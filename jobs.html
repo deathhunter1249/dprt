@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DPRT | Imperial Careers</title>
+    <title>DPRT | Recruitment</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@500;900&family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
@@ -11,38 +11,50 @@
         body {
             background: radial-gradient(circle at 50% 50%, #1a1a1c 0%, var(--dprt-ink) 100%);
             color: #e0e0e0; font-family: 'Inter', sans-serif; 
-            margin: 0; min-height: 100vh; overflow-x: hidden; position: relative;
+            margin: 0; min-height: 100vh; position: relative; overflow-x: hidden;
         }
 
-        /* ATMOSPHERIC BACKGROUNDS */
-        .mist { position: absolute; inset: 0; background: url('https://www.transparenttextures.com/patterns/natural-paper.png'); opacity: 0.03; pointer-events: none; z-index: 1; animation: drift 60s linear infinite; }
-        @keyframes drift { from { background-position: 0 0; } to { background-position: 1000px 1000px; } }
-        
-        /* JOB CARD STYLE */
+        /* Wide Rectangle Job Cards */
         .job-card {
-            background: rgba(20, 20, 22, 0.6);
-            border: 1px solid rgba(184, 134, 11, 0.3);
-            transition: all 0.3s ease;
+            background: rgba(20, 20, 22, 0.7);
+            border: 1px solid rgba(184, 134, 11, 0.2);
+            padding: 30px 40px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
+            width: 100%;
         }
-        .job-card:hover { border-color: var(--dprt-bronze); transform: translateY(-2px); box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        
-        /* ADMIN CONTROLS */
-        #admin-panel { display: none; }
-        .admin-only { display: none; }
-        .page-owner .admin-only { display: flex; }
+        .job-card:hover:not(.locked) {
+            border-color: var(--dprt-bronze);
+            background: rgba(184, 134, 11, 0.03);
+            transform: scale(1.01);
+        }
+        .job-card.locked { opacity: 0.4; cursor: not-allowed; grayscale: 1; }
+
+        .btn-action {
+            padding: 8px 24px;
+            font-size: 11px;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            transition: 0.3s;
+        }
+
+        /* Admin UI */
+        #admin-editor { 
+            display: none; position: fixed; inset: 0; 
+            background: rgba(0,0,0,0.95); z-index: 1000; 
+            align-items: center; justify-content: center; 
+            backdrop-filter: blur(10px);
+        }
 
         .chinese-font { font-family: 'Noto Serif SC', serif; }
-        .nav-btn { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.2em; color: #a0a0a0; transition: 0.4s ease; }
-        .nav-btn:hover { color: var(--dprt-bronze); }
-
-        /* MODAL */
-        #job-modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 200; align-items: center; justify-content: center; }
+        .nav-btn { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.2em; color: #a0a0a0; }
     </style>
 </head>
-<body id="body">
-
-    <div class="mist"></div>
+<body>
 
     <header class="relative z-50 border-b border-white/5 bg-black/20">
         <nav class="flex items-center justify-between px-10 py-5 max-w-7xl mx-auto">
@@ -52,123 +64,172 @@
                 </div>
                 <div class="flex flex-col leading-none">
                     <span class="text-3xl font-black tracking-widest text-white">DPRT</span>
-                    <span class="text-[9px] uppercase tracking-[0.4em] text-zinc-500 font-bold mt-1">Sovereign Estate</span>
+                    <span class="text-[9px] uppercase tracking-[0.4em] text-zinc-500 font-bold mt-1">Teapotian State</span>
                 </div>
             </div>
             <div class="hidden lg:flex items-center space-x-10">
                 <a href="index.html" class="nav-btn">Home</a>
-                <a href="info.html" class="nav-btn">Info</a>
                 <a href="jobs.html" class="nav-btn text-[#b8860b]">Jobs</a>
-                <a href="#" class="nav-btn">Group</a>
-                <a href="#" class="nav-btn">Wiki</a>
+                <a href="https://discord.gg/KBNqanJDfa" target="_blank" class="nav-btn">Group</a>
             </div>
-            <div id="auth-section">
-                <button onclick="login()" id="login-btn" class="border border-[#b8860b] text-[#b8860b] px-6 py-2 text-[10px] font-bold tracking-widest hover:bg-[#b8860b] hover:text-black transition">Verify</button>
+            <div id="user-profile-nav" class="flex items-center space-x-4">
+                <div class="text-right hidden sm:block">
+                    <p id="nav-username" class="text-white text-[11px] font-black uppercase italic">Guest</p>
+                    <p id="nav-rank" class="text-[#b8860b] text-[9px] font-bold uppercase tracking-tighter">Identity Unverified</p>
+                </div>
+                <img id="nav-pfp" class="w-10 h-10 border border-[#b8860b] hidden rounded-sm">
             </div>
         </nav>
     </header>
 
-    <main class="relative z-10 max-w-7xl mx-auto px-10 py-20">
-        <div class="text-center mb-16">
-            <h3 class="text-[#b8860b] font-bold text-sm mb-4 tracking-[0.6em] uppercase opacity-60 chinese-font">求職 — JOIN THE ORDER</h3>
-            <h1 class="text-5xl md:text-6xl font-black tracking-tighter text-white uppercase italic">Imperial Careers</h1>
-            <p class="text-zinc-500 mt-4 max-w-lg mx-auto">Select a path to serve the Republic. Each role requires absolute dedication to the Eternal Brew.</p>
+    <main class="max-w-6xl mx-auto px-10 py-20">
+        <div class="mb-16 border-l-4 border-[#b8860b] pl-8">
+            <h1 class="text-5xl font-black italic uppercase tracking-tighter text-white">Career Deployments</h1>
+            <p class="text-zinc-500 text-lg mt-2">The Estate requires your service. Select an application to begin.</p>
         </div>
 
-        <div id="job-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div id="job-list" class="flex flex-col gap-4">
             </div>
 
-        <div class="admin-only justify-center mt-12">
-            <button onclick="openModal()" class="w-16 h-16 border-2 border-dashed border-zinc-700 rounded-xl flex items-center justify-center text-zinc-600 hover:border-[#b8860b] hover:text-[#b8860b] transition-all">
-                <span class="text-3xl">+</span>
-            </button>
-        </div>
+        <button id="admin-add-trigger" onclick="openEditor()" class="hidden w-full mt-8 border-2 border-dashed border-zinc-800 py-6 text-zinc-600 hover:border-[#b8860b] hover:text-[#b8860b] transition-all font-black uppercase text-xs tracking-[.5em]">
+            + Add New Deployment
+        </button>
     </main>
 
-    <div id="job-modal">
-        <div class="bg-[#121214] border border-[#b8860b] p-8 w-full max-w-md">
-            <h2 class="text-xl font-bold text-white mb-6 uppercase tracking-widest">Create Job Application</h2>
-            <div class="space-y-4">
-                <input type="text" id="new-job-title" placeholder="Job Title" class="w-full bg-black border border-zinc-800 p-3 text-white outline-none focus:border-[#b8860b]">
-                <textarea id="new-job-desc" placeholder="Description" class="w-full bg-black border border-zinc-800 p-3 text-white outline-none focus:border-[#b8860b] h-32"></textarea>
-                <input type="text" id="new-job-link" placeholder="Application URL (Google Form/Discord)" class="w-full bg-black border border-zinc-800 p-3 text-white outline-none focus:border-[#b8860b]">
-                <div class="flex space-x-2">
-                    <button onclick="saveJob()" class="flex-1 bg-[#b8860b] text-black font-bold py-3 uppercase text-xs tracking-widest">Create</button>
-                    <button onclick="closeModal()" class="flex-1 bg-zinc-900 text-white font-bold py-3 uppercase text-xs tracking-widest">Cancel</button>
+    <div id="admin-editor" onclick="if(event.target == this) closeEditor()">
+        <div class="bg-[#0e0e10] border border-[#b8860b] p-10 w-full max-w-xl shadow-2xl">
+            <h2 class="text-white font-black uppercase mb-8 italic text-2xl border-b border-zinc-800 pb-4">App Configuration</h2>
+            <div class="space-y-5">
+                <div>
+                    <label class="text-[10px] uppercase font-black text-zinc-500 mb-2 block">App Title</label>
+                    <input type="text" id="edit-title" class="w-full bg-black border border-zinc-800 p-3 text-white outline-none focus:border-[#b8860b]">
+                </div>
+                <div>
+                    <label class="text-[10px] uppercase font-black text-zinc-500 mb-2 block">Description</label>
+                    <textarea id="edit-desc" class="w-full bg-black border border-zinc-800 p-3 text-white outline-none h-24 focus:border-[#b8860b]"></textarea>
+                </div>
+                <div class="flex items-center justify-between bg-black p-4 border border-zinc-800">
+                    <span class="text-xs uppercase font-black text-zinc-400">Lock Application (Closed)</span>
+                    <input type="checkbox" id="edit-locked" class="w-5 h-5 accent-[#b8860b]">
+                </div>
+                <div class="flex space-x-3 pt-4">
+                    <button onclick="saveApp()" class="flex-1 bg-[#b8860b] text-black font-black py-4 uppercase text-xs tracking-widest hover:brightness-110">Publish</button>
+                    <button onclick="closeEditor()" class="flex-1 bg-zinc-900 text-white font-black py-4 uppercase text-xs tracking-widest">Discard</button>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        const GUILD_ID = '1255926408312655963';
-        const OWNER_ID = '735531512124145674'; // <--- PUT YOUR DISCORD ID HERE!
+        const ROLE_IDS = {
+            'OWNER': '1255927538367332423',
+            'COUNCIL': '1256196665199558726',
+            'ADMIN': '1255950197746438357' // Example Admin ID
+        };
 
-        // Initial Sample Data
-        const defaultJobs = [
-            { title: "Kettlenauts", desc: "Heavy siege infantry. Forged in the heat of the greatest battles.", link: "#" },
-            { title: "Teaian Recons", desc: "Long-range precision and intelligence. We bag threats before they arrive.", link: "#" }
+        let currentEditingIndex = null;
+        let apps = JSON.parse(localStorage.getItem('dprt_apps')) || [
+            { title: "Kettlenauts", desc: "Heavy siege infantry. Forged in the field.", locked: false },
+            { title: "Teaian Recons", desc: "Long-range precision and intelligence gathering.", locked: true }
         ];
 
-        let jobs = JSON.parse(localStorage.getItem('dprt_custom_jobs')) || defaultJobs;
+        function initSync() {
+            const userData = JSON.parse(localStorage.getItem('dprt_user'));
+            if (!userData) return;
 
-        function renderJobs() {
-            const grid = document.getElementById('job-grid');
-            grid.innerHTML = '';
+            // Update Header
+            document.getElementById('nav-username').innerText = userData.username;
+            const pfp = document.getElementById('nav-pfp');
+            pfp.src = `https://cdn.discordapp.com/avatars/${userData.id}/${userData.avatar}.png`;
+            pfp.classList.remove('hidden');
+
+            // Rank Logic - FIXING OWNER HIERARCHY
+            let rank = "Citizen";
+            let isAdmin = false;
+
+            if (userData.roles.includes(ROLE_IDS.OWNER)) {
+                rank = "State Owner";
+                isAdmin = true;
+            } else if (userData.roles.includes(ROLE_IDS.COUNCIL)) {
+                rank = "High Council";
+                isAdmin = true;
+            }
+
+            document.getElementById('nav-rank').innerText = rank;
+
+            // Show Admin Controls
+            if (isAdmin) {
+                document.getElementById('admin-add-trigger').classList.remove('hidden');
+            }
             
-            jobs.forEach((job, index) => {
-                grid.innerHTML += `
-                    <div class="job-card p-8 rounded-sm flex flex-col justify-between">
-                        <div>
-                            <div class="w-10 h-10 border border-[#b8860b] flex items-center justify-center mb-6">
-                                <span class="text-[#b8860b] text-xs">★</span>
-                            </div>
-                            <h2 class="text-2xl font-black text-white uppercase italic mb-3">${job.title}</h2>
-                            <p class="text-zinc-500 text-sm leading-relaxed mb-8">${job.desc}</p>
+            renderApps(isAdmin);
+        }
+
+        function renderApps(isAdmin) {
+            const list = document.getElementById('job-list');
+            list.innerHTML = '';
+
+            apps.forEach((app, index) => {
+                const card = document.createElement('div');
+                card.className = `job-card ${app.locked ? 'locked' : ''}`;
+                
+                card.innerHTML = `
+                    <div class="flex-1 pr-10">
+                        <div class="flex items-center space-x-4 mb-2">
+                             <div class="w-8 h-8 border border-[#b8860b]/30 flex items-center justify-center">
+                                <span class="text-[#b8860b] text-[10px]">★</span>
+                             </div>
+                             <h3 class="text-2xl font-black uppercase italic text-white">${app.title}</h3>
                         </div>
-                        <div class="flex items-center justify-between">
-                            <a href="${job.link}" class="bg-[#b8860b] text-black px-6 py-2 text-[10px] font-black uppercase tracking-widest hover:brightness-110 transition">Open</a>
-                            ${document.body.classList.contains('page-owner') ? `<button onclick="deleteJob(${index})" class="text-red-900 text-[10px] hover:text-red-500 uppercase font-bold">Delete</button>` : ''}
-                        </div>
+                        <p class="text-zinc-500 text-sm max-w-2xl">${app.desc}</p>
+                    </div>
+                    <div class="flex items-center space-x-3">
+                        ${isAdmin ? `<button onclick="openEditor(${index})" class="border border-zinc-700 text-zinc-500 btn-action hover:border-white hover:text-white">Edit</button>` : ''}
+                        <button ${app.locked ? 'disabled' : ''} class="btn-action ${app.locked ? 'btn-locked bg-zinc-800 text-zinc-600' : 'bg-[#b8860b] text-black hover:scale-105'}">
+                            ${app.locked ? 'Closed' : 'Open'}
+                        </button>
                     </div>
                 `;
+                list.appendChild(card);
             });
         }
 
-        function checkPermissions() {
-            const user = JSON.parse(localStorage.getItem('dprt_user'));
-            if (user && user.id === OWNER_ID) {
-                document.body.classList.add('page-owner');
+        function openEditor(index = null) {
+            currentEditingIndex = index;
+            if (index !== null) {
+                document.getElementById('edit-title').value = apps[index].title;
+                document.getElementById('edit-desc').value = apps[index].desc;
+                document.getElementById('edit-locked').checked = apps[index].locked;
+            } else {
+                document.getElementById('edit-title').value = '';
+                document.getElementById('edit-desc').value = '';
+                document.getElementById('edit-locked').checked = false;
             }
-            renderJobs();
+            document.getElementById('admin-editor').style.display = 'flex';
         }
 
-        // Modal Logic
-        function openModal() { document.getElementById('job-modal').style.display = 'flex'; }
-        function closeModal() { document.getElementById('job-modal').style.display = 'none'; }
-
-        function saveJob() {
-            const title = document.getElementById('new-job-title').value;
-            const desc = document.getElementById('new-job-desc').value;
-            const link = document.getElementById('new-job-link').value;
-
-            if(title && desc) {
-                jobs.push({ title, desc, link });
-                localStorage.setItem('dprt_custom_jobs', JSON.stringify(jobs));
-                renderJobs();
-                closeModal();
-            }
+        function closeEditor() {
+            document.getElementById('admin-editor').style.display = 'none';
         }
 
-        function deleteJob(index) {
-            if(confirm("Burn this record?")) {
-                jobs.splice(index, 1);
-                localStorage.setItem('dprt_custom_jobs', JSON.stringify(jobs));
-                renderJobs();
+        function saveApp() {
+            const newData = {
+                title: document.getElementById('edit-title').value,
+                desc: document.getElementById('edit-desc').value,
+                locked: document.getElementById('edit-locked').checked
+            };
+
+            if (currentEditingIndex !== null) {
+                apps[currentEditingIndex] = newData;
+            } else {
+                apps.push(newData);
             }
+
+            localStorage.setItem('dprt_apps', JSON.stringify(apps));
+            location.reload(); // Hard refresh to sync "Global" state
         }
 
-        window.onload = checkPermissions;
+        window.onload = initSync;
     </script>
 </body>
 </html>
