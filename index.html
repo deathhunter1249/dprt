@@ -9,190 +9,138 @@
     <style>
         :root {
             --dprt-gold: #d4af37;
-            --dprt-gold-bright: #ffdf00;
             --dprt-bg: #050505;
         }
         body {
-            background-color: var(--dprt-bg);
-            background-image: radial-gradient(circle at 50% 50%, #111 0%, #050505 100%);
-            color: #ffffff;
+            background: var(--dprt-bg);
+            color: #fff;
             font-family: 'Inter', sans-serif;
             margin: 0;
-            height: 100vh;
             overflow: hidden;
+            height: 100vh;
         }
-        .chinese-font { font-family: 'Noto Serif SC', serif; }
 
-        /* DRAGON SCALE SPINE - GPU ACCELERATED */
-        .spine-container {
+        /* HARDWARE ACCELERATED SCALES */
+        .dragon-bg {
             position: absolute;
             inset: 0;
             z-index: 0;
             pointer-events: none;
+            opacity: 0.15;
         }
 
-        .dragon-spine {
+        .scale-line {
             position: absolute;
             width: 200%;
-            height: 12px;
+            height: 15px;
             background: repeating-linear-gradient(90deg, 
-                transparent, 
-                transparent 40px, 
-                var(--dprt-gold) 40px, 
-                var(--dprt-gold-bright) 48px, 
-                transparent 52px);
-            opacity: 0.18;
-            filter: blur(1px) drop-shadow(0 0 10px var(--dprt-gold));
+                var(--dprt-gold) 0px, 
+                var(--dprt-gold) 2px, 
+                transparent 2px, 
+                transparent 40px);
+            /* This is the secret to no lag: */
+            transform: translateZ(0); 
             will-change: transform;
         }
 
-        .spine-top { top: 18%; animation: slither 15s linear infinite; }
-        .spine-bottom { bottom: 18%; animation: slither 22s linear infinite reverse; }
+        .top-line { top: 20%; animation: slither 15s linear infinite; }
+        .bottom-line { bottom: 20%; animation: slither 20s linear infinite reverse; }
 
         @keyframes slither {
-            0% { transform: translate3d(0, 0, 0) skewX(-20deg); }
-            100% { transform: translate3d(-50%, 0, 0) skewX(-20deg); }
+            from { transform: translateX(0) skewX(-20deg); }
+            to { transform: translateX(-40px) skewX(-20deg); }
         }
 
         .nav-frame {
             background: rgba(5, 5, 5, 0.9);
-            backdrop-filter: blur(20px);
-            border-bottom: 2px solid rgba(212, 175, 55, 0.4);
-            z-index: 100;
+            backdrop-filter: blur(10px);
+            border-bottom: 2px solid var(--dprt-gold);
         }
-
-        .gold-border-btn {
-            border: 1px solid var(--dprt-gold);
-            background: rgba(212, 175, 55, 0.05);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .gold-border-btn:hover {
-            background: var(--dprt-gold);
-            color: #000;
-            box-shadow: 0 0 25px rgba(212, 175, 55, 0.3);
-            transform: translateY(-2px);
-        }
-
-        .user-pfp {
-            width: 42px;
-            height: 42px;
-            border-radius: 50%;
-            border: 2px solid var(--dprt-gold);
-            display: none;
-            cursor: pointer;
-            box-shadow: 0 0 15px rgba(212, 175, 55, 0.2);
-        }
-
+        
         .hero-title {
-            font-size: clamp(3.5rem, 11vw, 8.5rem);
-            line-height: 0.8;
-            letter-spacing: -0.05em;
-            text-shadow: 0 0 40px rgba(0,0,0,1);
+            font-size: clamp(3rem, 10vw, 8rem);
+            line-height: 0.85;
         }
     </style>
 </head>
 <body>
 
-    <div class="spine-container">
-        <div class="dragon-spine spine-top"></div>
-        <div class="dragon-spine spine-bottom"></div>
+    <div class="dragon-bg">
+        <div class="scale-line top-line"></div>
+        <div class="scale-line bottom-line"></div>
     </div>
 
-    <header class="nav-frame sticky top-0">
-        <nav class="flex items-center justify-between px-10 py-5 max-w-7xl mx-auto">
-            <div class="flex items-center space-x-6">
-                <div class="bg-[#d4af37] w-12 h-12 rounded flex items-center justify-center shadow-lg">
-                    <span class="text-black text-2xl font-black chinese-font">茶</span>
+    <header class="nav-frame relative z-50">
+        <nav class="flex items-center justify-between px-8 py-5 max-w-7xl mx-auto">
+            <div class="flex items-center space-x-4">
+                <div class="bg-[#d4af37] w-12 h-12 rounded flex items-center justify-center">
+                    <span class="text-black text-2xl font-black font-serif">茶</span>
                 </div>
-                <div class="flex flex-col leading-none">
-                    <span class="text-3xl font-black tracking-tighter italic">DPRT</span>
-                    <span class="text-[10px] uppercase tracking-[0.3em] text-gray-500 font-bold">The Teapot Republic</span>
-                </div>
+                <span class="text-3xl font-black italic tracking-tighter">DPRT</span>
             </div>
 
-            <div class="hidden xl:flex space-x-12 text-[11px] font-bold uppercase tracking-widest">
-                <a href="https://deathhunter1249.github.io/dprt/" class="text-[#d4af37]">Home</a>
-                <a href="https://deathhunter1249.github.io/dprt/#info" class="hover:text-[#d4af37] transition-colors">Info</a>
-                <a href="https://deathhunter1249.github.io/dprt/#apps" class="hover:text-[#d4af37] transition-colors">Applications</a>
-                <a href="https://discord.gg/KBNqanJDfa" target="_blank" class="hover:text-[#d4af37] transition-colors">Group</a>
-                <a href="https://republicofteapots.miraheze.org/" target="_blank" class="text-gray-600 hover:text-white transition-colors">WIKI</a>
-            </div>
-
-            <div id="auth-section">
-                <button id="login-btn" onclick="discordLogin()" class="gold-border-btn px-6 py-2 rounded text-[11px] font-black uppercase tracking-wider">
+            <div id="auth-zone">
+                <button id="login-btn" onclick="discordLogin()" class="border border-[#d4af37] px-6 py-2 rounded uppercase text-xs font-bold hover:bg-[#d4af37] hover:text-black transition-all">
                     Discord Login
                 </button>
-                <img id="avatar-img" onclick="logout()" class="user-pfp" src="" alt="Profile">
+                <img id="user-pfp" class="w-12 h-12 rounded-full border-2 border-[#d4af37] hidden cursor-pointer" onclick="logout()">
             </div>
         </nav>
     </header>
 
-    <main class="relative z-10 max-w-7xl mx-auto px-10 h-[calc(100vh-100px)] flex flex-col justify-center">
-        <div class="max-w-4xl border-l-4 border-[#d4af37] pl-10">
-            <h3 class="text-[#d4af37] font-bold text-xl mb-6 tracking-[0.2em] uppercase">
-                Democratic People's Republic of Teapots
-            </h3>
-            <h1 class="hero-title font-black uppercase text-white mb-10 italic">
-                GLORY TO <br> YOSOFO
-            </h1>
-            <p class="text-zinc-500 text-2xl max-w-2xl font-light leading-relaxed">
-                <span class="text-white font-bold italic underline decoration-[#d4af37] decoration-4">Motive 01:</span> <br> 
-                Maintain peace. Protect the motherland. Serve the eternal Republic.
-            </p>
-        </div>
+    <main class="relative z-10 max-w-7xl mx-auto px-8 h-[calc(100vh-80px)] flex flex-col justify-center">
+        <h3 class="text-[#d4af37] font-bold tracking-widest mb-4">DEMOCRATIC PEOPLE'S REPUBLIC OF TEAPOTS</h3>
+        <h1 class="hero-title font-black italic mb-8">GLORY TO <br> YOSOFO</h1>
+        <p class="text-zinc-500 text-xl border-l-2 border-[#d4af37] pl-6">
+            <span class="text-white font-bold italic underline">MOTIVE 01:</span><br>
+            Maintain peace. Protect the motherland.
+        </p>
     </main>
 
-    <footer class="fixed bottom-10 left-0 w-full text-center">
-        <div class="flex justify-center items-center space-x-10 text-gray-600 uppercase tracking-[0.5em] text-[10px] font-black">
-            <span>忠诚 LOYALTY</span>
-            <span class="text-[#d4af37]">•</span>
-            <span>纪律 DISCIPLINE</span>
-            <span class="text-[#d4af37]">•</span>
-            <span>茶 TEA</span>
-        </div>
+    <footer class="fixed bottom-8 w-full text-center text-[10px] tracking-[0.4em] text-zinc-600 font-bold">
+        忠诚 LOYALTY • 纪律 DISCIPLINE • 茶 TEA
     </footer>
 
     <script>
-        const CLIENT_ID = '1323365609777528962'; 
-        const REDIRECT_URI = window.location.origin + window.location.pathname;
+        const CLIENT_ID = '1323365609777528962';
+        // Redirect to wherever your server.js is hosted (e.g. Render/Railway)
+        const SERVER_URL = 'http://localhost:3000'; 
 
         function discordLogin() {
-            const url = `https://discord.com/api/oauth2/authorize?client_id=${CLIENT_ID}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&response_type=code&scope=identify`;
-            window.location.href = url;
+            const redirect = encodeURIComponent(window.location.origin + window.location.pathname);
+            window.location.href = `https://discord.com/api/oauth2/authorize?client_id=${CLIENT_ID}&redirect_uri=${redirect}&response_type=code&scope=identify`;
         }
 
-        async function handleAuth() {
+        async function init() {
             const params = new URLSearchParams(window.location.search);
-            const code = params.get("code");
+            const code = params.get('code');
 
             if (code) {
-                // Change 'localhost:3000' to your actual server URL when you deploy
-                const response = await fetch(`http://localhost:3000/discord/callback?code=${code}`);
-                const data = await response.json();
-                if (data.success) {
-                    localStorage.setItem('dprt_user', JSON.stringify(data.user));
-                    window.history.replaceState({}, document.title, window.location.pathname);
-                }
+                try {
+                    const res = await fetch(`${SERVER_URL}/discord/callback?code=${code}`);
+                    const data = await res.json();
+                    if (data.user) {
+                        localStorage.setItem('dprt_user', JSON.stringify(data.user));
+                        window.history.replaceState({}, document.title, window.location.pathname);
+                    }
+                } catch (e) { console.error("Server not reachable"); }
             }
 
             const user = JSON.parse(localStorage.getItem('dprt_user'));
             if (user) {
-                document.getElementById('login-btn').style.display = 'none';
-                const avatar = document.getElementById('avatar-img');
-                avatar.style.display = 'block';
-                avatar.src = `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png`;
+                document.getElementById('login-btn').classList.add('hidden');
+                const pfp = document.getElementById('user-pfp');
+                pfp.classList.remove('hidden');
+                pfp.src = `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png`;
             }
         }
 
         function logout() {
-            if(confirm("Sign out of the Republic?")) {
-                localStorage.removeItem('dprt_user');
-                window.location.reload();
-            }
+            localStorage.removeItem('dprt_user');
+            window.location.reload();
         }
 
-        window.onload = handleAuth;
+        window.onload = init;
     </script>
 </body>
 </html>
