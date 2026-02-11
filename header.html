@@ -1,14 +1,14 @@
-<div id="global-overlay" class="fixed inset-0 bg-black/30 z-[80] opacity-0 pointer-events-none transition-opacity duration-400" onclick="toggleMenu(false)"></div>
+<div id="global-overlay" class="fixed inset-0 bg-black/40 z-[80] opacity-0 pointer-events-none transition-opacity duration-500" onclick="toggleMenu(false)"></div>
 
-<header class="relative z-[101] border-b border-white/5 bg-black/20">
+<header class="relative z-[101] border-b border-white/5 bg-black/40 backdrop-blur-md">
     <nav class="flex items-center justify-between px-10 py-5 max-w-7xl mx-auto">
-        <div class="flex items-center space-x-5 cursor-pointer" onclick="window.location.href='index.html'">
-            <div class="w-11 h-11 border border-[#b8860b] flex items-center justify-center bg-[#b8860b]">
+        <div class="flex items-center space-x-5 cursor-pointer group" onclick="window.location.href='index.html'">
+            <div class="w-11 h-11 border border-[#b8860b] flex items-center justify-center bg-[#b8860b] group-hover:shadow-[0_0_15px_rgba(184,134,11,0.5)] transition-all">
                 <span class="text-black text-2xl chinese-font font-black">茶</span>
             </div>
             <div class="flex flex-col leading-none">
                 <span class="text-3xl font-black tracking-widest text-white">DPRT</span>
-                <span class="text-[9px] uppercase tracking-[0.4em] text-zinc-500 font-bold mt-1">Teapotian State</span>
+                <span class="text-[9px] uppercase tracking-[0.4em] text-[#b8860b] font-bold mt-1 opacity-80">Teapotian State</span>
             </div>
         </div>
 
@@ -20,31 +20,36 @@
             <a href="https://republicofteapots.miraheze.org/" target="_blank" class="nav-btn">Wiki</a>
         </div>
 
-        <div class="relative flex items-center justify-end w-[150px]">
+        <div class="relative flex items-center justify-end min-w-[150px]">
             <button id="login-btn" onclick="login()" class="btn-verify">Log In</button>
             
             <div id="user-display" class="hidden flex items-center space-x-4">
                 <div class="text-right hidden sm:block">
-                    <p id="nav-username" class="text-white text-[11px] font-black uppercase italic">Citizen</p>
-                    <p id="nav-rank" class="text-[#b8860b] text-[9px] font-bold uppercase tracking-tighter">Verifying...</p>
+                    <p id="nav-username" class="text-white text-[11px] font-black uppercase italic tracking-wider">Citizen</p>
+                    <p id="nav-rank" class="text-[#b8860b] text-[9px] font-bold uppercase tracking-[0.2em] opacity-80">Verifying...</p>
                 </div>
-                <img id="nav-pfp" class="user-pfp w-10 h-10 border border-[#b8860b] rounded-sm cursor-pointer" onclick="toggleMenu(true)">
+                <div class="relative group">
+                    <img id="nav-pfp" class="w-11 h-11 border border-[#b8860b]/50 hover:border-[#b8860b] rounded-sm cursor-pointer transition-all active:scale-95" onclick="toggleMenu(true)">
+                    <div class="absolute -top-1 -right-1 w-3 h-3 bg-[#b8860b] border-2 border-[#0a0a0c] rounded-full animate-pulse"></div>
+                </div>
             </div>
 
-            <div id="profile-menu" class="absolute top-[60px] right-0 width-[280px] bg-[#121214] border border-[#b8860b] z-[110] transform -translate-y-[10px] opacity-0 pointer-events-none transition-all duration-300 shadow-2xl">
-                <div class="p-6 border-b border-[#b8860b]/20 bg-[#b8860b]/5">
-                    <p id="menu-user-name" class="font-black text-white uppercase italic text-lg">Citizen</p>
-                    <p id="menu-user-rank" class="text-[9px] text-[#b8860b] tracking-widest font-bold uppercase">Rank</p>
+            <div id="profile-menu" class="absolute top-[70px] right-0 w-[280px] bg-[#0c0c0e] border border-[#b8860b]/30 z-[110] transform -translate-y-4 opacity-0 pointer-events-none transition-all duration-300 ease-out shadow-[0_20px_50px_rgba(0,0,0,0.8)]">
+                <div class="p-6 border-b border-[#b8860b]/20 bg-gradient-to-b from-[#b8860b]/10 to-transparent">
+                    <p id="menu-user-name" class="font-black text-white uppercase italic text-lg tracking-tighter">Citizen</p>
+                    <p id="menu-user-rank" class="text-[10px] text-[#b8860b] tracking-[0.3em] font-black uppercase mt-1">Verifying Rank</p>
                 </div>
-                <div class="menu-item flex justify-between p-4 cursor-pointer hover:bg-[#b8860b]/5 hover:text-[#b8860b] text-sm border-b border-white/5" onclick="alert('No new alerts.')">
-                    <span>Notifications</span>
-                    <span id="notif-count" class="notif-badge bg-[#b8860b] text-black text-[10px] px-2 py-0.5 font-black">0</span>
+                <div class="menu-item group" onclick="alert('System secure. No new threats.')">
+                    <span class="group-hover:translate-x-1 transition-transform">Notifications</span>
+                    <span id="notif-count" class="notif-badge">0</span>
                 </div>
-                <div class="menu-item p-4 cursor-pointer hover:bg-[#b8860b]/5 hover:text-[#b8860b] text-sm border-b border-white/5" onclick="window.location.href='settings.html'">
-                    Settings
+                <div class="menu-item group" onclick="window.location.href='settings.html'">
+                    <span class="group-hover:translate-x-1 transition-transform">Citizen Settings</span>
                 </div>
-                <div class="menu-item p-4 cursor-pointer text-red-500 hover:bg-red-500/5 text-xs font-black uppercase tracking-widest" onclick="logout()">
-                    Log Out
+                <div class="p-4">
+                    <button onclick="logout()" class="w-full py-3 border border-red-900/30 text-red-500 hover:bg-red-500/10 text-[10px] font-black uppercase tracking-[0.3em] transition-all">
+                        Terminate Session
+                    </button>
                 </div>
             </div>
         </div>
