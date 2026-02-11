@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DPRT | Republic of Teapots</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@500;900&family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root { --dprt-bronze: #b8860b; --dprt-ink: #0a0a0c; }
+        body {
+            background: radial-gradient(circle at 50% 50%, #1a1a1c 0%, var(--dprt-ink) 100%);
+            color: #e0e0e0; font-family: 'Inter', sans-serif; 
+            margin: 0; height: 100vh; overflow: hidden; position: relative;
+        }
+        /* Scanline Effect */
+        body::before {
+            content: " "; display: block; position: absolute; inset: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.02), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.02));
+            z-index: 100; background-size: 100% 4px, 3px 100%; pointer-events: none;
+        }
+
+        .ember {
+            position: absolute; background: var(--dprt-bronze); border-radius: 50%; opacity: 0; pointer-events: none;
+            animation: rise 12s infinite ease-in; z-index: 2; filter: blur(1px);
+        }
+        @keyframes rise {
+            0% { transform: translateY(105vh) scale(0); opacity: 0; }
+            50% { opacity: 0.6; box-shadow: 0 0 10px var(--dprt-bronze); }
+            100% { transform: translateY(-10vh) scale(1.5); opacity: 0; }
+        }
+
+        #blur-container { transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1); }
+        .chinese-font { font-family: 'Noto Serif SC', serif; }
+        .nav-btn { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.2em; color: #a0a0a0; transition: 0.4s ease; cursor: pointer; }
+        .nav-btn:hover { color: var(--dprt-bronze); letter-spacing: 0.3em; }
+        .hero-title { font-size: clamp(3.5rem, 12vw, 8rem); line-height: 0.8; color: #fff; font-family: 'Noto Serif SC', serif; font-weight: 900; filter: drop-shadow(0 0 30px rgba(0,0,0,1)); }
+        
+        .btn-verify { border: 1px solid var(--dprt-bronze); color: var(--dprt-bronze); padding: 10px 24px; font-size: 10px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.3em; transition: 0.3s; background: transparent; cursor: pointer; }
+        .btn-verify:hover { background: var(--dprt-bronze); color: black; box-shadow: 0 0 20px rgba(184, 134, 11, 0.4); }
+
+        .menu-item { padding: 16px 20px; border-bottom: 1px solid rgba(184, 134, 11, 0.1); display: flex; justify-content: space-between; align-items: center; cursor: pointer; font-size: 12px; color: #888; transition: 0.3s; }
+        .menu-item:hover { background: rgba(184, 134, 11, 0.05); color: var(--dprt-bronze); }
+        .notif-badge { background: var(--dprt-bronze); color: black; font-size: 10px; font-weight: 900; padding: 1px 6px; border-radius: 2px; }
+    </style>
+</head>
+<body>
+
+    <div id="embers-container"></div>
+    
+    <div id="header-placeholder"></div>
+
+    <div id="blur-container" class="relative z-10">
+        <main class="max-w-7xl mx-auto px-12 h-[calc(100vh-100px)] flex flex-col justify-center">
+            <div class="max-w-4xl border-l-2 border-[#b8860b]/40 pl-16 relative">
+                <div class="absolute -left-[2px] top-0 h-24 w-[2px] bg-[#b8860b] shadow-[0_0_15px_#b8860b]"></div>
+                
+                <h3 class="text-[#b8860b] font-black text-xs mb-8 tracking-[0.8em] uppercase opacity-80 chinese-font animate-pulse">
+                    大同茶國 — 永恆秩序
+                </h3>
+                <h1 class="hero-title mb-10 italic uppercase">
+                    Tranquility<br><span class="text-[#b8860b]">Through</span> Order
+                </h1>
+                <p class="text-zinc-500 text-xl font-light leading-relaxed max-w-2xl">
+                    The Estate is built upon the <span class="text-zinc-200 font-bold italic">Eternal Brew</span>. 
+                    Structure is the vessel; loyalty is the tea. Serve the Nation; protect the state.
+                </p>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        const CLIENT_ID = '1323365609777528962';
+        const GUILD_ID = '1255926408312655963'; 
+        const REDIRECT_URI = window.location.origin + window.location.pathname;
+
+        const ROLE_IDS = {
+            'OWNER': '1255927538367332423',
+            'COUNCIL': '1256196665199558726', 
+            'OFFICER': '1255950197746438357',
+            'CIVILIAN': '1255941719199977585',
+            'PEASANT': '1389026114554560562'
+        };
+
+        // 1. LOAD GLOBAL HEADER
+        async function loadGlobalHeader() {
+            const resp = await fetch('header.html');
+            const html = await resp.text();
+            document.getElementById('header-placeholder').innerHTML = html;
+            
+            // Highlight current page
+            const path = window.location.pathname.split("/").pop() || 'index.html';
+            const links = {'index.html': 'nav-home', 'info.html': 'nav-info', 'jobs.html': 'nav-jobs'};
+            if(links[path]) document.getElementById(links[path])?.classList.add('text-[#b8860b]');
+            
+            initAuth();
+        }
+
+        // 2. AUTH LOGIC
+        async function initAuth() {
+            const fragment = new URLSearchParams(window.location.hash.slice(1));
+            const accessToken = fragment.get('access_token');
+
+            if (accessToken) {
+                try {
+                    const userRes = await fetch('https://discord.com/api/users/@me', {
+                        headers: { Authorization: `Bearer ${accessToken}` }
+                    });
+                    const user = await userRes.json();
+                    const memberRes = await fetch(`https://discord.com/api/users/@me/guilds/${GUILD_ID}/member`, {
+                        headers: { Authorization: `Bearer ${accessToken}` }
+                    });
+                    const memberData = await memberRes.json();
+
+                    if (user.id) {
+                        const userData = { ...user, roles: memberData.roles || [] };
+                        localStorage.setItem('dprt_user', JSON.stringify(userData));
+                        window.history.replaceState({}, document.title, window.location.pathname);
+                    }
+                } catch (e) { console.error("Identity verify failed:", e); }
+            }
+            renderUser();
+        }
+
+        function renderUser() {
+            const user = JSON.parse(localStorage.getItem('dprt_user'));
+            if (!user) return;
+
+            document.getElementById('login-btn').style.display = 'none';
+            document.getElementById('user-display').classList.remove('hidden');
+            
+            // Update all name/rank fields in the injected header
+            document.getElementById('nav-username').innerText = user.username;
+            document.getElementById('menu-user-name').innerText = user.username;
+            document.getElementById('nav-pfp').src = `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png`;
+
+            let rank = "Civilian";
+            if (user.roles.includes(ROLE_IDS.OWNER)) rank = "State Owner";
+            else if (user.roles.includes(ROLE_IDS.COUNCIL)) rank = "High Council";
+            else if (user.roles.includes(ROLE_IDS.OFFICER)) rank = "Imperial Officer";
+            else if (user.roles.includes(ROLE_IDS.CIVILIAN)) rank = "Verified Citizen";
+            else if (user.roles.includes(ROLE_IDS.PEASANT)) rank = "Peasant";
+            
+            document.getElementById('nav-rank').innerText = rank;
+            document.getElementById('menu-user-rank').innerText = rank;
+            document.getElementById('notif-count').innerText = "2";
+        }
+
+        function login() {
+            const scopes = encodeURIComponent('identify guilds.members.read');
+            window.location.href = `https://discord.com/api/oauth2/authorize?client_id=${CLIENT_ID}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&response_type=token&scope=${scopes}`;
+        }
+
+        function logout() {
+            localStorage.removeItem('dprt_user');
+            window.location.reload();
+        }
+
+        function toggleMenu(show) {
+            const menu = document.getElementById('profile-menu');
+            const overlay = document.getElementById('global-overlay');
+            const blur = document.getElementById('blur-container');
+            
+            if (show) {
+                menu.classList.remove('opacity-0', 'pointer-events-none', '-translate-y-4');
+                overlay.classList.remove('opacity-0', 'pointer-events-none');
+                blur.style.filter = "blur(8px) brightness(0.5)";
+                blur.style.transform = "scale(0.98)";
+            } else {
+                menu.classList.add('opacity-0', 'pointer-events-none', '-translate-y-4');
+                overlay.classList.add('opacity-0', 'pointer-events-none');
+                blur.style.filter = "none";
+                blur.style.transform = "scale(1)";
+            }
+        }
+
+        // 3. AMBIANCE
+        const embers = document.getElementById('embers-container');
+        for (let i = 0; i < 20; i++) {
+            const e = document.createElement('div');
+            e.className = 'ember';
+            e.style.left = Math.random() * 100 + '%';
+            e.style.width = e.style.height = (Math.random() * 4 + 1) + 'px';
+            e.style.animationDelay = Math.random() * 12 + 's';
+            embers.appendChild(e);
+        }
+
+        window.onload = loadGlobalHeader;
+    </script>
+</body>
+</html>
