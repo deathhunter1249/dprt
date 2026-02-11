@@ -11,8 +11,8 @@ app.use(cors());
 app.use(express.json());
 
 // ===== CONFIGURATION =====
-const DISCORD_CLIENT_ID = '1323365609777528962';
-const DISCORD_CLIENT_SECRET = 'uRiAE9S6GpeabZptLcdh-cDQh6xcG0sH'; // From Discord Developer Portal
+const DISCORD_CLIENT_ID = '';
+const DISCORD_CLIENT_SECRET = ''; // From Discord Developer Portal
 const REDIRECT_URI = 'https://deathhunter1249.github.io/dprt/';
 
 // ===== EXCHANGE CODE FOR TOKEN =====
