@@ -9,94 +9,216 @@
     <style>
         :root {
             --dprt-gold: #d4af37;
+            --dprt-gold-bright: #f0c74d;
             --dprt-bg: #0a0a0a;
+            --dprt-bg-light: #151515;
         }
         body {
             background-color: var(--dprt-bg);
-            background-image: radial-gradient(circle at 30% 40%, #151515 0%, #0a0a0a 70%);
+            background-image: radial-gradient(circle at 30% 40%, var(--dprt-bg-light) 0%, var(--dprt-bg) 70%);
             color: #ffffff;
             font-family: 'Inter', sans-serif;
             margin: 0;
             height: 100vh;
-            overflow: hidden; 
+            overflow: hidden;
+            cursor: default;
         }
         .chinese-font { font-family: 'Noto Serif SC', serif; }
 
-        /* ANIMATED FLOWING LINES */
+        /* ANIMATED WAVE LINES - Thicker and Wave-like */
         .line-container {
             position: absolute;
             inset: 0;
             z-index: 0;
             pointer-events: none;
-            opacity: 0.15;
+            opacity: 0.2;
         }
 
         .flowing-line {
             position: absolute;
-            width: 200%; /* Extra width for the sliding animation */
-            height: 300px;
+            width: 300%;
+            height: 400px;
             stroke: var(--dprt-gold);
-            stroke-width: 4;
+            stroke-width: 8;
             fill: none;
-            animation: moveLine 20s linear infinite;
+            filter: blur(1px);
         }
 
-        .line-top { top: 10%; animation-duration: 25s; opacity: 0.8; }
-        .line-bottom { bottom: 5%; animation-duration: 18s; transform: scaleY(-1); opacity: 0.6; }
+        .line-top { 
+            top: 8%; 
+            animation: waveFlow1 30s ease-in-out infinite;
+            opacity: 0.7;
+        }
+        .line-middle { 
+            top: 40%; 
+            animation: waveFlow2 25s ease-in-out infinite;
+            opacity: 0.5;
+        }
+        .line-bottom { 
+            bottom: 10%; 
+            animation: waveFlow3 35s ease-in-out infinite;
+            opacity: 0.6;
+        }
 
-        @keyframes moveLine {
-            from { transform: translateX(0); }
-            to { transform: translateX(-50%); }
+        @keyframes waveFlow1 {
+            0%, 100% { transform: translateX(0) translateY(0); }
+            50% { transform: translateX(-33.33%) translateY(-20px); }
+        }
+
+        @keyframes waveFlow2 {
+            0%, 100% { transform: translateX(0) translateY(0); }
+            50% { transform: translateX(-33.33%) translateY(15px); }
+        }
+
+        @keyframes waveFlow3 {
+            0%, 100% { transform: translateX(0) translateY(0); }
+            50% { transform: translateX(-33.33%) translateY(-10px); }
+        }
+
+        /* ANIMATED STARS */
+        .stars-container {
+            position: absolute;
+            inset: 0;
+            z-index: 1;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .star {
+            position: absolute;
+            background: var(--dprt-gold);
+            border-radius: 50%;
+            opacity: 0;
+            animation: twinkle 3s ease-in-out infinite;
+            box-shadow: 0 0 10px var(--dprt-gold);
+            transition: transform 0.3s ease-out;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0; transform: scale(0); }
+            50% { opacity: 1; transform: scale(1); }
         }
 
         .nav-frame {
-            background: linear-gradient(to bottom, rgba(10, 10, 10, 0.95), rgba(10, 10, 10, 0.7));
-            backdrop-filter: blur(12px);
-            border-bottom: 1px solid rgba(212, 175, 55, 0.3);
+            background: linear-gradient(to bottom, rgba(10, 10, 10, 0.98), rgba(10, 10, 10, 0.85));
+            backdrop-filter: blur(16px);
+            border-bottom: 2px solid rgba(212, 175, 55, 0.4);
             position: sticky;
             top: 0;
             z-index: 50;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
         }
 
         .gold-text { color: var(--dprt-gold); }
-        .nav-link { transition: all 0.2s ease; }
-        .nav-link:hover { color: var(--dprt-gold); text-shadow: 0 0 10px rgba(212, 175, 55, 0.5); }
+        
+        .nav-link { 
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+        }
+        
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--dprt-gold);
+            transition: width 0.3s ease;
+        }
+        
+        .nav-link:hover { 
+            color: var(--dprt-gold-bright); 
+            text-shadow: 0 0 15px rgba(212, 175, 55, 0.6);
+            transform: translateY(-2px);
+        }
+        
+        .nav-link:hover::after {
+            width: 100%;
+        }
         
         .discord-btn {
-            background-color: var(--dprt-gold);
+            background: linear-gradient(135deg, var(--dprt-gold) 0%, var(--dprt-gold-bright) 100%);
             color: #000;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            border: 2px solid transparent;
         }
+        
+        .discord-btn::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, var(--dprt-gold-bright) 0%, #fff 100%);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+        
+        .discord-btn:hover::before {
+            opacity: 0.3;
+        }
+        
         .discord-btn:hover {
-            transform: translateY(-2px);
-            background-color: #f0c74d;
-            box-shadow: 0 0 20px rgba(212, 175, 55, 0.3);
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 10px 30px rgba(212, 175, 55, 0.5);
+            border-color: var(--dprt-gold-bright);
+        }
+        
+        .discord-btn:active {
+            transform: translateY(-1px) scale(1.02);
+        }
+
+        .discord-icon {
+            transition: transform 0.3s ease;
+        }
+
+        .discord-btn:hover .discord-icon {
+            transform: rotate(10deg) scale(1.1);
         }
 
         .hero-title {
             font-size: clamp(3.5rem, 11vw, 8rem);
             line-height: 0.85;
             letter-spacing: -0.04em;
-            text-shadow: 0 10px 30px rgba(0,0,0,0.8);
+            text-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
+        }
+
+        /* Glow effect for logo */
+        .logo-glow {
+            box-shadow: 0 0 20px rgba(194, 154, 48, 0.4);
+            transition: box-shadow 0.3s ease;
+        }
+
+        .logo-glow:hover {
+            box-shadow: 0 0 30px rgba(194, 154, 48, 0.7);
         }
     </style>
 </head>
 <body>
 
+    <!-- ANIMATED WAVE LINES -->
     <div class="line-container">
-        <svg class="flowing-line line-top" viewBox="0 0 1000 300" preserveAspectRatio="none">
-            <path d="M0,150 Q125,50 250,150 T500,150 T750,150 T1000,150 M1000,150 Q1125,50 1250,150 T1500,150 T1750,150 T2000,150" />
+        <svg class="flowing-line line-top" viewBox="0 0 1500 400" preserveAspectRatio="none">
+            <path d="M0,200 Q100,120 200,200 T400,200 Q500,120 600,200 T800,200 Q900,120 1000,200 T1200,200 Q1300,120 1400,200 T1600,200 Q1700,120 1800,200 T2000,200 Q2100,120 2200,200 T2400,200 Q2500,120 2600,200 T2800,200" />
         </svg>
 
-        <svg class="flowing-line line-bottom" viewBox="0 0 1000 300" preserveAspectRatio="none">
-            <path d="M0,150 C150,250 350,50 500,150 S850,50 1000,150 M1000,150 C1150,250 1350,50 1500,150 S1850,50 2000,150" stroke-width="6"/>
+        <svg class="flowing-line line-middle" viewBox="0 0 1500 400" preserveAspectRatio="none">
+            <path d="M0,200 C120,280 280,120 400,200 S680,120 800,200 C920,280 1080,120 1200,200 S1480,120 1600,200 C1720,280 1880,120 2000,200 S2280,120 2400,200 C2520,280 2680,120 2800,200" stroke-width="10"/>
+        </svg>
+
+        <svg class="flowing-line line-bottom" viewBox="0 0 1500 400" preserveAspectRatio="none">
+            <path d="M0,200 Q150,100 300,200 T600,200 Q750,100 900,200 T1200,200 Q1350,100 1500,200 T1800,200 Q1950,100 2100,200 T2400,200 Q2550,100 2700,200 T3000,200" stroke-width="12"/>
         </svg>
     </div>
+
+    <!-- STARS CONTAINER -->
+    <div class="stars-container" id="starsContainer"></div>
 
     <header class="nav-frame">
         <nav class="flex items-center justify-between px-8 py-5 max-w-7xl mx-auto">
             <div class="flex items-center space-x-5">
-                <div class="bg-[#c29a30] w-14 h-14 rounded-lg flex items-center justify-center">
+                <div class="bg-[#c29a30] w-14 h-14 rounded-lg flex items-center justify-center logo-glow">
                     <span class="text-black text-3xl font-black chinese-font">茶</span>
                 </div>
                 <div class="flex flex-col leading-none">
@@ -110,10 +232,13 @@
                 <a href="https://deathhunter1249.github.io/dprt/#info" class="nav-link">Info</a>
                 <a href="https://deathhunter1249.github.io/dprt/#apps" class="nav-link">Applications</a>
                 <a href="https://discord.gg/KBNqanJDfa" target="_blank" class="nav-link">Group</a>
-                <a href="https://republicofteapots.miraheze.org/" target="_blank" class="nav-link text-gray-600">WIKI</a>
+                <a href="https://republicofteapots.miraheze.org/" target="_blank" class="nav-link">WIKI</a>
             </div>
 
-            <button onclick="window.location.href='https://discord.gg/KBNqanJDfa'" class="discord-btn flex items-center px-7 py-3 rounded-lg font-black text-xs uppercase tracking-wider">
+            <button id="discordLogin" class="discord-btn flex items-center px-7 py-3 rounded-lg font-black text-xs uppercase tracking-wider gap-3">
+                <svg class="discord-icon" width="20" height="20" viewBox="0 0 71 55" fill="currentColor">
+                    <path d="M60.1045 4.8978C55.5792 2.8214 50.7265 1.2916 45.6527 0.41542C45.5603 0.39851 45.468 0.440769 45.4204 0.525289C44.7963 1.6353 44.105 3.0834 43.6209 4.2216C38.1637 3.4046 32.7345 3.4046 27.3892 4.2216C26.905 3.0581 26.1886 1.6353 25.5617 0.525289C25.5141 0.443589 25.4218 0.40133 25.3294 0.41542C20.2584 1.2888 15.4057 2.8186 10.8776 4.8978C10.8384 4.9147 10.8048 4.9429 10.7825 4.9795C1.57795 18.7309 -0.943561 32.1443 0.293408 45.3914C0.299005 45.4562 0.335386 45.5182 0.385761 45.5576C6.45866 50.0174 12.3413 52.7249 18.1147 54.5195C18.2071 54.5477 18.305 54.5139 18.3638 54.4378C19.7295 52.5728 20.9469 50.6063 21.9907 48.5383C22.0523 48.4172 21.9935 48.2735 21.8676 48.2256C19.9366 47.4931 18.0979 46.6 16.3292 45.5858C16.1893 45.5041 16.1781 45.304 16.3068 45.2082C16.679 44.9293 17.0513 44.6391 17.4067 44.3461C17.471 44.2926 17.5606 44.2813 17.6362 44.3151C29.2558 49.6202 41.8354 49.6202 53.3179 44.3151C53.3935 44.2785 53.4831 44.2898 53.5502 44.3433C53.9057 44.6363 54.2779 44.9293 54.6529 45.2082C54.7816 45.304 54.7732 45.5041 54.6333 45.5858C52.8646 46.6197 51.0259 47.4931 49.0921 48.2228C48.9662 48.2707 48.9102 48.4172 48.9718 48.5383C50.038 50.6034 51.2554 52.5699 52.5959 54.435C52.6519 54.5139 52.7526 54.5477 52.845 54.5195C58.6464 52.7249 64.529 50.0174 70.6019 45.5576C70.6551 45.5182 70.6887 45.459 70.6943 45.3942C72.1747 30.0791 68.2147 16.7757 60.1968 4.9823C60.1772 4.9429 60.1437 4.9147 60.1045 4.8978ZM23.7259 37.3253C20.2276 37.3253 17.3451 34.1136 17.3451 30.1693C17.3451 26.225 20.1717 23.0133 23.7259 23.0133C27.308 23.0133 30.1626 26.2532 30.1066 30.1693C30.1066 34.1136 27.28 37.3253 23.7259 37.3253ZM47.3178 37.3253C43.8196 37.3253 40.9371 34.1136 40.9371 30.1693C40.9371 26.225 43.7636 23.0133 47.3178 23.0133C50.9 23.0133 53.7545 26.2532 53.6986 30.1693C53.6986 34.1136 50.9 37.3253 47.3178 37.3253Z"/>
+                </svg>
                 Discord Login
             </button>
         </nav>
@@ -145,6 +270,94 @@
             <span>TEA</span>
         </div>
     </footer>
+
+    <script>
+        // ===== STARS ANIMATION =====
+        const starsContainer = document.getElementById('starsContainer');
+        const starCount = 50;
+        let stars = [];
+
+        // Create stars
+        for (let i = 0; i < starCount; i++) {
+            const star = document.createElement('div');
+            star.className = 'star';
+            
+            // Random size between 1-4px
+            const size = Math.random() * 3 + 1;
+            star.style.width = `${size}px`;
+            star.style.height = `${size}px`;
+            
+            // Random position
+            star.style.left = `${Math.random() * 100}%`;
+            star.style.top = `${Math.random() * 100}%`;
+            
+            // Random animation delay
+            star.style.animationDelay = `${Math.random() * 3}s`;
+            star.style.animationDuration = `${2 + Math.random() * 2}s`;
+            
+            starsContainer.appendChild(star);
+            stars.push({
+                element: star,
+                x: parseFloat(star.style.left),
+                y: parseFloat(star.style.top)
+            });
+        }
+
+        // Mouse interaction - stars move away from cursor
+        let mouseX = 0;
+        let mouseY = 0;
+
+        document.addEventListener('mousemove', (e) => {
+            mouseX = (e.clientX / window.innerWidth) * 100;
+            mouseY = (e.clientY / window.innerHeight) * 100;
+            
+            stars.forEach((star, index) => {
+                const dx = mouseX - star.x;
+                const dy = mouseY - star.y;
+                const distance = Math.sqrt(dx * dx + dy * dy);
+                
+                if (distance < 15) {
+                    const force = (15 - distance) / 15;
+                    const moveX = -dx * force * 2;
+                    const moveY = -dy * force * 2;
+                    
+                    star.element.style.transform = `translate(${moveX}px, ${moveY}px)`;
+                } else {
+                    star.element.style.transform = 'translate(0, 0)';
+                }
+            });
+        });
+
+        // ===== DISCORD OAUTH LOGIN =====
+        const discordLoginBtn = document.getElementById('discordLogin');
+        
+        // REPLACE THESE VALUES WITH YOUR DISCORD APP CREDENTIALS
+        const DISCORD_CLIENT_ID = '1323365609777528962'; // Get from https://discord.com/developers/applications
+        const REDIRECT_URI = 'https://deathhunter1249.github.io/dprt/'; // Your redirect URL
+        const SCOPES = 'identify'; // You can add more scopes: 'identify email guilds'
+        
+        discordLoginBtn.addEventListener('click', () => {
+            const discordAuthUrl = `https://discord.com/oauth2/authorize?client_id=${DISCORD_CLIENT_ID}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&response_type=code&scope=${SCOPES}`;
+            window.location.href = discordAuthUrl;
+        });
+
+        // ===== HANDLE OAUTH CALLBACK =====
+        // When Discord redirects back, it adds ?code=... to the URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const code = urlParams.get('code');
+        
+        if (code) {
+            // You need a backend to exchange the code for an access token
+            // This cannot be done purely in GitHub Pages (frontend only)
+            console.log('Received OAuth code:', code);
+            
+            // Send this code to your backend server
+            // Example: fetch('https://your-backend.com/discord/callback?code=' + code)
+            
+            // For now, just clean the URL
+            window.history.replaceState({}, document.title, window.location.pathname);
+        }
+    </script>
 
 </body>
 </html>
