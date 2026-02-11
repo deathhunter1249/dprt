@@ -166,7 +166,7 @@
         
         // IMPORTANT: Change this to your actual netlify URL once you have it!
         // Example: https://dprt-site.netlify.app/.netlify/functions/auth
-        const FUNCTION_URL = '/.netlify/functions/auth'; 
+        const FUNCTION_URL = 'https://sparkly-gelato-78da1b.netlify.app/.netlify/functions/auth';
 
         function login() {
             window.location.href = `https://discord.com/api/oauth2/authorize?client_id=${CLIENT_ID}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&response_type=code&scope=identify`;
