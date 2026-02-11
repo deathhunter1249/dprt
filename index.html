@@ -15,27 +15,39 @@
             margin: 0; height: 100vh; overflow: hidden; position: relative;
         }
 
-        /* THE BLUR LOGIC */
-        /* Everything inside #blur-container will blur when menu is open */
-        #blur-container {
-            transition: filter 0.5s ease, opacity 0.5s ease;
+        /* ATMOSPHERIC BACKGROUNDS */
+        .mist {
+            position: absolute; inset: 0; background: url('https://www.transparenttextures.com/patterns/natural-paper.png');
+            opacity: 0.03; pointer-events: none; z-index: 1; animation: drift 60s linear infinite;
         }
-        body.menu-open #blur-container {
-            filter: blur(4px); /* Softened from 10px */
-            opacity: 0.6;      /* Subtle darkening */
-            pointer-events: none;
+        @keyframes drift { from { background-position: 0 0; } to { background-position: 1000px 1000px; } }
+
+        .silk-pattern {
+            position: absolute; inset: 0; opacity: 0.05; pointer-events: none; z-index: 1;
+            background-image: radial-gradient(var(--dprt-bronze) 0.5px, transparent 0.5px); background-size: 40px 40px;
         }
 
-        /* OVERLAY - Now behind the menu */
+        .ember {
+            position: absolute; background: var(--dprt-bronze); border-radius: 50%; opacity: 0; pointer-events: none;
+            animation: rise 12s infinite ease-in; z-index: 2;
+        }
+        @keyframes rise {
+            0% { transform: translateY(105vh) scale(0); opacity: 0; }
+            50% { opacity: 0.4; }
+            100% { transform: translateY(-10vh) scale(1.2); opacity: 0; }
+        }
+
+        /* BLUR & OVERLAY */
+        #blur-container { transition: filter 0.4s ease, opacity 0.4s ease; z-index: 10; position: relative; }
+        body.menu-open #blur-container { filter: blur(4px); opacity: 0.5; pointer-events: none; }
+
         #global-overlay {
-            position: fixed; inset: 0; 
-            background: rgba(0,0,0,0.3); /* Much lighter */
-            z-index: 80; opacity: 0;
-            pointer-events: none; transition: opacity 0.4s ease;
+            position: fixed; inset: 0; background: rgba(0,0,0,0.3);
+            z-index: 80; opacity: 0; pointer-events: none; transition: opacity 0.4s ease;
         }
         body.menu-open #global-overlay { opacity: 1; pointer-events: auto; }
 
-        /* DROPDOWN MENU - Stays sharp (Z-INDEX 110) */
+        /* DROPDOWN MENU */
         #profile-menu {
             position: absolute; top: 85px; right: 40px; width: 280px;
             background: #121214; border: 1px solid var(--dprt-bronze);
@@ -45,40 +57,45 @@
         }
         body.menu-open #profile-menu { transform: translateY(0); opacity: 1; pointer-events: auto; }
 
-        /* PFP - Stays sharp (Z-INDEX 100) */
+        .menu-item {
+            padding: 16px 20px; border-bottom: 1px solid rgba(184, 134, 11, 0.1);
+            display: flex; justify-content: space-between; align-items: center;
+            cursor: pointer; font-size: 13px; transition: 0.2s;
+        }
+        .menu-item:hover { background: rgba(184, 134, 11, 0.05); color: var(--dprt-bronze); }
+        .notif-badge { background: var(--dprt-bronze); color: black; font-size: 10px; font-weight: 900; padding: 1px 6px; border-radius: 2px; }
+
+        /* NAV & TYPOGRAPHY */
+        .chinese-font { font-family: 'Noto Serif SC', serif; }
+        .nav-btn { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.2em; color: #a0a0a0; transition: 0.4s ease; }
+        .nav-btn:hover { color: var(--dprt-bronze); letter-spacing: 0.3em; }
+        .hero-title { font-size: clamp(3rem, 10vw, 7rem); line-height: 0.85; color: #fff; font-family: 'Noto Serif SC', serif; font-weight: 900; }
+        
         .user-pfp {
             width: 44px; height: 44px; border: 1px solid var(--dprt-bronze);
             border-radius: 2px; cursor: pointer; display: none;
             position: relative; z-index: 101; 
-            transition: all 0.3s ease;
         }
-
-        .chinese-font { font-family: 'Noto Serif SC', serif; }
-        .nav-btn { font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.2em; color: #a0a0a0; transition: 0.4s ease; }
-        .nav-btn:hover { color: var(--dprt-bronze); letter-spacing: 0.3em; }
-        .hero-title { font-size: clamp(3rem, 10vw, 7rem); line-height: 0.85; color: #fff; font-family: 'Noto Serif SC', serif; font-weight: 900; }
-        
-        .menu-item {
-            padding: 16px 20px; border-bottom: 1px solid rgba(184,134,11,0.1);
-            display: flex; justify-content: space-between; align-items: center;
-            cursor: pointer; font-size: 13px;
-        }
-        .menu-item:hover { background: rgba(184,134,11,0.05); color: var(--dprt-bronze); }
-        .notif-badge { background: var(--dprt-bronze); color: black; font-size: 10px; font-weight: 900; padding: 1px 6px; border-radius: 2px; }
     </style>
 </head>
 <body id="body">
 
+    <div class="mist"></div>
+    <div class="silk-pattern"></div>
+    <div id="embers-container"></div>
     <div id="global-overlay" onclick="toggleMenu(false)"></div>
 
     <div id="blur-container">
         <header class="relative z-50 border-b border-white/5 bg-black/20">
             <nav class="flex items-center justify-between px-10 py-5 max-w-7xl mx-auto">
                 <div class="flex items-center space-x-5">
-                    <div class="w-10 h-10 border border-[#b8860b] flex items-center justify-center">
-                        <span class="text-[#b8860b] text-xl chinese-font">茶</span>
+                    <div class="w-11 h-11 border border-[#b8860b] flex items-center justify-center bg-[#b8860b]">
+                        <span class="text-black text-2xl chinese-font font-black">茶</span>
                     </div>
-                    <span class="text-3xl font-black tracking-widest text-white">DPRT</span>
+                    <div class="flex flex-col leading-none">
+                        <span class="text-3xl font-black tracking-widest text-white">DPRT</span>
+                        <span class="text-[9px] uppercase tracking-[0.4em] text-zinc-500 font-bold mt-1">Sovereign Estate</span>
+                    </div>
                 </div>
 
                 <div class="hidden lg:flex items-center space-x-10">
@@ -89,20 +106,22 @@
                     <a href="https://republicofteapots.miraheze.org/" target="_blank" class="nav-btn">Wiki</a>
                 </div>
 
-                <div style="width: 44px;"></div>
-            </nav>
+                <div style="width: 44px;"></div> </nav>
         </header>
 
         <main class="max-w-7xl mx-auto px-12 h-[calc(100vh-100px)] flex flex-col justify-center">
             <div class="max-w-4xl border-l-2 border-[#b8860b]/30 pl-16">
-                <h3 class="text-[#b8860b] font-bold text-sm mb-6 tracking-[0.6em] uppercase opacity-60 chinese-font">大同茶國</h3>
+                <h3 class="text-[#b8860b] font-bold text-sm mb-6 tracking-[0.6em] uppercase opacity-60 chinese-font">大同茶國 — 永恆秩序</h3>
                 <h1 class="hero-title mb-10">TRANQUILITY<br>THROUGH ORDER</h1>
-                <p class="text-zinc-500 text-xl font-light">Serve the kettle; protect the leaf.</p>
+                <p class="text-zinc-500 text-xl font-light leading-relaxed">
+                    The Estate is built upon the <span class="text-zinc-300">Eternal Brew</span>. 
+                    Serve the kettle; protect the leaf.
+                </p>
             </div>
         </main>
     </div>
 
-    <div class="fixed top-5 right-10 z-[110]">
+    <div class="fixed top-5 right-10 z-[110] flex flex-col items-end">
         <button id="login-btn" onclick="login()" class="border border-[#b8860b] text-[#b8860b] px-6 py-2 text-[10px] font-bold tracking-widest hover:bg-[#b8860b] hover:text-black transition duration-300 mt-2">
             Identity Verify
         </button>
@@ -110,67 +129,106 @@
         
         <div id="profile-menu">
             <div class="p-6 border-b border-[#b8860b]/20 bg-[#b8860b]/5">
-                <p id="user-name" class="font-black text-white uppercase italic">Citizen</p>
-                <p class="text-[9px] text-zinc-500 tracking-widest font-bold">REPUBLIC VERIFIED</p>
+                <p id="user-name" class="font-black text-white uppercase italic text-lg">Citizen</p>
+                <p id="user-rank" class="text-[9px] text-[#b8860b] tracking-widest font-bold uppercase">Verifying...</p>
             </div>
-            <div class="menu-item">
+            <div class="menu-item" onclick="alert('Viewing alerts...')">
                 <span>Notifications</span>
                 <span id="notif-count" class="notif-badge">0</span>
             </div>
             <div class="menu-item" onclick="window.location.href='settings.html'">
                 <span>Settings</span>
             </div>
-            <div class="menu-item text-red-500" onclick="logout()">
-                <span class="font-bold uppercase tracking-widest text-[11px]">Relinquish Duty</span>
+            <div class="menu-item text-red-500 hover:bg-red-500/5" onclick="logout()">
+                <span class="font-bold uppercase tracking-widest text-[11px]">Log Out</span>
             </div>
         </div>
     </div>
 
     <script>
+        // --- 1. CONFIGURATION ---
         const CLIENT_ID = '1323365609777528962';
+        const GUILD_ID = 'YOUR_SERVER_ID_HERE'; // Replace with your Server ID
         const REDIRECT_URI = window.location.origin + window.location.pathname;
 
+        const ROLE_IDS = {
+            'COUNCIL': '1256196665199558726', 
+            'OFFICER': '1255950197746438357',
+            'CIVILIAN': '1255941719199977585',
+            'PEASENT': '1389026114554560562'.
+        };
+
+        // Ember Generation
+        const embers = document.getElementById('embers-container');
+        for (let i = 0; i < 15; i++) {
+            const e = document.createElement('div');
+            e.className = 'ember';
+            e.style.left = Math.random() * 100 + '%';
+            e.style.width = e.style.height = (Math.random() * 3 + 1) + 'px';
+            e.style.animationDelay = Math.random() * 10 + 's';
+            embers.appendChild(e);
+        }
+
+        // --- 2. LOGIC ---
         function toggleMenu(show) {
             document.getElementById('body').classList.toggle('menu-open', show);
         }
 
         function login() {
-            window.location.href = `https://discord.com/api/oauth2/authorize?client_id=${CLIENT_ID}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&response_type=token&scope=identify`;
+            const scopes = encodeURIComponent('identify guilds.members.read');
+            window.location.href = `https://discord.com/api/oauth2/authorize?client_id=${CLIENT_ID}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&response_type=token&scope=${scopes}`;
         }
 
         async function init() {
             const fragment = new URLSearchParams(window.location.hash.slice(1));
             const accessToken = fragment.get('access_token');
+
             if (accessToken) {
                 try {
-                    const res = await fetch('https://discord.com/api/users/@me', {
+                    const userRes = await fetch('https://discord.com/api/users/@me', {
                         headers: { Authorization: `Bearer ${accessToken}` }
                     });
-                    const user = await res.json();
+                    const user = await userRes.json();
+
+                    const memberRes = await fetch(`https://discord.com/api/users/@me/guilds/${GUILD_ID}/member`, {
+                        headers: { Authorization: `Bearer ${accessToken}` }
+                    });
+                    const memberData = await memberRes.json();
+
                     if (user.id) {
-                        localStorage.setItem('dprt_user', JSON.stringify(user));
+                        const userData = { ...user, roles: memberData.roles || [] };
+                        localStorage.setItem('dprt_user', JSON.stringify(userData));
                         window.history.replaceState({}, document.title, window.location.pathname);
                     }
-                } catch (e) { console.error(e); }
+                } catch (e) { console.error("Identity verify failed:", e); }
             }
+            renderUser();
+        }
 
+        function renderUser() {
             const user = JSON.parse(localStorage.getItem('dprt_user'));
-            if (user) {
-                document.getElementById('login-btn').style.display = 'none';
-                document.getElementById('user-name').innerText = user.username;
-                const pfp = document.getElementById('user-pfp');
-                pfp.style.display = 'block';
-                pfp.src = `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png`;
-                document.getElementById('notif-count').innerText = "2";
-            }
+            if (!user) return;
+
+            document.getElementById('login-btn').style.display = 'none';
+            document.getElementById('user-name').innerText = user.username;
+            const pfp = document.getElementById('user-pfp');
+            pfp.style.display = 'block';
+            pfp.src = `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png`;
+
+            let rank = "Civilian";
+            if (user.roles.includes(ROLE_IDS.COUNCIL)) rank = "High Council";
+            else if (user.roles.includes(ROLE_IDS.OFFICER)) rank = "Imperial Officer";
+            else if (user.roles.includes(ROLE_IDS.CITIZEN)) rank = "Verified Citizen";
+            
+            document.getElementById('user-rank').innerText = rank;
+            document.getElementById('notif-count').innerText = "2";
         }
 
         function logout() {
-            if(confirm("Relinquish your duties to the Republic?")) {
-                localStorage.removeItem('dprt_user');
-                window.location.reload();
-            }
+            localStorage.removeItem('dprt_user');
+            window.location.reload();
         }
+
         window.onload = init;
     </script>
 </body>
