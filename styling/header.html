@@ -162,55 +162,26 @@
 </header>
 
 <script>
-    // --- Configuration ---
     const CLIENT_ID = '1323365609777528962';
+    let apps = JSON.parse(localStorage.getItem('dprt_apps')) || [
+        { title: "Kettlenauts", desc: "Heavy siege infantry.", locked: false },
+        { title: "Teaian Recons", desc: "Intelligence and elimination.", locked: true }
+    ];
 
-    function login() {
-        const currentUrl = window.location.origin + window.location.pathname.replace(/\/$/, "");
-        const redirectUri = encodeURIComponent(currentUrl);
-        const authUrl = `https://discord.com/api/oauth2/authorize?client_id=${CLIENT_ID}&redirect_uri=${redirectUri}&response_type=token&scope=identify%20guilds.members.read`;
-        window.location.href = authUrl;
+    async function loadHeader() {
+        try {
+            // Absolute path to root header
+            const resp = await fetch('/dprt/header.html'); 
+            const html = await resp.text();
+            document.getElementById('header-placeholder').innerHTML = html;
+            
+            // Critical: Initialize Auth AFTER header is loaded
+            initAuth();
+        } catch (e) { console.error("Header failed", e); }
     }
 
-    function logout() {
-        localStorage.removeItem('discord_access_token');
-        window.location.href = '/dprt/home';
-    }
-
-    function toggleMenu(show) {
-        const menu = document.getElementById('profile-menu');
-        const overlay = document.getElementById('global-overlay');
-        const blur = document.getElementById('blur-container');
-        if (!menu) return;
-
-         if (show) {
-            menu.classList.remove('opacity-0', 'pointer-events-none', '-translate-y-4');
-            overlay.classList.remove('opacity-0', 'pointer-events-none');
-            // Optimization: Use a smaller blur and exclude the transform if lag persists
-            blur.style.filter = "blur(4px) brightness(0.6)"; 
-            blur.style.willChange = "filter"; 
-        } else {
-            menu.classList.add('opacity-0', 'pointer-events-none', '-translate-y-4');
-            overlay.classList.add('opacity-0', 'pointer-events-none');
-            blur.style.filter = "none";
-            blur.style.willChange = "auto";
-        }
-    }
-
-    function highlightNav() {
-        const path = window.location.pathname;
-        document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active-page'));
-
-        if (path.includes('home')) document.getElementById('nav-home')?.classList.add('active-page');
-        if (path.includes('info')) document.getElementById('nav-info')?.classList.add('active-page');
-        if (path.includes('jobs')) document.getElementById('nav-jobs')?.classList.add('active-page');
-    }
-
-    // --- Main Logic ---
-    window.addEventListener('DOMContentLoaded', async () => {
-        highlightNav();
-        
-        // 1. Get Token from URL or LocalStorage
+    async function initAuth() {
+        // 1. Check URL for new token, then check LocalStorage
         const fragment = new URLSearchParams(window.location.hash.slice(1));
         let token = fragment.get('access_token');
         
@@ -221,42 +192,38 @@
             token = localStorage.getItem('discord_access_token');
         }
 
-        // 2. Fetch User Data if Token exists
+        let isAdmin = false;
+
         if (token) {
             try {
                 const response = await fetch('https://discord.com/api/users/@me', {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
-
-                if (!response.ok) {
-                    throw new Error('Unauthorized');
-                }
-
+                if (!response.ok) throw new Error();
                 const user = await response.json();
 
-                // Update UI Elements
+                // Update Header UI (IDs match your header.html)
                 document.getElementById('nav-username').innerText = user.username;
                 document.getElementById('menu-user-name').innerText = user.username;
-                
-                if (user.avatar) {
-                    document.getElementById('nav-pfp').src = `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png`;
-                } else {
-                    document.getElementById('nav-pfp').src = `https://cdn.discordapp.com/embed/avatars/0.png`;
-                }
-
+                document.getElementById('nav-pfp').src = `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png`;
                 document.getElementById('nav-rank').innerText = "Teapotian Citizen";
-                document.getElementById('menu-user-rank').innerText = "Verified Resident";
-
-                // Show user UI
+                
                 document.getElementById('login-btn').classList.add('hidden');
                 document.getElementById('user-display').classList.remove('hidden');
 
+                // Admin Check
+                if (user.username === 'deathhunter1249' || user.id === '1255927538367332423') {
+                    isAdmin = true;
+                    document.getElementById('admin-add-trigger')?.classList.remove('hidden');
+                }
             } catch (err) {
-                console.error("Auth session expired:", err);
                 localStorage.removeItem('discord_access_token');
-                document.getElementById('login-btn').classList.remove('hidden');
-                document.getElementById('user-display').classList.add('hidden');
             }
         }
-    });
+        renderApps(isAdmin);
+    }
+
+    // ... (Keep your existing renderApps, openEditor, and saveApp functions) ...
+
+    window.onload = loadHeader;
 </script>
