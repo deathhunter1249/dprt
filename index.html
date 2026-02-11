@@ -32,6 +32,7 @@
             z-index: 0;
             pointer-events: none;
             opacity: 0.2;
+            will-change: transform; /* GPU acceleration hint */
         }
 
         .flowing-line {
@@ -41,7 +42,8 @@
             stroke: var(--dprt-gold);
             stroke-width: 8;
             fill: none;
-            filter: blur(1px);
+            filter: blur(0.5px); /* Reduced from 1px */
+            will-change: transform; /* GPU acceleration */
         }
 
         .line-top { 
@@ -61,18 +63,18 @@
         }
 
         @keyframes waveFlow1 {
-            0%, 100% { transform: translateX(0) translateY(0); }
-            50% { transform: translateX(-33.33%) translateY(-20px); }
+            0%, 100% { transform: translate3d(0, 0, 0); } /* Use translate3d for GPU */
+            50% { transform: translate3d(-33.33%, -20px, 0); }
         }
 
         @keyframes waveFlow2 {
-            0%, 100% { transform: translateX(0) translateY(0); }
-            50% { transform: translateX(-33.33%) translateY(15px); }
+            0%, 100% { transform: translate3d(0, 0, 0); }
+            50% { transform: translate3d(-33.33%, 15px, 0); }
         }
 
         @keyframes waveFlow3 {
-            0%, 100% { transform: translateX(0) translateY(0); }
-            50% { transform: translateX(-33.33%) translateY(-10px); }
+            0%, 100% { transform: translate3d(0, 0, 0); }
+            50% { transform: translate3d(-33.33%, -10px, 0); }
         }
 
         /* ANIMATED STARS */
@@ -91,7 +93,8 @@
             opacity: 0;
             animation: twinkle 3s ease-in-out infinite;
             box-shadow: 0 0 10px var(--dprt-gold);
-            transition: transform 0.3s ease-out;
+            transition: transform 0.15s ease-out; /* Reduced from 0.3s for snappier feel */
+            will-change: transform; /* GPU acceleration */
         }
 
         @keyframes twinkle {
@@ -199,16 +202,16 @@
 
     <!-- ANIMATED WAVE LINES -->
     <div class="line-container">
-        <svg class="flowing-line line-top" viewBox="0 0 1500 400" preserveAspectRatio="none">
-            <path d="M0,200 Q100,120 200,200 T400,200 Q500,120 600,200 T800,200 Q900,120 1000,200 T1200,200 Q1300,120 1400,200 T1600,200 Q1700,120 1800,200 T2000,200 Q2100,120 2200,200 T2400,200 Q2500,120 2600,200 T2800,200" />
+        <svg class="flowing-line line-top" viewBox="0 0 1200 400" preserveAspectRatio="none">
+            <path d="M0,200 Q200,120 400,200 T800,200 T1200,200 T1600,200 T2000,200 T2400,200" />
         </svg>
 
-        <svg class="flowing-line line-middle" viewBox="0 0 1500 400" preserveAspectRatio="none">
-            <path d="M0,200 C120,280 280,120 400,200 S680,120 800,200 C920,280 1080,120 1200,200 S1480,120 1600,200 C1720,280 1880,120 2000,200 S2280,120 2400,200 C2520,280 2680,120 2800,200" stroke-width="10"/>
+        <svg class="flowing-line line-middle" viewBox="0 0 1200 400" preserveAspectRatio="none">
+            <path d="M0,200 C200,280 400,120 600,200 S1000,120 1200,200 S1600,120 1800,200 S2200,120 2400,200" stroke-width="10"/>
         </svg>
 
-        <svg class="flowing-line line-bottom" viewBox="0 0 1500 400" preserveAspectRatio="none">
-            <path d="M0,200 Q150,100 300,200 T600,200 Q750,100 900,200 T1200,200 Q1350,100 1500,200 T1800,200 Q1950,100 2100,200 T2400,200 Q2550,100 2700,200 T3000,200" stroke-width="12"/>
+        <svg class="flowing-line line-bottom" viewBox="0 0 1200 400" preserveAspectRatio="none">
+            <path d="M0,200 Q300,100 600,200 T1200,200 T1800,200 T2400,200 T3000,200" stroke-width="12"/>
         </svg>
     </div>
 
@@ -274,7 +277,7 @@
     <script>
         // ===== STARS ANIMATION =====
         const starsContainer = document.getElementById('starsContainer');
-        const starCount = 50;
+        const starCount = 30; // Reduced from 50
         let stars = [];
 
         // Create stars
@@ -303,15 +306,13 @@
             });
         }
 
-        // Mouse interaction - stars move away from cursor
+        // Mouse interaction - stars move away from cursor (optimized with throttling)
         let mouseX = 0;
         let mouseY = 0;
+        let animationFrame;
 
-        document.addEventListener('mousemove', (e) => {
-            mouseX = (e.clientX / window.innerWidth) * 100;
-            mouseY = (e.clientY / window.innerHeight) * 100;
-            
-            stars.forEach((star, index) => {
+        function updateStars() {
+            stars.forEach((star) => {
                 const dx = mouseX - star.x;
                 const dy = mouseY - star.y;
                 const distance = Math.sqrt(dx * dx + dy * dy);
@@ -326,6 +327,19 @@
                     star.element.style.transform = 'translate(0, 0)';
                 }
             });
+        }
+
+        document.addEventListener('mousemove', (e) => {
+            mouseX = (e.clientX / window.innerWidth) * 100;
+            mouseY = (e.clientY / window.innerHeight) * 100;
+            
+            // Use requestAnimationFrame for smooth performance
+            if (!animationFrame) {
+                animationFrame = requestAnimationFrame(() => {
+                    updateStars();
+                    animationFrame = null;
+                });
+            }
         });
 
         // ===== DISCORD OAUTH LOGIN =====
