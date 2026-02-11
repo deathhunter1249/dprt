@@ -10,6 +10,7 @@
         transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); 
         cursor: pointer;
         padding: 4px 0;
+        text-decoration: none;
     }
 
     .nav-btn::after {
@@ -97,6 +98,14 @@
     #global-overlay {
         will-change: opacity;
     }
+    
+    .notif-badge {
+        background: #b8860b;
+        color: black;
+        padding: 2px 6px;
+        font-size: 9px;
+        border-radius: 2px;
+    }
 </style>
 
 <div id="global-overlay" class="fixed inset-0 bg-black/60 z-[80] opacity-0 pointer-events-none transition-opacity duration-300 backdrop-blur-[2px]" onclick="toggleMenu(false)"></div>
@@ -104,7 +113,7 @@
 <header class="relative z-[101] border-b border-white/5 bg-black/40 backdrop-blur-md">
     <nav class="flex items-center justify-between px-10 py-5 max-w-7xl mx-auto">
         
-        <div class="flex items-center space-x-5 cursor-pointer group" onclick="window.location.href='/dprt/home/'">
+        <div class="flex items-center space-x-5 cursor-pointer group" onclick="window.location.href='/dprt/'">
             <div class="w-11 h-11 border border-[#b8860b] flex items-center justify-center bg-[#b8860b] group-hover:shadow-[0_0_15px_rgba(184,134,11,0.5)] transition-all">
                 <span class="text-black text-2xl chinese-font font-black">茶</span>
             </div>
@@ -115,7 +124,7 @@
         </div>
 
         <div class="hidden lg:flex items-center space-x-10">
-            <a href="/dprt/home/" class="nav-btn" id="nav-home">Home</a>
+            <a href="/dprt/" class="nav-btn" id="nav-home">Home</a>
             <a href="/dprt/info/" class="nav-btn" id="nav-info">Info</a>
             <a href="/dprt/jobs/" class="nav-btn" id="nav-jobs">Jobs</a>
             <a href="https://discord.gg/KBNqanJDfa" target="_blank" class="nav-btn">Group</a>
@@ -147,7 +156,7 @@
                     <span id="notif-count" class="notif-badge">67</span>
                 </div>
                 
-                <div class="menu-item group" onclick="window.location.href='/dprt/settings'">
+                <div class="menu-item group" onclick="window.location.href='/dprt/settings/'">
                     <span>Settings</span>
                 </div>
                 
@@ -163,36 +172,40 @@
 
 <script>
     const CLIENT_ID = '1323365609777528962';
-    let apps = JSON.parse(localStorage.getItem('dprt_apps')) || [
-        { title: "Kettlenauts", desc: "Heavy siege infantry.", locked: false },
-        { title: "Teaian Recons", desc: "Intelligence and elimination.", locked: true }
-    ];
 
-    async function loadHeader() {
-        try {
-            // Absolute path to root header
-            const resp = await fetch('/dprt/header.html'); 
-            const html = await resp.text();
-            document.getElementById('header-placeholder').innerHTML = html;
-            
-            // Critical: Initialize Auth AFTER header is loaded
-            initAuth();
-        } catch (e) { console.error("Header failed", e); }
+    // Toggle Menu Function
+    function toggleMenu(open) {
+        const menu = document.getElementById('profile-menu');
+        const overlay = document.getElementById('global-overlay');
+        if (open) {
+            menu.classList.remove('opacity-0', 'pointer-events-none', '-translate-y-4');
+            overlay.classList.remove('opacity-0', 'pointer-events-none');
+        } else {
+            menu.classList.add('opacity-0', 'pointer-events-none', '-translate-y-4');
+            overlay.classList.add('opacity-0', 'pointer-events-none');
+        }
+    }
+
+    function login() {
+        const redirect = encodeURIComponent(window.location.origin + '/dprt/');
+        window.location.href = `https://discord.com/oauth2/authorize?client_id=${CLIENT_ID}&response_type=token&redirect_uri=${redirect}&scope=identify`;
+    }
+
+    function logout() {
+        localStorage.removeItem('discord_access_token');
+        window.location.reload();
     }
 
     async function initAuth() {
-        // 1. Check URL for new token, then check LocalStorage
         const fragment = new URLSearchParams(window.location.hash.slice(1));
         let token = fragment.get('access_token');
         
         if (token) {
             localStorage.setItem('discord_access_token', token);
-            window.location.hash = ""; // Clean URL
+            window.history.replaceState({}, document.title, window.location.pathname);
         } else {
             token = localStorage.getItem('discord_access_token');
         }
-
-        let isAdmin = false;
 
         if (token) {
             try {
@@ -202,7 +215,6 @@
                 if (!response.ok) throw new Error();
                 const user = await response.json();
 
-                // Update Header UI (IDs match your header.html)
                 document.getElementById('nav-username').innerText = user.username;
                 document.getElementById('menu-user-name').innerText = user.username;
                 document.getElementById('nav-pfp').src = `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png`;
@@ -211,19 +223,17 @@
                 document.getElementById('login-btn').classList.add('hidden');
                 document.getElementById('user-display').classList.remove('hidden');
 
-                // Admin Check
+                // Admin Logic
                 if (user.username === 'deathhunter1249' || user.id === '1255927538367332423') {
-                    isAdmin = true;
-                    document.getElementById('admin-add-trigger')?.classList.remove('hidden');
+                    document.getElementById('nav-rank').innerText = "Supreme Brewer";
+                    document.getElementById('menu-user-rank').innerText = "Administrator";
                 }
             } catch (err) {
                 localStorage.removeItem('discord_access_token');
             }
         }
-        renderApps(isAdmin);
     }
 
-    // ... (Keep your existing renderApps, openEditor, and saveApp functions) ...
-
-    window.onload = loadHeader;
+    // Run auth on load
+    window.addEventListener('DOMContentLoaded', initAuth);
 </script>
