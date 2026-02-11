@@ -180,12 +180,20 @@
     function toggleMenu(show) {
         const menu = document.getElementById('profile-menu');
         const overlay = document.getElementById('global-overlay');
-        if (show) {
+        const blur = document.getElementById('blur-container');
+        if (!menu) return;
+
+         if (show) {
             menu.classList.remove('opacity-0', 'pointer-events-none', '-translate-y-4');
             overlay.classList.remove('opacity-0', 'pointer-events-none');
+            // Optimization: Use a smaller blur and exclude the transform if lag persists
+            blur.style.filter = "blur(4px) brightness(0.6)"; 
+            blur.style.willChange = "filter"; 
         } else {
             menu.classList.add('opacity-0', 'pointer-events-none', '-translate-y-4');
             overlay.classList.add('opacity-0', 'pointer-events-none');
+            blur.style.filter = "none";
+            blur.style.willChange = "auto";
         }
     }
 
