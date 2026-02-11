@@ -200,7 +200,6 @@ async function initAuth() {
     const fragment = new URLSearchParams(window.location.hash.slice(1));
     let token = fragment.get('access_token') || localStorage.getItem('discord_access_token');
     
-    // 1. Handle Token Storage
     if (fragment.get('access_token')) {
         localStorage.setItem('discord_access_token', token);
         window.history.replaceState({}, document.title, window.location.pathname);
@@ -213,34 +212,40 @@ async function initAuth() {
             headers: { 'Authorization': `Bearer ${token}` }
         });
         
-        if (!response.ok) throw new Error();
+        if (!response.ok) throw new Error("Invalid Token");
         const user = await response.json();
 
-        // 2. Update Basic Info
-        document.getElementById('nav-username').innerText = user.username;
-        document.getElementById('menu-user-name').innerText = user.username;
-        document.getElementById('nav-pfp').src = `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png`;
-        
-        // 3. Set Default Rank
-        document.getElementById('nav-rank').innerText = "Teapotian Citizen";
-        document.getElementById('menu-user-rank').innerText = "Verified Citizen";
-        
-        // 4. Show User Display
-        document.getElementById('login-btn').classList.add('hidden');
-        document.getElementById('user-display').classList.remove('hidden');
+        // 1. Map the Elements
+        const navName = document.getElementById('nav-username');
+        const menuName = document.getElementById('menu-user-name');
+        const navRank = document.getElementById('nav-rank');
+        const menuRank = document.getElementById('menu-user-rank');
+        const navPfp = document.getElementById('nav-pfp');
 
-        // 5. Admin Overwrite (CRITICAL FIX)
-        // Check both ID and Username for redundancy
+        // 2. Update Basic Profile
+        if(navName) navName.innerText = user.username;
+        if(menuName) menuName.innerText = user.username;
+        if(navPfp) navPfp.src = `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png`;
+
+        // 3. Set Default Rank (So it doesn't stay on "Verifying")
+        if(navRank) navRank.innerText = "Teapotian Citizen";
+        if(menuRank) menuRank.innerText = "Verified Citizen";
+
+        // 4. Admin Rank Overwrite
         if (user.id === '1255927538367332423' || user.username === 'deathhunter1249') {
-            document.getElementById('nav-rank').innerText = "Supreme Brewer";
-            document.getElementById('menu-user-rank').innerText = "Overseer / Admin";
+            if(navRank) navRank.innerText = "Supreme Brewer";
+            if(menuRank) menuRank.innerText = "Overseer / Admin";
             
-            // Show the admin button if it exists on the page
-            const adminBtn = document.getElementById('admin-add-trigger');
-            if (adminBtn) adminBtn.classList.remove('hidden');
+            // Show Admin UI if on the jobs page
+            const adminTrigger = document.getElementById('admin-add-trigger');
+            if (adminTrigger) adminTrigger.classList.remove('hidden');
         }
 
-        // Run app rendering if on the Jobs page
+        // 5. Toggle Visibility
+        document.getElementById('login-btn')?.classList.add('hidden');
+        document.getElementById('user-display')?.classList.remove('hidden');
+
+        // 6. Trigger Job Grid if on Jobs Page
         if (typeof renderApps === "function") {
             const isAdmin = (user.id === '1255927538367332423' || user.username === 'deathhunter1249');
             renderApps(isAdmin);
