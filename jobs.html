@@ -14,14 +14,12 @@
             margin: 0; min-height: 100vh; overflow-x: hidden;
         }
 
-        /* Performance Fix: Static Grain instead of heavy CSS gradients */
         .bg-overlay {
             position: fixed; inset: 0;
             background: radial-gradient(circle at 50% 50%, #1a1a1c 0%, #0a0a0c 100%);
             z-index: -1;
         }
 
-        /* Hardware Accelerated Embers */
         .ember {
             position: absolute; background: var(--dprt-bronze); border-radius: 50%; opacity: 0;
             pointer-events: none; z-index: 1; will-change: transform;
@@ -33,20 +31,17 @@
             100% { transform: translate3d(0, -10vh, 0) scale(1.2); opacity: 0; }
         }
 
-        /* Drag and Drop Styling */
         .job-card {
             background: rgba(20, 20, 22, 0.8);
             border: 1px solid rgba(184, 134, 11, 0.15);
             padding: 25px 35px;
             display: flex; align-items: center; justify-content: space-between;
-            transition: transform 0.3s cubic-bezier(0.2, 1, 0.2, 1), box-shadow 0.3s, border-color 0.3s;
-            cursor: default;
+            transition: all 0.3s cubic-bezier(0.2, 1, 0.2, 1);
         }
         
         .draggable { cursor: grab; }
         .draggable:active { cursor: grabbing; }
         
-        /* Dragging Animation States */
         .dragging {
             opacity: 0.5;
             transform: scale(0.98);
@@ -64,6 +59,7 @@
         }
         .btn-delete:hover { opacity: 1; text-shadow: 0 0 10px #ff4444; }
 
+        #blur-container { transition: filter 0.6s ease, transform 0.6s ease; }
         .chinese-font { font-family: 'Noto Serif SC', serif; }
     </style>
 </head>
@@ -73,7 +69,7 @@
     <div id="header-placeholder"></div>
 
     <div id="blur-container">
-        <main class="max-w-6xl mx-auto px-10 py-20">
+        <main class="max-w-6xl mx-auto px-10 py-20 pt-32">
             <div class="mb-16 border-l-4 border-[#b8860b] pl-8">
                 <h1 class="text-6xl font-black italic uppercase tracking-tighter text-white">Community Applications</h1>
                 <p class="text-zinc-500 text-lg mt-4">Database of active deployments and state roles.</p>
@@ -106,8 +102,8 @@
     </div>
 
     <script>
-        const GUILD_ID = '1255926408312655963';
         const ROLE_IDS = { 'OWNER': '1255927538367332423', 'COUNCIL': '1256196665199558726' };
+        let currentEditingIndex = null;
 
         let apps = JSON.parse(localStorage.getItem('dprt_apps')) || [
             { title: "Kettlenauts", desc: "Heavy siege infantry.", locked: false },
@@ -115,22 +111,38 @@
         ];
 
         async function loadHeader() {
-            const resp = await fetch('header.html');
-            document.getElementById('header-placeholder').innerHTML = await resp.text();
-            initAuth();
+            try {
+                const resp = await fetch('header.html');
+                document.getElementById('header-placeholder').innerHTML = await resp.text();
+                
+                // Highlight Jobs link
+                const jobsLink = document.getElementById('nav-jobs');
+                if(jobsLink) jobsLink.classList.add('text-[#b8860b]');
+
+                initAuth();
+            } catch (e) { console.error("Header failed to load", e); }
         }
 
         function initAuth() {
             const user = JSON.parse(localStorage.getItem('dprt_user'));
             let isAdmin = false;
+
             if (user) {
-                // ... (existing logic to hide login-btn and show user-display) ...
                 document.getElementById('login-btn').style.display = 'none';
                 document.getElementById('user-display').classList.remove('hidden');
                 document.getElementById('nav-username').innerText = user.username;
+                document.getElementById('menu-user-name').innerText = user.username;
                 document.getElementById('nav-pfp').src = `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png`;
 
-                if (user.roles.includes(ROLE_IDS.OWNER) || user.roles.includes(ROLE_IDS.COUNCIL)) isAdmin = true;
+                // Note: User roles usually require a separate Guild Member fetch. 
+                // For now, this logic assumes user.roles exists in your storage.
+                if (user.roles && (user.roles.includes(ROLE_IDS.OWNER) || user.roles.includes(ROLE_IDS.COUNCIL))) {
+                    isAdmin = true;
+                }
+                
+                // DEBUG: If you want to test Admin mode without roles, uncomment next line:
+                // isAdmin = true; 
+
                 if (isAdmin) document.getElementById('admin-add-trigger').classList.remove('hidden');
             }
             renderApps(isAdmin);
@@ -142,7 +154,7 @@
 
             apps.forEach((app, index) => {
                 const card = document.createElement('div');
-                card.className = `job-card ${isAdmin ? 'draggable' : ''} ${app.locked ? 'locked' : ''}`;
+                card.className = `job-card ${isAdmin ? 'draggable' : ''} ${app.locked ? 'opacity-80' : ''}`;
                 if (isAdmin) {
                     card.draggable = true;
                     card.dataset.index = index;
@@ -159,7 +171,7 @@
                             <button onclick="deleteApp(${index})" class="btn-delete">Delete</button>
                             <button onclick="openEditor(${index})" class="text-[10px] font-black uppercase text-zinc-500 hover:text-white">Edit</button>
                         ` : ''}
-                        <button class="px-6 py-2 text-[10px] font-black uppercase tracking-widest ${app.locked ? 'bg-zinc-800 text-zinc-500' : 'bg-[#b8860b] text-black'}">
+                        <button class="px-6 py-2 text-[10px] font-black uppercase tracking-widest transition-all ${app.locked ? 'bg-zinc-800 text-zinc-500 cursor-not-allowed' : 'bg-[#b8860b] text-black hover:shadow-[0_0_15px_#b8860b]'}">
                             ${app.locked ? 'Locked' : 'Enlist'}
                         </button>
                     </div>
@@ -188,13 +200,10 @@
                 if (dragSourceEl !== el) {
                     const fromIdx = parseInt(dragSourceEl.dataset.index);
                     const toIdx = parseInt(el.dataset.index);
-                    
-                    // Reorder Array
                     const item = apps.splice(fromIdx, 1)[0];
                     apps.splice(toIdx, 0, item);
-                    
                     localStorage.setItem('dprt_apps', JSON.stringify(apps));
-                    renderApps(true); // Re-render with admin tools
+                    renderApps(true);
                 }
                 return false;
             });
@@ -203,17 +212,10 @@
             });
         }
 
-        function deleteApp(index) {
-            if(confirm("Confirm deletion from State Database?")) {
-                apps.splice(index, 1);
-                localStorage.setItem('dprt_apps', JSON.stringify(apps));
-                renderApps(true);
-            }
-        }
-
-        // ... (Include existing openEditor, closeEditor, saveApp functions here) ...
+        // --- EDITOR LOGIC ---
         function openEditor(index = null) {
             currentEditingIndex = index;
+            const modal = document.getElementById('admin-editor');
             if (index !== null) {
                 document.getElementById('edit-title').value = apps[index].title;
                 document.getElementById('edit-desc').value = apps[index].desc;
@@ -223,19 +225,59 @@
                 document.getElementById('edit-desc').value = '';
                 document.getElementById('edit-locked').checked = false;
             }
-            document.getElementById('admin-editor').style.display = 'flex';
+            modal.style.display = 'flex';
         }
+
         function closeEditor() { document.getElementById('admin-editor').style.display = 'none'; }
+
         function saveApp() {
-            const newData = {
-                title: document.getElementById('edit-title').value,
-                desc: document.getElementById('edit-desc').value,
-                locked: document.getElementById('edit-locked').checked
-            };
+            const title = document.getElementById('edit-title').value;
+            const desc = document.getElementById('edit-desc').value;
+            const locked = document.getElementById('edit-locked').checked;
+
+            if(!title) return alert("Title required.");
+
+            const newData = { title, desc, locked };
+
             if (currentEditingIndex !== null) apps[currentEditingIndex] = newData;
             else apps.push(newData);
+
             localStorage.setItem('dprt_apps', JSON.stringify(apps));
-            location.reload();
+            closeEditor();
+            initAuth(); // Re-render
+        }
+
+        function deleteApp(index) {
+            if(confirm("Confirm deletion from State Database?")) {
+                apps.splice(index, 1);
+                localStorage.setItem('dprt_apps', JSON.stringify(apps));
+                initAuth();
+            }
+        }
+
+        // --- GLOBAL UI FUNCTIONS ---
+        function logout() {
+            localStorage.removeItem('dprt_user');
+            window.location.reload();
+        }
+
+        function toggleMenu(show) {
+            const menu = document.getElementById('profile-menu');
+            const overlay = document.getElementById('global-overlay');
+            const blur = document.getElementById('blur-container');
+            if (!menu) return;
+
+            if (show) {
+                menu.classList.remove('opacity-0', 'pointer-events-none', '-translate-y-4');
+                overlay.classList.remove('opacity-0', 'pointer-events-none');
+                blur.style.filter = "blur(12px) brightness(0.4)";
+                blur.style.transform = "scale(0.98)";
+            } else {
+                menu.classList.add('opacity-0', 'pointer-events-none', '-translate-y-4');
+                overlay.classList.add('opacity-0', 'pointer-events-none');
+                blur.style.filter = "none";
+                blur.style.transform = "scale(1)";
+            }
         }
 
         // Embers

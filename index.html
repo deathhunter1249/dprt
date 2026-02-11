@@ -21,7 +21,7 @@
             z-index: -1;
         }
 
-        /* Performance Optimized Embers */
+        /* Performance Optimized Embers - Using GPU */
         .ember {
             position: absolute; background: var(--dprt-bronze); border-radius: 50%; opacity: 0;
             pointer-events: none; z-index: 1; will-change: transform;
@@ -36,11 +36,16 @@
         /* Scanline Overlay */
         body::before {
             content: " "; display: block; position: absolute; inset: 0;
-            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.15) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.01), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.01));
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.15) 50%), 
+                        linear-gradient(90deg, rgba(255, 0, 0, 0.01), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.01));
             z-index: 100; background-size: 100% 4px, 3px 100%; pointer-events: none;
         }
 
-        #blur-container { transition: filter 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.6s cubic-bezier(0.16, 1, 0.3, 1); }
+        #blur-container { 
+            transition: filter 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.6s cubic-bezier(0.16, 1, 0.3, 1); 
+            will-change: filter, transform;
+        }
+        
         .hero-title { font-size: clamp(3.5rem, 12vw, 8rem); line-height: 0.8; color: #fff; font-family: 'Noto Serif SC', serif; font-weight: 900; }
         .chinese-font { font-family: 'Noto Serif SC', serif; }
     </style>
@@ -74,35 +79,69 @@
     <script>
         const CLIENT_ID = '1323365609777528962';
         const GUILD_ID = '1255926408312655963'; 
+        // Ensure REDIRECT_URI matches Discord Dev Portal exactly
         const REDIRECT_URI = window.location.origin + window.location.pathname;
 
-        // LOAD HEADER
+        // 1. LOAD HEADER & SYNC UI
         async function loadGlobalHeader() {
-            const resp = await fetch('header.html');
-            document.getElementById('header-placeholder').innerHTML = await resp.text();
-            
-            // Set Active Link
-            const path = window.location.pathname.split("/").pop() || 'index.html';
-            const links = {'index.html': 'nav-home', 'home.html': 'nav-home', 'jobs.html': 'nav-jobs'};
-            if(links[path]) document.getElementById(links[path])?.classList.add('text-[#b8860b]');
-            
+            try {
+                const resp = await fetch('header.html');
+                if (!resp.ok) throw new Error("Header file not found");
+                const html = await resp.text();
+                document.getElementById('header-placeholder').innerHTML = html;
+                
+                // Highlight active link
+                const path = window.location.pathname.split("/").pop() || 'index.html';
+                const links = {'index.html': 'nav-home', 'home.html': 'nav-home', 'jobs.html': 'nav-jobs', 'info.html': 'nav-info'};
+                if(links[path]) document.getElementById(links[path])?.classList.add('text-[#b8860b]');
+                
+                // Trigger Authentication check once header exists
+                initAuth();
+            } catch (e) {
+                console.error("Layout Error:", e);
+            }
+        }
+
+        // 2. DISCORD AUTHENTICATION
+        async function initAuth() {
+            const fragment = new URLSearchParams(window.location.hash.slice(1));
+            const accessToken = fragment.get('access_token');
+
+            if (accessToken) {
+                try {
+                    const userRes = await fetch('https://discord.com/api/users/@me', {
+                        headers: { Authorization: `Bearer ${accessToken}` }
+                    });
+                    const user = await userRes.json();
+                    
+                    if (user.id) {
+                        localStorage.setItem('dprt_user', JSON.stringify(user));
+                        // Clean URL fragment
+                        window.history.replaceState({}, document.title, window.location.pathname);
+                    }
+                } catch (e) { console.error("Identity Verification Failed:", e); }
+            }
             renderUser();
         }
 
+        // 3. RENDER USER DATA INTO HEADER
         function renderUser() {
             const user = JSON.parse(localStorage.getItem('dprt_user'));
-            if (!user) return;
+            const loginBtn = document.getElementById('login-btn');
+            const userDisplay = document.getElementById('user-display');
 
-            document.getElementById('login-btn').style.display = 'none';
-            document.getElementById('user-display').classList.remove('hidden');
-            document.getElementById('nav-username').innerText = user.username;
-            document.getElementById('nav-pfp').src = `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png`;
+            if (!user || !loginBtn) return;
+
+            loginBtn.style.display = 'none';
+            userDisplay.classList.remove('hidden');
             
-            // Re-sync rank in menu if needed
-            const menuName = document.getElementById('menu-user-name');
-            if(menuName) menuName.innerText = user.username;
+            // Inject data into header elements
+            document.getElementById('nav-username').innerText = user.username;
+            document.getElementById('menu-user-name').innerText = user.username;
+            document.getElementById('nav-pfp').src = `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png`;
         }
 
+        // 4. GLOBAL UTILITIES (Used by header.html buttons)
         function login() {
             const scopes = encodeURIComponent('identify guilds.members.read');
             window.location.href = `https://discord.com/api/oauth2/authorize?client_id=${CLIENT_ID}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&response_type=token&scope=${scopes}`;
@@ -118,6 +157,8 @@
             const overlay = document.getElementById('global-overlay');
             const blur = document.getElementById('blur-container');
             
+            if (!menu) return;
+
             if (show) {
                 menu.classList.remove('opacity-0', 'pointer-events-none', '-translate-y-4');
                 overlay.classList.remove('opacity-0', 'pointer-events-none');
@@ -131,17 +172,18 @@
             }
         }
 
-        // Embers
-        const embers = document.getElementById('embers-container');
+        // 5. AMBIANCE GENERATOR
+        const embersContainer = document.getElementById('embers-container');
         for (let i = 0; i < 15; i++) {
             const e = document.createElement('div');
             e.className = 'ember';
             e.style.left = Math.random() * 100 + '%';
             e.style.width = e.style.height = (Math.random() * 3 + 1) + 'px';
             e.style.animationDelay = Math.random() * 10 + 's';
-            embers.appendChild(e);
+            embersContainer.appendChild(e);
         }
 
+        // Initialize on load
         window.onload = loadGlobalHeader;
     </script>
 </body>
