@@ -9,77 +9,53 @@
     <style>
         :root {
             --dprt-bronze: #b8860b;
-            --dprt-crimson: #8b0000;
             --dprt-ink: #0a0a0c;
         }
         body {
-            /* Deeper, more atmospheric background */
             background: radial-gradient(circle at 50% 50%, #1a1a1c 0%, var(--dprt-ink) 100%);
-            color: #e0e0e0; 
-            font-family: 'Inter', sans-serif; 
-            margin: 0; height: 100vh; overflow: hidden;
+            color: #e0e0e0; font-family: 'Inter', sans-serif; margin: 0; height: 100vh; overflow: hidden;
         }
         .chinese-font { font-family: 'Noto Serif SC', serif; }
 
-        /* REFINED DRAGON FRAME (Less intrusive, more "Silk-like") */
+        /* Subtle Dragon Silk Pattern */
         .dragon-frame {
             position: absolute; inset: 0; z-index: 0; pointer-events: none;
             display: flex; flex-direction: column; justify-content: space-between;
-            opacity: 0.1; mix-blend-mode: overlay;
+            opacity: 0.08; mix-blend-mode: overlay;
         }
         .dragon-svg { width: 100%; height: 40vh; stroke: var(--dprt-bronze); stroke-width: 1; fill: none; }
 
-        /* BRONZE LOGO BOX */
-        .logo-box {
-            background: linear-gradient(145deg, #8b6508, #4a3304);
-            border: 1px solid rgba(184, 134, 11, 0.5);
-            box-shadow: 0 4px 20px rgba(0,0,0,0.8);
-        }
-
-        /* NAVIGATION UPGRADE */
         .nav-frame {
-            background: rgba(10, 10, 12, 0.85); 
-            backdrop-filter: blur(15px);
-            border-bottom: 1px solid rgba(184, 134, 11, 0.15); 
-            z-index: 50;
+            background: rgba(10, 10, 12, 0.85); backdrop-filter: blur(15px);
+            border-bottom: 1px solid rgba(184, 134, 11, 0.15); z-index: 50;
         }
         .nav-btn {
-            font-size: 15px; font-weight: 500; text-transform: uppercase; 
-            letter-spacing: 0.15em; color: #a0a0a0; transition: all 0.4s ease;
+            font-size: 14px; font-weight: 600; text-transform: uppercase; 
+            letter-spacing: 0.15em; color: #888; transition: all 0.4s ease;
             padding: 10px 20px;
         }
         .nav-btn:hover { 
             color: var(--dprt-bronze); 
-            text-shadow: 0 0 10px rgba(184, 134, 11, 0.4);
-            letter-spacing: 0.25em; /* Smooth expansion */
+            letter-spacing: 0.25em;
         }
 
         .discord-btn {
-            background: var(--dprt-ink);
-            color: var(--dprt-bronze);
             border: 1px solid var(--dprt-bronze);
+            color: var(--dprt-bronze);
             transition: all 0.3s ease;
-            box-shadow: inset 0 0 5px rgba(184, 134, 11, 0.2);
         }
         .discord-btn:hover { 
-            background: var(--dprt-bronze); 
-            color: var(--dprt-ink);
-            transform: translateY(-1px);
+            background: var(--dprt-bronze); color: var(--dprt-ink);
         }
 
         .hero-title {
-            font-size: clamp(3rem, 10vw, 7rem); 
-            line-height: 0.9; letter-spacing: -0.02em;
-            color: #ffffff;
-            font-family: 'Noto Serif SC', serif;
-            font-weight: 900;
+            font-size: clamp(3rem, 10vw, 7rem); line-height: 0.9;
+            font-family: 'Noto Serif SC', serif; font-weight: 900;
         }
 
-        /* VINTAGE PAPER TEXTURE OVERLAY */
-        body::after {
-            content: ""; position: absolute; inset: 0;
-            background-image: url('https://www.transparenttextures.com/patterns/paper.png');
-            opacity: 0.05; pointer-events: none; z-index: 1;
+        .user-pfp {
+            width: 40px; height: 40px; border-radius: 4px; /* Squared for a more formal look */
+            border: 1px solid var(--dprt-bronze); display: none;
         }
     </style>
 </head>
@@ -94,31 +70,29 @@
         </svg>
     </div>
 
-    <div id="stars" style="opacity: 0.3;"></div>
-
     <header class="nav-frame sticky top-0">
         <nav class="flex items-center justify-between px-12 py-5 max-w-7xl mx-auto">
             <div class="flex items-center space-x-6">
-                <div class="logo-box w-12 h-12 rounded-sm flex items-center justify-center">
-                    <span class="text-white text-2xl chinese-font">茶</span>
+                <div class="w-12 h-12 bg-[#b8860b] rounded-sm flex items-center justify-center shadow-lg">
+                    <span class="text-black text-2xl chinese-font font-black">茶</span>
                 </div>
                 <div class="flex flex-col leading-none">
-                    <span class="text-3xl font-black tracking-widest text-white">DPRT</span>
+                    <span class="text-3xl font-black tracking-widest">DPRT</span>
                     <span class="text-[9px] uppercase tracking-[0.5em] text-zinc-600 font-bold">The Sovereign Estate</span>
                 </div>
             </div>
 
-            <div class="hidden lg:flex items-center space-x-4">
-                <a href="#" class="nav-btn text-[#b8860b]">Home</a>
-                <a href="#" class="nav-btn">Info</a>
-                <a href="#" class="nav-btn">Jobs</a>
-                <a href="https://discord.gg/KBNqanJDfa" target="_blank" class="nav-btn">Group</a>
-                <a href="https://republicofteapots.miraheze.org/" target="_blank" class="nav-btn">Wiki</a>
+            <div class="hidden lg:flex items-center space-x-6">
+                <a href="#" class="nav-btn text-[#b8860b]">Archive</a>
+                <a href="#" class="nav-btn">Protocol</a>
+                <a href="#" class="nav-btn">Systems</a>
+                <a href="https://discord.gg/KBNqanJDfa" target="_blank" class="nav-btn">Enclave</a>
+                <a href="https://republicofteapots.miraheze.org/" target="_blank" class="nav-btn">Codicil</a>
             </div>
 
             <div id="auth-area">
-                <button id="login-btn" onclick="login()" class="discord-btn flex items-center px-6 py-2 rounded-sm font-bold text-[10px] uppercase tracking-widest gap-2">
-                    Identity Verification
+                <button id="login-btn" onclick="login()" class="discord-btn px-6 py-2 rounded-sm font-bold text-[10px] uppercase tracking-widest">
+                    Identity Verify
                 </button>
                 <img id="user-pfp" class="user-pfp" onclick="logout()" src="">
             </div>
@@ -126,36 +100,17 @@
     </header>
 
     <main class="relative z-10 max-w-7xl mx-auto px-12 h-[calc(100vh-100px)] flex flex-col justify-center">
-        <div class="max-w-4xl border-l-[1px] border-[#b8860b] pl-12">
+        <div class="max-w-4xl border-l border-[#b8860b]/30 pl-12">
             <h3 class="text-[#b8860b] font-medium text-lg mb-4 tracking-[0.4em] uppercase opacity-60 chinese-font">大同茶國</h3>
             <h1 class="hero-title mb-8">TRANQUILITY <br> THROUGH ORDER</h1>
-            <p class="text-zinc-400 text-xl max-w-2xl font-light leading-relaxed">
-                The Republic is built upon the <span class="text-white border-b border-[#b8860b]">Eternal Brew</span>. 
-                We maintain the balance between heat and water, strength and grace. 
-                Serve the kettle; protect the leaf.
+            <p class="text-zinc-500 text-xl max-w-2xl font-light leading-relaxed italic">
+                The Republic is maintained by the strength of the leaf and the heat of the water. 
+                Serve the kettle; protect the brew.
             </p>
         </div>
     </main>
 
-    <footer class="fixed bottom-8 left-0 w-full text-center z-10">
-        <div class="flex justify-center items-center space-x-12 text-zinc-700 uppercase tracking-[0.8em] text-[9px] font-bold">
-            <span>RESPECT</span> <span>•</span> <span>PURITY</span> <span>•</span> <span>HARMONY</span>
-        </div>
-    </footer>
-
     <script>
-        // Star generator (fewer, subtle stars)
-        const starContainer = document.getElementById('stars');
-        for (let i = 0; i < 30; i++) {
-            const star = document.createElement('div');
-            star.className = 'star';
-            star.style.width = star.style.height = (Math.random() * 1.5) + 'px';
-            star.style.left = Math.random() * 100 + '%';
-            star.style.top = Math.random() * 100 + '%';
-            star.style.animationDelay = Math.random() * 5 + 's';
-            starContainer.appendChild(star);
-        }
-
         const CLIENT_ID = '1323365609777528962';
         const REDIRECT_URI = window.location.origin + window.location.pathname;
         const FUNCTION_URL = 'https://sparkly-gelato-78da1b.netlify.app/.netlify/functions/auth';
@@ -165,7 +120,9 @@
         }
 
         async function init() {
-            const code = new URLSearchParams(window.location.search).get('code');
+            const params = new URLSearchParams(window.location.search);
+            const code = params.get('code');
+            
             if (code) {
                 try {
                     const res = await fetch(`${FUNCTION_URL}?code=${code}`);
@@ -183,13 +140,6 @@
                 const pfp = document.getElementById('user-pfp');
                 pfp.style.display = 'block';
                 pfp.src = `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png`;
-            }
-        }
-
-        function logout() {
-            if(confirm("Relinquish your duties to the Republic?")) {
-                localStorage.removeItem('dprt_user');
-                window.location.reload();
             }
         }
         window.onload = init;
