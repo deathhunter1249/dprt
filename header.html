@@ -1,0 +1,52 @@
+<div id="global-overlay" class="fixed inset-0 bg-black/30 z-[80] opacity-0 pointer-events-none transition-opacity duration-400" onclick="toggleMenu(false)"></div>
+
+<header class="relative z-[101] border-b border-white/5 bg-black/20">
+    <nav class="flex items-center justify-between px-10 py-5 max-w-7xl mx-auto">
+        <div class="flex items-center space-x-5 cursor-pointer" onclick="window.location.href='index.html'">
+            <div class="w-11 h-11 border border-[#b8860b] flex items-center justify-center bg-[#b8860b]">
+                <span class="text-black text-2xl chinese-font font-black">茶</span>
+            </div>
+            <div class="flex flex-col leading-none">
+                <span class="text-3xl font-black tracking-widest text-white">DPRT</span>
+                <span class="text-[9px] uppercase tracking-[0.4em] text-zinc-500 font-bold mt-1">Teapotian State</span>
+            </div>
+        </div>
+
+        <div class="hidden lg:flex items-center space-x-10">
+            <a href="index.html" class="nav-btn" id="nav-home">Home</a>
+            <a href="info.html" class="nav-btn" id="nav-info">Info</a>
+            <a href="jobs.html" class="nav-btn" id="nav-jobs">Jobs</a>
+            <a href="https://discord.gg/KBNqanJDfa" target="_blank" class="nav-btn">Group</a>
+            <a href="https://republicofteapots.miraheze.org/" target="_blank" class="nav-btn">Wiki</a>
+        </div>
+
+        <div class="relative flex items-center justify-end w-[150px]">
+            <button id="login-btn" onclick="login()" class="btn-verify">Log In</button>
+            
+            <div id="user-display" class="hidden flex items-center space-x-4">
+                <div class="text-right hidden sm:block">
+                    <p id="nav-username" class="text-white text-[11px] font-black uppercase italic">Citizen</p>
+                    <p id="nav-rank" class="text-[#b8860b] text-[9px] font-bold uppercase tracking-tighter">Verifying...</p>
+                </div>
+                <img id="nav-pfp" class="user-pfp w-10 h-10 border border-[#b8860b] rounded-sm cursor-pointer" onclick="toggleMenu(true)">
+            </div>
+
+            <div id="profile-menu" class="absolute top-[60px] right-0 width-[280px] bg-[#121214] border border-[#b8860b] z-[110] transform -translate-y-[10px] opacity-0 pointer-events-none transition-all duration-300 shadow-2xl">
+                <div class="p-6 border-b border-[#b8860b]/20 bg-[#b8860b]/5">
+                    <p id="menu-user-name" class="font-black text-white uppercase italic text-lg">Citizen</p>
+                    <p id="menu-user-rank" class="text-[9px] text-[#b8860b] tracking-widest font-bold uppercase">Rank</p>
+                </div>
+                <div class="menu-item flex justify-between p-4 cursor-pointer hover:bg-[#b8860b]/5 hover:text-[#b8860b] text-sm border-b border-white/5" onclick="alert('No new alerts.')">
+                    <span>Notifications</span>
+                    <span id="notif-count" class="notif-badge bg-[#b8860b] text-black text-[10px] px-2 py-0.5 font-black">0</span>
+                </div>
+                <div class="menu-item p-4 cursor-pointer hover:bg-[#b8860b]/5 hover:text-[#b8860b] text-sm border-b border-white/5" onclick="window.location.href='settings.html'">
+                    Settings
+                </div>
+                <div class="menu-item p-4 cursor-pointer text-red-500 hover:bg-red-500/5 text-xs font-black uppercase tracking-widest" onclick="logout()">
+                    Log Out
+                </div>
+            </div>
+        </div>
+    </nav>
+</header>
