@@ -1,13 +1,14 @@
-<div id="global-overlay" class="fixed inset-0 bg-black/40 z-[80] opacity-0 pointer-events-none transition-opacity duration-500" onclick="toggleMenu(false)"></div>
+<div id="global-overlay" class="fixed inset-0 bg-black/60 z-[80] opacity-0 pointer-events-none transition-opacity duration-500 backdrop-blur-sm" onclick="toggleMenu(false)"></div>
 
 <header class="relative z-[101] border-b border-white/5 bg-black/40 backdrop-blur-md">
     <nav class="flex items-center justify-between px-10 py-5 max-w-7xl mx-auto">
+        
         <div class="flex items-center space-x-5 cursor-pointer group" onclick="window.location.href='index.html'">
-            <div class="w-11 h-11 border border-[#b8860b] flex items-center justify-center bg-[#b8860b] group-hover:shadow-[0_0_15px_rgba(184,134,11,0.5)] transition-all">
+            <div class="w-11 h-11 border border-[#b8860b] flex items-center justify-center bg-[#b8860b] group-hover:shadow-[0_0_20px_rgba(184,134,11,0.6)] transition-all duration-300">
                 <span class="text-black text-2xl chinese-font font-black">茶</span>
             </div>
             <div class="flex flex-col leading-none">
-                <span class="text-3xl font-black tracking-widest text-white">DPRT</span>
+                <span class="text-3xl font-black tracking-widest text-white group-hover:text-[#b8860b] transition-colors">DPRT</span>
                 <span class="text-[9px] uppercase tracking-[0.4em] text-[#b8860b] font-bold mt-1 opacity-80">Teapotian State</span>
             </div>
         </div>
@@ -26,32 +27,68 @@
             <div id="user-display" class="hidden flex items-center space-x-4">
                 <div class="text-right hidden sm:block">
                     <p id="nav-username" class="text-white text-[11px] font-black uppercase italic tracking-wider">Citizen</p>
-                    <p id="nav-rank" class="text-[#b8860b] text-[9px] font-bold uppercase tracking-[0.2em] opacity-80">Verifying...</p>
+                    <p id="nav-rank" class="text-[#b8860b] text-[9px] font-bold uppercase tracking-[0.2em] opacity-80">Identity Verified</p>
                 </div>
                 <div class="relative group">
-                    <img id="nav-pfp" class="w-11 h-11 border border-[#b8860b]/50 hover:border-[#b8860b] rounded-sm cursor-pointer transition-all active:scale-95" onclick="toggleMenu(true)">
-                    <div class="absolute -top-1 -right-1 w-3 h-3 bg-[#b8860b] border-2 border-[#0a0a0c] rounded-full animate-pulse"></div>
+                    <img id="nav-pfp" src="" class="w-11 h-11 border border-[#b8860b]/50 hover:border-[#b8860b] rounded-sm cursor-pointer transition-all active:scale-95 shadow-[0_0_10px_rgba(0,0,0,0.5)]" onclick="toggleMenu(true)">
+                    <div class="absolute -top-1 -right-1 w-3 h-3 bg-[#b8860b] border-2 border-[#0a0a0c] rounded-full animate-pulse shadow-[0_0_8px_#b8860b]"></div>
                 </div>
             </div>
 
-            <div id="profile-menu" class="absolute top-[70px] right-0 w-[280px] bg-[#0c0c0e] border border-[#b8860b]/30 z-[110] transform -translate-y-4 opacity-0 pointer-events-none transition-all duration-300 ease-out shadow-[0_20px_50px_rgba(0,0,0,0.8)]">
+            <div id="profile-menu" class="absolute top-[75px] right-0 w-[280px] bg-[#0c0c0e] border border-[#b8860b]/30 z-[110] transform translate-y-[-10px] opacity-0 pointer-events-none transition-all duration-300 ease-out shadow-[0_25px_60px_rgba(0,0,0,0.9)]">
+                
                 <div class="p-6 border-b border-[#b8860b]/20 bg-gradient-to-b from-[#b8860b]/10 to-transparent">
-                    <p id="menu-user-name" class="font-black text-white uppercase italic text-lg tracking-tighter">Citizen</p>
-                    <p id="menu-user-rank" class="text-[10px] text-[#b8860b] tracking-[0.3em] font-black uppercase mt-1">Verifying Rank</p>
+                    <p id="menu-user-name" class="font-black text-white uppercase italic text-lg tracking-tighter leading-none">Citizen</p>
+                    <p id="menu-user-rank" class="text-[9px] text-[#b8860b] tracking-[0.3em] font-black uppercase mt-2 opacity-70">Verifying Rank...</p>
                 </div>
-                <div class="menu-item group" onclick="alert('System secure. No new threats.')">
-                    <span class="group-hover:translate-x-1 transition-transform">Notifications</span>
+
+                <div class="menu-item group" onclick="alert('Directive: Maintain the Eternal Brew.')">
+                    <span class="group-hover:translate-x-2 transition-transform duration-300">Notifications</span>
                     <span id="notif-count" class="notif-badge">0</span>
                 </div>
+                
                 <div class="menu-item group" onclick="window.location.href='settings.html'">
-                    <span class="group-hover:translate-x-1 transition-transform">Citizen Settings</span>
+                    <span class="group-hover:translate-x-2 transition-transform duration-300">Citizen Settings</span>
                 </div>
-                <div class="p-4">
-                    <button onclick="logout()" class="w-full py-3 border border-red-900/30 text-red-500 hover:bg-red-500/10 text-[10px] font-black uppercase tracking-[0.3em] transition-all">
-                        Terminate Session
+
+                <div class="p-4 bg-black/20">
+                    <button onclick="logout()" class="w-full py-3 border border-red-900/40 text-red-500 hover:bg-red-500/10 hover:border-red-500/60 text-[10px] font-black uppercase tracking-[0.3em] transition-all duration-300">
+                        Log Out
                     </button>
                 </div>
+
+                <div class="h-1 bg-[#b8860b] w-full opacity-50"></div>
             </div>
         </div>
     </nav>
 </header>
+
+<style>
+    /* Ensure styles carry over if not defined in main file */
+    .menu-item {
+        padding: 16px 24px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        cursor: pointer;
+        color: #888;
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        transition: all 0.3s;
+        border-bottom: 1px solid rgba(255,255,255,0.03);
+    }
+    .menu-item:hover {
+        background: rgba(184, 134, 11, 0.05);
+        color: #fff;
+    }
+    .notif-badge {
+        background: #b8860b;
+        color: #000;
+        font-size: 9px;
+        padding: 2px 6px;
+        font-weight: 900;
+        border-radius: 2px;
+    }
+</style>
