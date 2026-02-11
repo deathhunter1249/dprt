@@ -9,137 +9,155 @@
     <style>
         :root {
             --dprt-gold: #d4af37;
-            --dprt-bg: #050505;
+            --dprt-gold-bright: #f0c74d;
+            --dprt-bg: #0a0a0a;
         }
         body {
-            background: var(--dprt-bg);
-            color: #fff;
-            font-family: 'Inter', sans-serif;
-            margin: 0;
-            overflow: hidden;
-            height: 100vh;
+            background-color: var(--dprt-bg);
+            background-image: radial-gradient(circle at 30% 40%, #151515 0%, #0a0a0a 70%);
+            color: #ffffff; font-family: 'Inter', sans-serif; margin: 0; height: 100vh; overflow: hidden;
         }
+        .chinese-font { font-family: 'Noto Serif SC', serif; }
 
-        /* HARDWARE ACCELERATED SCALES */
-        .dragon-bg {
-            position: absolute;
-            inset: 0;
-            z-index: 0;
-            pointer-events: none;
-            opacity: 0.15;
-        }
-
-        .scale-line {
-            position: absolute;
-            width: 200%;
-            height: 15px;
-            background: repeating-linear-gradient(90deg, 
-                var(--dprt-gold) 0px, 
-                var(--dprt-gold) 2px, 
-                transparent 2px, 
-                transparent 40px);
-            /* This is the secret to no lag: */
-            transform: translateZ(0); 
+        /* GPU OPTIMIZED DRAGON SCALES */
+        .line-container { position: absolute; inset: 0; z-index: 0; pointer-events: none; opacity: 0.2; }
+        .flowing-line {
+            position: absolute; width: 200%; height: 300px;
+            stroke: var(--dprt-gold); stroke-width: 8; fill: none;
             will-change: transform;
         }
-
-        .top-line { top: 20%; animation: slither 15s linear infinite; }
-        .bottom-line { bottom: 20%; animation: slither 20s linear infinite reverse; }
-
-        @keyframes slither {
-            from { transform: translateX(0) skewX(-20deg); }
-            to { transform: translateX(-40px) skewX(-20deg); }
+        .line-top { top: 10%; animation: wave 20s linear infinite; }
+        .line-bottom { bottom: 5%; animation: wave 25s linear infinite reverse; transform: scaleY(-1); }
+        
+        @keyframes wave {
+            from { transform: translate3d(0, 0, 0); }
+            to { transform: translate3d(-50%, 0, 0); }
         }
+
+        /* STARFIELD */
+        .star {
+            position: absolute; background: var(--dprt-gold); border-radius: 50%;
+            opacity: 0; animation: twinkle 3s ease-in-out infinite;
+            will-change: transform, opacity;
+        }
+        @keyframes twinkle { 50% { opacity: 1; } }
 
         .nav-frame {
-            background: rgba(5, 5, 5, 0.9);
-            backdrop-filter: blur(10px);
-            border-bottom: 2px solid var(--dprt-gold);
+            background: rgba(10, 10, 10, 0.9); backdrop-filter: blur(15px);
+            border-bottom: 2px solid rgba(212, 175, 55, 0.4); z-index: 50;
         }
-        
+
+        .discord-btn {
+            background: linear-gradient(135deg, var(--dprt-gold) 0%, var(--dprt-gold-bright) 100%);
+            color: #000; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .discord-btn:hover { transform: translateY(-2px); box-shadow: 0 0 20px rgba(212, 175, 55, 0.5); }
+
+        .user-pfp {
+            width: 48px; height: 48px; border-radius: 50%;
+            border: 2px solid var(--dprt-gold); display: none; cursor: pointer;
+        }
+
         .hero-title {
-            font-size: clamp(3rem, 10vw, 8rem);
-            line-height: 0.85;
+            font-size: clamp(3.5rem, 11vw, 8rem); line-height: 0.85; letter-spacing: -0.04em;
+            text-shadow: 0 10px 30px rgba(0,0,0,0.8);
         }
     </style>
 </head>
 <body>
 
-    <div class="dragon-bg">
-        <div class="scale-line top-line"></div>
-        <div class="scale-line bottom-line"></div>
+    <div class="line-container">
+        <svg class="flowing-line line-top" viewBox="0 0 1000 300" preserveAspectRatio="none">
+            <path d="M0,150 Q125,50 250,150 T500,150 T750,150 T1000,150 M1000,150 Q1125,50 1250,150 T1500,150 T1750,150 T2000,150" />
+        </svg>
+        <svg class="flowing-line line-bottom" viewBox="0 0 1000 300" preserveAspectRatio="none">
+            <path d="M0,150 C150,250 350,50 500,150 S850,50 1000,150 M1000,150 C1150,250 1350,50 1500,150 S1850,50 2000,150" />
+        </svg>
     </div>
 
-    <header class="nav-frame relative z-50">
+    <div id="stars"></div>
+
+    <header class="nav-frame sticky top-0">
         <nav class="flex items-center justify-between px-8 py-5 max-w-7xl mx-auto">
-            <div class="flex items-center space-x-4">
-                <div class="bg-[#d4af37] w-12 h-12 rounded flex items-center justify-center">
-                    <span class="text-black text-2xl font-black font-serif">茶</span>
+            <div class="flex items-center space-x-5">
+                <div class="bg-[#c29a30] w-14 h-14 rounded-lg flex items-center justify-center">
+                    <span class="text-black text-3xl font-black chinese-font">茶</span>
                 </div>
-                <span class="text-3xl font-black italic tracking-tighter">DPRT</span>
+                <div class="flex flex-col leading-none">
+                    <span class="text-4xl font-black tracking-tighter">DPRT</span>
+                    <span class="text-[11px] uppercase tracking-[0.3em] text-gray-400 font-bold">Republic of Teapots</span>
+                </div>
             </div>
 
-            <div id="auth-zone">
-                <button id="login-btn" onclick="discordLogin()" class="border border-[#d4af37] px-6 py-2 rounded uppercase text-xs font-bold hover:bg-[#d4af37] hover:text-black transition-all">
+            <div id="auth-area">
+                <button id="login-btn" onclick="login()" class="discord-btn flex items-center px-7 py-3 rounded-lg font-black text-xs uppercase tracking-wider gap-2">
+                    <svg width="18" height="18" viewBox="0 0 71 55" fill="currentColor"><path d="M60.1,4.9C55.6,2.8,50.7,1.3,45.7,0.4c-0.1,0-0.2,0-0.3,0.1c-0.6,1.1-1.3,2.6-1.8,3.7c-5.5-0.8-10.9-0.8-16.2,0c-0.5-1.1-1.2-2.6-1.8-3.7c-0.1-0.1-0.2-0.1-0.3-0.1C20.3,1.3,15.4,2.8,10.9,4.9C10.8,4.9,10.8,5,10.8,5C1.6,18.7-0.9,32.1,0.3,45.4c0,0.1,0,0.1,0.1,0.2c6.1,4.5,12,7.2,17.7,9c0.1,0,0.2,0,0.2-0.1c1.4-1.9,2.6-3.8,3.6-5.9c0.1-0.1,0-0.3-0.1-0.3c-1.9-0.7-3.8-1.6-5.5-2.6c-0.1-0.1-0.1-0.3,0-0.4c0.4-0.3,0.7-0.6,1.1-0.9c0.1-0.1,0.2-0.1,0.2-0.1c11.6,5.3,24.2,5.3,35.7,0c0.1,0,0.2,0,0.2,0.1c0.4,0.3,0.7,0.6,1.1,0.9c0.1,0.1,0.1,0.3,0,0.4c-1.8,1-3.6,1.9-5.5,2.6c-0.1,0.1-0.1,0.2-0.1,0.3c1.1,2.1,2.3,4,3.6,5.9c0.1,0.1,0.2,0.1,0.2,0.1c5.8-1.8,11.7-4.5,17.7-9c0.1-0.1,0.1-0.1,0.1-0.2C72.2,30.1,68.2,16.8,60.1,5C60.1,5,60.1,4.9,60.1,4.9z M23.7,37.3c-3.5,0-6.4-3.2-6.4-7.2s2.8-7.2,6.4-7.2c3.6,0,6.4,3.2,6.4,7.2S27.3,37.3,23.7,37.3z M47.3,37.3c-3.5,0-6.4-3.2-6.4-7.2s2.8-7.2,6.4-7.2c3.6,0,6.4,3.2,6.4,7.2S50.9,37.3,47.3,37.3z"/></svg>
                     Discord Login
                 </button>
-                <img id="user-pfp" class="w-12 h-12 rounded-full border-2 border-[#d4af37] hidden cursor-pointer" onclick="logout()">
+                <img id="user-pfp" class="user-pfp" onclick="logout()" src="">
             </div>
         </nav>
     </header>
 
-    <main class="relative z-10 max-w-7xl mx-auto px-8 h-[calc(100vh-80px)] flex flex-col justify-center">
-        <h3 class="text-[#d4af37] font-bold tracking-widest mb-4">DEMOCRATIC PEOPLE'S REPUBLIC OF TEAPOTS</h3>
-        <h1 class="hero-title font-black italic mb-8">GLORY TO <br> YOSOFO</h1>
-        <p class="text-zinc-500 text-xl border-l-2 border-[#d4af37] pl-6">
-            <span class="text-white font-bold italic underline">MOTIVE 01:</span><br>
-            Maintain peace. Protect the motherland.
-        </p>
+    <main class="relative z-10 max-w-7xl mx-auto px-8 h-[calc(100vh-100px)] flex flex-col justify-center">
+        <div class="max-w-5xl border-l-4 border-[#d4af37] pl-8">
+            <h3 class="text-[#d4af37] font-bold text-2xl mb-4 uppercase">Democratic People's Republic of Teapots</h3>
+            <h1 class="hero-title font-black uppercase text-white mb-8 italic">GLORY TO <br> YOSOFO</h1>
+            <p class="text-gray-400 text-xl md:text-2xl max-w-2xl font-light">
+                <span class="text-white font-bold italic underline decoration-[#d4af37]">Motive 01:</span> <br> 
+                Maintain peace. Protect the motherland.
+            </p>
+        </div>
     </main>
 
-    <footer class="fixed bottom-8 w-full text-center text-[10px] tracking-[0.4em] text-zinc-600 font-bold">
-        忠诚 LOYALTY • 纪律 DISCIPLINE • 茶 TEA
+    <footer class="fixed bottom-10 left-0 w-full text-center">
+        <div class="flex justify-center items-center space-x-12 text-gray-500 uppercase tracking-[0.5em] text-[10px] font-black">
+            <span>忠诚 LOYALTY</span> <span class="text-[#d4af37]">•</span> 
+            <span>纪律 DISCIPLINE</span> <span class="text-[#d4af37]">•</span> 
+            <span>茶 TEA</span>
+        </div>
     </footer>
 
     <script>
-        const CLIENT_ID = '1323365609777528962';
-        // Redirect to wherever your server.js is hosted (e.g. Render/Railway)
-        const SERVER_URL = 'http://localhost:3000'; 
+        // Star generator
+        const starContainer = document.getElementById('stars');
+        for (let i = 0; i < 40; i++) {
+            const star = document.createElement('div');
+            star.className = 'star';
+            star.style.width = star.style.height = (Math.random() * 3 + 1) + 'px';
+            star.style.left = Math.random() * 100 + '%';
+            star.style.top = Math.random() * 100 + '%';
+            star.style.animationDelay = Math.random() * 3 + 's';
+            starContainer.appendChild(star);
+        }
 
-        function discordLogin() {
-            const redirect = encodeURIComponent(window.location.origin + window.location.pathname);
-            window.location.href = `https://discord.com/api/oauth2/authorize?client_id=${CLIENT_ID}&redirect_uri=${redirect}&response_type=code&scope=identify`;
+        const CLIENT_ID = '1323365609777528962';
+        const REDIRECT_URI = window.location.origin + window.location.pathname;
+        const FUNCTION_URL = '/.netlify/functions/auth'; // Pointing to Netlify
+
+        function login() {
+            window.location.href = `https://discord.com/api/oauth2/authorize?client_id=${CLIENT_ID}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&response_type=code&scope=identify`;
         }
 
         async function init() {
-            const params = new URLSearchParams(window.location.search);
-            const code = params.get('code');
-
+            const code = new URLSearchParams(window.location.search).get('code');
             if (code) {
-                try {
-                    const res = await fetch(`${SERVER_URL}/discord/callback?code=${code}`);
-                    const data = await res.json();
-                    if (data.user) {
-                        localStorage.setItem('dprt_user', JSON.stringify(data.user));
-                        window.history.replaceState({}, document.title, window.location.pathname);
-                    }
-                } catch (e) { console.error("Server not reachable"); }
+                const res = await fetch(`${FUNCTION_URL}?code=${code}`);
+                const data = await res.json();
+                if (data.user) {
+                    localStorage.setItem('dprt_user', JSON.stringify(data.user));
+                    window.history.replaceState({}, document.title, window.location.pathname);
+                }
             }
-
             const user = JSON.parse(localStorage.getItem('dprt_user'));
             if (user) {
-                document.getElementById('login-btn').classList.add('hidden');
+                document.getElementById('login-btn').style.display = 'none';
                 const pfp = document.getElementById('user-pfp');
-                pfp.classList.remove('hidden');
+                pfp.style.display = 'block';
                 pfp.src = `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png`;
             }
         }
-
-        function logout() {
-            localStorage.removeItem('dprt_user');
-            window.location.reload();
-        }
-
+        function logout() { localStorage.removeItem('dprt_user'); window.location.reload(); }
         window.onload = init;
     </script>
 </body>
