@@ -331,10 +331,14 @@
         // ===== DISCORD OAUTH LOGIN =====
         const discordLoginBtn = document.getElementById('discordLogin');
         
-        // REPLACE THESE VALUES WITH YOUR DISCORD APP CREDENTIALS
-        const DISCORD_CLIENT_ID = '1323365609777528962'; // Get from https://discord.com/developers/applications
-        const REDIRECT_URI = 'https://deathhunter1249.github.io/dprt/'; // Your redirect URL
-        const SCOPES = 'identify'; // You can add more scopes: 'identify email guilds'
+        // Public Client ID - SAFE to be in public code
+        const DISCORD_CLIENT_ID = '1323365609777528962';
+        const REDIRECT_URI = 'https://deathhunter1249.github.io/dprt/';
+        const SCOPES = 'identify email';
+        
+        // Your backend API endpoint - YOU NEED TO REPLACE THIS
+        // After deploying server.js to Netlify/Vercel, put the URL here
+        const BACKEND_API = 'https://YOUR-BACKEND-URL.netlify.app'; 
         
         discordLoginBtn.addEventListener('click', () => {
             const discordAuthUrl = `https://discord.com/oauth2/authorize?client_id=${DISCORD_CLIENT_ID}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&response_type=code&scope=${SCOPES}`;
@@ -342,20 +346,36 @@
         });
 
         // ===== HANDLE OAUTH CALLBACK =====
-        // When Discord redirects back, it adds ?code=... to the URL
         const urlParams = new URLSearchParams(window.location.search);
         const code = urlParams.get('code');
         
         if (code) {
-            // You need a backend to exchange the code for an access token
-            // This cannot be done purely in GitHub Pages (frontend only)
-            console.log('Received OAuth code:', code);
+            // Send code to backend to exchange for user info
+            fetch(`${BACKEND_API}/discord/callback?code=${code}`)
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        console.log('Logged in as:', data.user.username);
+                        // Store user info
+                        localStorage.setItem('dprt_user', JSON.stringify(data.user));
+                        // Show success message
+                        alert(`Welcome to DPRT, ${data.user.username}!`);
+                    }
+                })
+                .catch(err => {
+                    console.error('Login failed:', err);
+                    alert('Login failed. Please try again.');
+                });
             
-            // Send this code to your backend server
-            // Example: fetch('https://your-backend.com/discord/callback?code=' + code)
-            
-            // For now, just clean the URL
+            // Clean URL
             window.history.replaceState({}, document.title, window.location.pathname);
+        }
+
+        // Check if user is already logged in
+        const storedUser = localStorage.getItem('dprt_user');
+        if (storedUser) {
+            const user = JSON.parse(storedUser);
+            console.log('Already logged in as:', user.username);
         }
     </script>
 
