@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DPRT | Recruitment</title>
+    <title>DPRT | Career Deployments</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@500;900&family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
@@ -14,154 +14,197 @@
             margin: 0; min-height: 100vh; position: relative; overflow-x: hidden;
         }
 
+        /* Scanline Effect */
+        body::before {
+            content: " "; display: block; position: absolute; inset: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.02), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.02));
+            z-index: 100; background-size: 100% 4px, 3px 100%; pointer-events: none;
+        }
+
+        /* Ember Effects */
+        .ember {
+            position: absolute; background: var(--dprt-bronze); border-radius: 50%; opacity: 0; pointer-events: none;
+            animation: rise 12s infinite ease-in; z-index: 2; filter: blur(1px);
+        }
+        @keyframes rise {
+            0% { transform: translateY(105vh) scale(0); opacity: 0; }
+            50% { opacity: 0.6; box-shadow: 0 0 10px var(--dprt-bronze); }
+            100% { transform: translateY(-10vh) scale(1.5); opacity: 0; }
+        }
+
+        #blur-container { transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1); }
+
         /* Wide Rectangle Job Cards */
         .job-card {
-            background: rgba(20, 20, 22, 0.7);
-            border: 1px solid rgba(184, 134, 11, 0.2);
+            background: rgba(20, 20, 22, 0.5);
+            border: 1px solid rgba(184, 134, 11, 0.15);
             padding: 30px 40px;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
             position: relative;
             width: 100%;
+            backdrop-filter: blur(5px);
         }
         .job-card:hover:not(.locked) {
             border-color: var(--dprt-bronze);
-            background: rgba(184, 134, 11, 0.03);
-            transform: scale(1.01);
+            background: rgba(184, 134, 11, 0.05);
+            transform: translateX(10px);
+            box-shadow: -10px 0 20px rgba(184, 134, 11, 0.1);
         }
-        .job-card.locked { opacity: 0.4; cursor: not-allowed; grayscale: 1; }
+        .job-card.locked { opacity: 0.3; cursor: not-allowed; filter: grayscale(1); }
 
         .btn-action {
-            padding: 8px 24px;
-            font-size: 11px;
+            padding: 10px 24px;
+            font-size: 10px;
             font-weight: 900;
             text-transform: uppercase;
-            letter-spacing: 0.1em;
+            letter-spacing: 0.2em;
             transition: 0.3s;
         }
 
-        /* Admin UI */
         #admin-editor { 
             display: none; position: fixed; inset: 0; 
             background: rgba(0,0,0,0.95); z-index: 1000; 
             align-items: center; justify-content: center; 
-            backdrop-filter: blur(10px);
+            backdrop-filter: blur(15px);
         }
 
         .chinese-font { font-family: 'Noto Serif SC', serif; }
-        .nav-btn { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.2em; color: #a0a0a0; }
+        .nav-btn { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.2em; color: #a0a0a0; transition: 0.4s; }
+        .nav-btn:hover { color: var(--dprt-bronze); }
     </style>
 </head>
 <body>
 
-    <header class="relative z-50 border-b border-white/5 bg-black/20">
-        <nav class="flex items-center justify-between px-10 py-5 max-w-7xl mx-auto">
-            <div class="flex items-center space-x-5">
-                <div class="w-11 h-11 border border-[#b8860b] flex items-center justify-center bg-[#b8860b]">
-                    <span class="text-black text-2xl chinese-font font-black">茶</span>
-                </div>
-                <div class="flex flex-col leading-none">
-                    <span class="text-3xl font-black tracking-widest text-white">DPRT</span>
-                    <span class="text-[9px] uppercase tracking-[0.4em] text-zinc-500 font-bold mt-1">Teapotian State</span>
-                </div>
-            </div>
-            <div class="hidden lg:flex items-center space-x-10">
-                <a href="index.html" class="nav-btn">Home</a>
-                <a href="jobs.html" class="nav-btn text-[#b8860b]">Jobs</a>
-                <a href="https://discord.gg/KBNqanJDfa" target="_blank" class="nav-btn">Group</a>
-            </div>
-            <div id="user-profile-nav" class="flex items-center space-x-4">
-                <div class="text-right hidden sm:block">
-                    <p id="nav-username" class="text-white text-[11px] font-black uppercase italic">Guest</p>
-                    <p id="nav-rank" class="text-[#b8860b] text-[9px] font-bold uppercase tracking-tighter">Identity Unverified</p>
-                </div>
-                <img id="nav-pfp" class="w-10 h-10 border border-[#b8860b] hidden rounded-sm">
-            </div>
-        </nav>
-    </header>
+    <div id="embers-container"></div>
+    
+    <div id="header-placeholder"></div>
 
-    <main class="max-w-6xl mx-auto px-10 py-20">
-        <div class="mb-16 border-l-4 border-[#b8860b] pl-8">
-            <h1 class="text-5xl font-black italic uppercase tracking-tighter text-white">Career Deployments</h1>
-            <p class="text-zinc-500 text-lg mt-2">The Estate requires your service. Select an application to begin.</p>
-        </div>
-
-        <div id="job-list" class="flex flex-col gap-4">
+    <div id="blur-container">
+        <main class="max-w-6xl mx-auto px-10 py-20">
+            <div class="mb-16 border-l-4 border-[#b8860b] pl-8 relative">
+                <div class="absolute -left-[4px] top-0 h-full w-[4px] bg-[#b8860b] shadow-[0_0_20px_#b8860b]"></div>
+                <h1 class="text-6xl font-black italic uppercase tracking-tighter text-white">Career Deployments</h1>
+                <p class="text-zinc-500 text-lg mt-4 max-w-2xl">The Estate requires your service. Our specialized divisions are the pillars of the Republic. Choose your path wisely.</p>
             </div>
 
-        <button id="admin-add-trigger" onclick="openEditor()" class="hidden w-full mt-8 border-2 border-dashed border-zinc-800 py-6 text-zinc-600 hover:border-[#b8860b] hover:text-[#b8860b] transition-all font-black uppercase text-xs tracking-[.5em]">
-            + Add New Deployment
-        </button>
-    </main>
+            <div id="job-list" class="flex flex-col gap-6">
+                </div>
+
+            <button id="admin-add-trigger" onclick="openEditor()" class="hidden w-full mt-10 border border-dashed border-[#b8860b]/30 py-8 text-zinc-600 hover:border-[#b8860b] hover:text-[#b8860b] transition-all font-black uppercase text-xs tracking-[.5em] bg-white/5">
+                + Authorize New Deployment
+            </button>
+        </main>
+    </div>
 
     <div id="admin-editor" onclick="if(event.target == this) closeEditor()">
-        <div class="bg-[#0e0e10] border border-[#b8860b] p-10 w-full max-w-xl shadow-2xl">
-            <h2 class="text-white font-black uppercase mb-8 italic text-2xl border-b border-zinc-800 pb-4">App Configuration</h2>
-            <div class="space-y-5">
+        <div class="bg-[#0e0e10] border border-[#b8860b] p-10 w-full max-w-xl shadow-[0_0_60px_rgba(0,0,0,1)]">
+            <h2 class="text-white font-black uppercase mb-8 italic text-2xl border-b border-[#b8860b]/20 pb-4">Terminal Configuration</h2>
+            <div class="space-y-6">
                 <div>
-                    <label class="text-[10px] uppercase font-black text-zinc-500 mb-2 block">App Title</label>
-                    <input type="text" id="edit-title" class="w-full bg-black border border-zinc-800 p-3 text-white outline-none focus:border-[#b8860b]">
+                    <label class="text-[10px] uppercase font-black text-[#b8860b] mb-2 block">Division Title</label>
+                    <input type="text" id="edit-title" class="w-full bg-black border border-zinc-800 p-4 text-white outline-none focus:border-[#b8860b] transition-colors">
                 </div>
                 <div>
-                    <label class="text-[10px] uppercase font-black text-zinc-500 mb-2 block">Description</label>
-                    <textarea id="edit-desc" class="w-full bg-black border border-zinc-800 p-3 text-white outline-none h-24 focus:border-[#b8860b]"></textarea>
+                    <label class="text-[10px] uppercase font-black text-[#b8860b] mb-2 block">Directives / Description</label>
+                    <textarea id="edit-desc" class="w-full bg-black border border-zinc-800 p-4 text-white outline-none h-32 focus:border-[#b8860b] transition-colors"></textarea>
                 </div>
-                <div class="flex items-center justify-between bg-black p-4 border border-zinc-800">
-                    <span class="text-xs uppercase font-black text-zinc-400">Lock Application (Closed)</span>
-                    <input type="checkbox" id="edit-locked" class="w-5 h-5 accent-[#b8860b]">
+                <div class="flex items-center justify-between bg-black/50 p-5 border border-zinc-800">
+                    <span class="text-xs uppercase font-black text-zinc-400 tracking-widest">Restrict Recruitment (Locked)</span>
+                    <input type="checkbox" id="edit-locked" class="w-6 h-6 accent-[#b8860b]">
                 </div>
-                <div class="flex space-x-3 pt-4">
-                    <button onclick="saveApp()" class="flex-1 bg-[#b8860b] text-black font-black py-4 uppercase text-xs tracking-widest hover:brightness-110">Publish</button>
-                    <button onclick="closeEditor()" class="flex-1 bg-zinc-900 text-white font-black py-4 uppercase text-xs tracking-widest">Discard</button>
+                <div class="flex space-x-4 pt-4">
+                    <button onclick="saveApp()" class="flex-1 bg-[#b8860b] text-black font-black py-4 uppercase text-[11px] tracking-widest hover:shadow-[0_0_20px_rgba(184,134,11,0.4)] transition-all">Update Database</button>
+                    <button onclick="closeEditor()" class="flex-1 bg-zinc-900 text-white font-black py-4 uppercase text-[11px] tracking-widest">Abort</button>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
+        const CLIENT_ID = '1323365609777528962';
+        const GUILD_ID = '1255926408312655963'; 
+        const REDIRECT_URI = window.location.origin + window.location.pathname;
+
         const ROLE_IDS = {
             'OWNER': '1255927538367332423',
             'COUNCIL': '1256196665199558726',
-            'ADMIN': '1255950197746438357' // Example Admin ID
+            'ADMIN_RANK': '1255950197746438357'
         };
 
         let currentEditingIndex = null;
         let apps = JSON.parse(localStorage.getItem('dprt_apps')) || [
-            { title: "Kettlenauts", desc: "Heavy siege infantry. Forged in the field.", locked: false },
-            { title: "Teaian Recons", desc: "Long-range precision and intelligence gathering.", locked: true }
+            { title: "Kettlenauts", desc: "Front-line heavy siege infantry. Only the most resilient citizens are selected for the cauldron of war.", locked: false },
+            { title: "Teaian Recons", desc: "The eyes of the Republic. Specialists in deep-cover intelligence and long-range elimination.", locked: true }
         ];
 
-        function initSync() {
-            const userData = JSON.parse(localStorage.getItem('dprt_user'));
-            if (!userData) return;
+        // 1. LOAD GLOBAL HEADER
+        async function loadGlobalHeader() {
+            const resp = await fetch('header.html');
+            const html = await resp.text();
+            document.getElementById('header-placeholder').innerHTML = html;
+            
+            // Highlight current page
+            const path = window.location.pathname.split("/").pop() || 'index.html';
+            const links = {'index.html': 'nav-home', 'info.html': 'nav-info', 'jobs.html': 'nav-jobs'};
+            if(links[path]) document.getElementById(links[path])?.classList.add('text-[#b8860b]');
+            
+            initAuth();
+        }
 
-            // Update Header
-            document.getElementById('nav-username').innerText = userData.username;
-            const pfp = document.getElementById('nav-pfp');
-            pfp.src = `https://cdn.discordapp.com/avatars/${userData.id}/${userData.avatar}.png`;
-            pfp.classList.remove('hidden');
+        // 2. AUTH & RENDER
+        async function initAuth() {
+            // Check for Discord Token in URL
+            const fragment = new URLSearchParams(window.location.hash.slice(1));
+            const accessToken = fragment.get('access_token');
 
-            // Rank Logic - FIXING OWNER HIERARCHY
-            let rank = "Citizen";
+            if (accessToken) {
+                try {
+                    const userRes = await fetch('https://discord.com/api/users/@me', {
+                        headers: { Authorization: `Bearer ${accessToken}` }
+                    });
+                    const user = await userRes.json();
+                    const memberRes = await fetch(`https://discord.com/api/users/@me/guilds/${GUILD_ID}/member`, {
+                        headers: { Authorization: `Bearer ${accessToken}` }
+                    });
+                    const memberData = await memberRes.json();
+
+                    if (user.id) {
+                        const userData = { ...user, roles: memberData.roles || [] };
+                        localStorage.setItem('dprt_user', JSON.stringify(userData));
+                        window.history.replaceState({}, document.title, window.location.pathname);
+                    }
+                } catch (e) { console.error("Identity verify failed:", e); }
+            }
+            renderEverything();
+        }
+
+        function renderEverything() {
+            const user = JSON.parse(localStorage.getItem('dprt_user'));
             let isAdmin = false;
 
-            if (userData.roles.includes(ROLE_IDS.OWNER)) {
-                rank = "State Owner";
-                isAdmin = true;
-            } else if (userData.roles.includes(ROLE_IDS.COUNCIL)) {
-                rank = "High Council";
-                isAdmin = true;
+            if (user) {
+                document.getElementById('login-btn').style.display = 'none';
+                document.getElementById('user-display').classList.remove('hidden');
+                
+                document.getElementById('nav-username').innerText = user.username;
+                document.getElementById('menu-user-name').innerText = user.username;
+                document.getElementById('nav-pfp').src = `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png`;
+
+                let rank = "Citizen";
+                if (user.roles.includes(ROLE_IDS.OWNER)) { rank = "State Owner"; isAdmin = true; }
+                else if (user.roles.includes(ROLE_IDS.COUNCIL)) { rank = "High Council"; isAdmin = true; }
+                else if (user.roles.includes(ROLE_IDS.ADMIN_RANK)) { rank = "Imperial Officer"; }
+                
+                document.getElementById('nav-rank').innerText = rank;
+                document.getElementById('menu-user-rank').innerText = rank;
+                document.getElementById('notif-count').innerText = "2";
+
+                if (isAdmin) document.getElementById('admin-add-trigger').classList.remove('hidden');
             }
 
-            document.getElementById('nav-rank').innerText = rank;
-
-            // Show Admin Controls
-            if (isAdmin) {
-                document.getElementById('admin-add-trigger').classList.remove('hidden');
-            }
-            
             renderApps(isAdmin);
         }
 
@@ -172,26 +215,36 @@
             apps.forEach((app, index) => {
                 const card = document.createElement('div');
                 card.className = `job-card ${app.locked ? 'locked' : ''}`;
-                
                 card.innerHTML = `
                     <div class="flex-1 pr-10">
-                        <div class="flex items-center space-x-4 mb-2">
-                             <div class="w-8 h-8 border border-[#b8860b]/30 flex items-center justify-center">
-                                <span class="text-[#b8860b] text-[10px]">★</span>
+                        <div class="flex items-center space-x-6 mb-3">
+                             <div class="w-10 h-10 border border-[#b8860b]/40 flex items-center justify-center bg-[#b8860b]/5 shadow-[0_0_10px_rgba(184,134,11,0.1)]">
+                                <span class="text-[#b8860b] text-[12px] font-black">${index + 1}</span>
                              </div>
-                             <h3 class="text-2xl font-black uppercase italic text-white">${app.title}</h3>
+                             <h3 class="text-3xl font-black uppercase italic text-white tracking-tighter">${app.title}</h3>
                         </div>
-                        <p class="text-zinc-500 text-sm max-w-2xl">${app.desc}</p>
+                        <p class="text-zinc-500 text-sm max-w-2xl leading-relaxed">${app.desc}</p>
                     </div>
-                    <div class="flex items-center space-x-3">
-                        ${isAdmin ? `<button onclick="openEditor(${index})" class="border border-zinc-700 text-zinc-500 btn-action hover:border-white hover:text-white">Edit</button>` : ''}
-                        <button ${app.locked ? 'disabled' : ''} class="btn-action ${app.locked ? 'btn-locked bg-zinc-800 text-zinc-600' : 'bg-[#b8860b] text-black hover:scale-105'}">
-                            ${app.locked ? 'Closed' : 'Open'}
+                    <div class="flex items-center space-x-4">
+                        ${isAdmin ? `<button onclick="openEditor(${index})" class="border border-zinc-700 text-zinc-500 btn-action hover:border-white hover:text-white">Adjust</button>` : ''}
+                        <button ${app.locked ? 'disabled' : ''} class="btn-action ${app.locked ? 'bg-zinc-800 text-zinc-600' : 'bg-[#b8860b] text-black hover:shadow-[0_0_15px_#b8860b]'}" onclick="window.location.href='apply.html?job=${index}'">
+                            ${app.locked ? 'Locked' : 'Enlist Now'}
                         </button>
                     </div>
                 `;
                 list.appendChild(card);
             });
+        }
+
+        // 3. LOGIC & OVERLAYS
+        function login() {
+            const scopes = encodeURIComponent('identify guilds.members.read');
+            window.location.href = `https://discord.com/api/oauth2/authorize?client_id=${CLIENT_ID}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&response_type=token&scope=${scopes}`;
+        }
+
+        function logout() {
+            localStorage.removeItem('dprt_user');
+            window.location.reload();
         }
 
         function openEditor(index = null) {
@@ -208,9 +261,7 @@
             document.getElementById('admin-editor').style.display = 'flex';
         }
 
-        function closeEditor() {
-            document.getElementById('admin-editor').style.display = 'none';
-        }
+        function closeEditor() { document.getElementById('admin-editor').style.display = 'none'; }
 
         function saveApp() {
             const newData = {
@@ -218,18 +269,39 @@
                 desc: document.getElementById('edit-desc').value,
                 locked: document.getElementById('edit-locked').checked
             };
-
-            if (currentEditingIndex !== null) {
-                apps[currentEditingIndex] = newData;
-            } else {
-                apps.push(newData);
-            }
-
+            if (currentEditingIndex !== null) apps[currentEditingIndex] = newData;
+            else apps.push(newData);
             localStorage.setItem('dprt_apps', JSON.stringify(apps));
-            location.reload(); // Hard refresh to sync "Global" state
+            location.reload();
         }
 
-        window.onload = initSync;
+        function toggleMenu(show) {
+            const menu = document.getElementById('profile-menu');
+            const overlay = document.getElementById('global-overlay');
+            const blur = document.getElementById('blur-container');
+            if (show) {
+                menu.classList.remove('opacity-0', 'pointer-events-none', '-translate-y-4');
+                overlay.classList.remove('opacity-0', 'pointer-events-none');
+                blur.style.filter = "blur(10px) brightness(0.4)";
+            } else {
+                menu.classList.add('opacity-0', 'pointer-events-none', '-translate-y-4');
+                overlay.classList.add('opacity-0', 'pointer-events-none');
+                blur.style.filter = "none";
+            }
+        }
+
+        // AMBIANCE
+        const embers = document.getElementById('embers-container');
+        for (let i = 0; i < 25; i++) {
+            const e = document.createElement('div');
+            e.className = 'ember';
+            e.style.left = Math.random() * 100 + '%';
+            e.style.width = e.style.height = (Math.random() * 4 + 1) + 'px';
+            e.style.animationDelay = Math.random() * 12 + 's';
+            embers.appendChild(e);
+        }
+
+        window.onload = loadGlobalHeader;
     </script>
 </body>
 </html>
