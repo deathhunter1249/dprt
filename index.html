@@ -18,27 +18,19 @@
         }
         .chinese-font { font-family: 'Noto Serif SC', serif; }
 
+        /* STATIONARY DRAGON DESIGNS */
+        .dragon-frame {
+            position: absolute; inset: 0; z-index: 0; pointer-events: none;
+            display: flex; flex-direction: column; justify-content: space-between;
+            padding: 2vh 0; opacity: 0.15;
+        }
+        .dragon-svg { width: 100%; height: 35vh; stroke: var(--dprt-gold); stroke-width: 2; fill: none; }
+
         /* LOGO BOX UPGRADE */
         .logo-box {
             background: linear-gradient(145deg, #d4af37, #b8860b);
             box-shadow: inset 2px 2px 5px rgba(255,255,255,0.3), 0 5px 15px rgba(0,0,0,0.5);
             border: 1px solid rgba(255,215,0,0.4);
-        }
-
-        /* STATIONARY BREATHING LINES (No Lag) */
-        .line-container { position: absolute; inset: 0; z-index: 0; pointer-events: none; opacity: 0.3; }
-        .flowing-line {
-            position: absolute; width: 100%; height: 2px;
-            background: linear-gradient(90deg, transparent, var(--dprt-gold), transparent);
-            box-shadow: 0 0 20px var(--dprt-gold);
-            will-change: transform, opacity;
-        }
-        .line-top { top: 30%; animation: breathe 4s ease-in-out infinite; }
-        .line-bottom { bottom: 30%; animation: breathe 4s ease-in-out infinite reverse; }
-        
-        @keyframes breathe {
-            0%, 100% { transform: translateY(0); opacity: 0.2; }
-            50% { transform: translateY(-20px); opacity: 0.5; }
         }
 
         /* STARFIELD */
@@ -53,7 +45,6 @@
             border-bottom: 1px solid rgba(212, 175, 55, 0.2); z-index: 50;
         }
 
-        /* BUTTON STYLES */
         .nav-btn {
             font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.2em;
             color: #777; transition: all 0.3s ease;
@@ -84,9 +75,27 @@
 </head>
 <body>
 
-    <div class="line-container">
-        <div class="flowing-line line-top"></div>
-        <div class="flowing-line line-bottom"></div>
+    <div class="dragon-frame">
+        <svg class="dragon-svg" viewBox="0 0 1000 100" preserveAspectRatio="none">
+            <path d="M0,50 C150,0 350,100 500,50 S850,0 1000,50 L1000,0 L0,0 Z" fill="url(#grad1)" stroke="none" opacity="0.5"/>
+            <path d="M0,50 C150,0 350,100 500,50 S850,0 1000,50" />
+            <defs>
+                <linearGradient id="grad1" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:var(--dprt-gold);stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:var(--dprt-gold);stop-opacity:0" />
+                </linearGradient>
+            </defs>
+        </svg>
+        <svg class="dragon-svg" viewBox="0 0 1000 100" preserveAspectRatio="none" style="transform: scaleY(-1);">
+            <path d="M0,50 C150,0 350,100 500,50 S850,0 1000,50 L1000,0 L0,0 Z" fill="url(#grad2)" stroke="none" opacity="0.5"/>
+            <path d="M0,50 C150,0 350,100 500,50 S850,0 1000,50" />
+            <defs>
+                <linearGradient id="grad2" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:var(--dprt-gold);stop-opacity:1" />
+                    <stop offset="100%" style="stop-color:var(--dprt-gold);stop-opacity:0" />
+                </linearGradient>
+            </defs>
+        </svg>
     </div>
 
     <div id="stars"></div>
@@ -141,7 +150,6 @@
     </footer>
 
     <script>
-        // Efficient Star Generator
         const starContainer = document.getElementById('stars');
         for (let i = 0; i < 50; i++) {
             const star = document.createElement('div');
@@ -155,6 +163,9 @@
 
         const CLIENT_ID = '1323365609777528962';
         const REDIRECT_URI = window.location.origin + window.location.pathname;
+        
+        // IMPORTANT: Change this to your actual netlify URL once you have it!
+        // Example: https://dprt-site.netlify.app/.netlify/functions/auth
         const FUNCTION_URL = '/.netlify/functions/auth'; 
 
         function login() {
@@ -162,21 +173,20 @@
         }
 
         async function init() {
-            // 1. Check if we just came back from Discord with a code
             const code = new URLSearchParams(window.location.search).get('code');
             if (code) {
                 try {
-                    const res = await fetch(`${FUNCTION_URL}?code=${code}`);
+                    // We use the full URL if we are on GitHub Pages
+                    const target = FUNCTION_URL.startsWith('http') ? FUNCTION_URL : window.location.origin + FUNCTION_URL;
+                    const res = await fetch(`${target}?code=${code}`);
                     const data = await res.json();
                     if (data.user) {
                         localStorage.setItem('dprt_user', JSON.stringify(data.user));
-                        // Clean the URL
                         window.history.replaceState({}, document.title, window.location.pathname);
                     }
-                } catch (e) { console.error("Login failed"); }
+                } catch (e) { console.error("Login failed:", e); }
             }
 
-            // 2. Check if user is already in LocalStorage
             const user = JSON.parse(localStorage.getItem('dprt_user'));
             if (user) {
                 document.getElementById('login-btn').style.display = 'none';
@@ -192,7 +202,6 @@
                 window.location.reload();
             }
         }
-
         window.onload = init;
     </script>
 </body>
