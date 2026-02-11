@@ -15,127 +15,129 @@
             font-family: 'Inter', sans-serif;
             margin: 0;
             min-height: 100vh;
-            overflow-x: hidden;
-            /* Scanline Effect */
             background-image: linear-gradient(rgba(184, 134, 11, 0.02) 50%, transparent 50%);
             background-size: 100% 4px;
         }
 
-        /* Dossier Row Styling */
-        .job-row {
-            display: grid;
-            grid-template-columns: 4px 1fr 2fr 180px;
-            align-items: center;
-            gap: 2rem;
-            padding: 2rem 1.5rem;
-            border-bottom: 1px solid rgba(184, 134, 11, 0.1);
-            transition: all 0.3s ease;
+        /* Card Styling */
+        .job-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(184, 134, 11, 0.1);
+            padding: 2.5rem;
             position: relative;
-            background: rgba(255, 255, 255, 0.01);
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            overflow: hidden;
         }
 
-        .job-row:hover {
-            background: rgba(184, 134, 11, 0.04);
-            padding-left: 2rem;
+        .job-card:hover {
+            background: rgba(184, 134, 11, 0.05);
+            border-color: var(--dprt-bronze);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
 
-        .job-row::before {
-            content: '';
-            height: 60%;
-            width: 4px;
-            background: transparent;
-            transition: 0.3s;
-        }
-
-        .job-row:hover::before {
-            background: var(--dprt-bronze);
-            box-shadow: 0 0 15px var(--dprt-bronze);
-        }
-
-        .status-badge {
+        .job-card::before {
+            content: 'ROLE';
+            position: absolute;
+            top: 10px;
+            right: 10px;
             font-family: 'JetBrains Mono', monospace;
-            font-size: 9px;
-            font-weight: 900;
-            padding: 2px 8px;
-            border: 1px solid;
-            text-transform: uppercase;
-            display: inline-block;
-            margin-bottom: 8px;
+            font-size: 8px;
+            color: rgba(184, 134, 11, 0.3);
+            letter-spacing: 2px;
         }
 
-        .status-open { color: var(--dprt-bronze); border-color: rgba(184, 134, 11, 0.4); }
-        .status-locked { color: #444; border-color: #222; }
+        .status-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 8px;
+            background: var(--dprt-bronze);
+            box-shadow: 0 0 10px var(--dprt-bronze);
+        }
 
-        /* Smooth UI Transitions (No Lag) */
-        #blur-container { transition: opacity 0.5s ease, transform 0.5s ease; }
-        .chinese-font { font-family: 'Noto Serif SC', serif; }
-
-        /* Buttons */
-        .btn-enlist {
-            font-size: 10px;
-            font-weight: 900;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            padding: 12px 24px;
-            transition: 0.3s;
-            text-align: center;
+        .status-locked .status-dot {
+            background: #444;
+            box-shadow: none;
         }
 
         /* Admin UI */
-        .admin-tag {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 10px;
-            color: #ff4444;
-            letter-spacing: 1px;
+        .admin-controls {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            padding: 8px 15px;
+            background: rgba(184, 134, 11, 0.1);
+            display: flex;
+            justify-content: flex-end;
+            gap: 15px;
+            opacity: 0;
+            transition: 0.3s;
         }
+
+        .job-card:hover .admin-controls { opacity: 1; }
+
+        .btn-action {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 9px;
+            font-weight: 900;
+            color: var(--dprt-bronze);
+            cursor: pointer;
+        }
+
+        .btn-action:hover { color: white; }
+
+        .chinese-font { font-family: 'Noto Serif SC', serif; }
+        
+        #blur-container { transition: all 0.5s ease; }
     </style>
 </head>
 <body>
     <div id="header-placeholder"></div>
 
     <div id="blur-container">
-        <main class="max-w-7xl mx-auto px-10 py-32">
-            <div class="flex justify-between items-end border-b border-zinc-800 pb-10 mb-10">
-                <div>
-                    <div class="flex items-center space-x-3 mb-4">
-                        <div class="h-[1px] w-12 bg-[#b8860b]"></div>
-                        <span class="text-[#b8860b] font-mono text-[10px] tracking-[0.5em] uppercase">Directorate of Personnel</span>
-                    </div>
-                    <h1 class="text-6xl font-black uppercase italic tracking-tighter text-white">State Roles</h1>
+        <main class="max-w-7xl mx-auto px-10 py-24">
+            <div class="mb-16">
+                <div class="flex items-center space-x-3 mb-4">
+                    <div class="h-[1px] w-12 bg-[#b8860b]"></div>
+                    <span class="text-[#b8860b] font-mono text-[10px] tracking-[0.5em] uppercase">Directorate of Personnel</span>
                 </div>
-                <div class="text-right font-mono text-[10px] text-zinc-600 uppercase leading-loose">
-                    Security: Tier-1 Clear<br>
-                    Last Sync: <span id="sync-time">Just Now</span>
-                </div>
+                <h1 class="text-6xl font-black uppercase italic tracking-tighter text-white">Apply Now<span class="text-[#b8860b]">!</span></h1>
+                <p class="text-zinc-500 mt-4 max-w-lg text-sm leading-relaxed font-medium">Select a department to begin your enlistment process. Restricted roles require Tier-2 verification or direct Overseer appointment.</p>
             </div>
 
-            <div id="job-list" class="flex flex-col">
+            <div id="job-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 </div>
 
-            <button id="admin-add-trigger" onclick="openEditor()" class="hidden w-full mt-12 border border-dashed border-zinc-800 py-8 text-zinc-600 hover:border-[#b8860b] hover:text-[#b8860b] transition-all font-black uppercase text-[10px] tracking-[0.4em]">
-                + Initialize New Directive
+            <button id="admin-add-trigger" onclick="openEditor()" class="hidden w-full mt-12 border border-dashed border-zinc-800 py-12 text-zinc-600 hover:border-[#b8860b] hover:text-[#b8860b] transition-all font-black uppercase text-[10px] tracking-[0.4em]">
+                + Initialize New Personnel Directive
             </button>
         </main>
     </div>
 
-    <div id="admin-editor" class="fixed inset-0 bg-black/95 z-[2000] hidden items-center justify-center backdrop-blur-sm" onclick="if(event.target == this) closeEditor()">
-        <div class="bg-[#0e0e10] border border-[#b8860b]/30 p-10 w-full max-w-lg">
+    <div id="admin-editor" class="fixed inset-0 bg-black/95 z-[2000] hidden items-center justify-center backdrop-blur-md">
+        <div class="bg-[#0e0e10] border border-[#b8860b]/30 p-10 w-full max-w-lg shadow-[0_0_50px_rgba(0,0,0,0.9)]">
             <h2 class="text-white font-black uppercase mb-8 italic text-xl border-b border-zinc-800 pb-4">Modify Entry</h2>
             <div class="space-y-6">
                 <div>
                     <label class="text-[9px] uppercase font-bold text-zinc-500 block mb-2">Role Title</label>
-                    <input type="text" id="edit-title" class="w-full bg-black border border-zinc-800 p-4 text-white focus:border-[#b8860b] outline-none transition-all">
+                    <input type="text" id="edit-title" placeholder="e.g. SCAM INVESTIGATOR" class="w-full bg-black border border-zinc-800 p-4 text-white focus:border-[#b8860b] outline-none transition-all font-bold">
                 </div>
                 <div>
                     <label class="text-[9px] uppercase font-bold text-zinc-500 block mb-2">Directives</label>
-                    <textarea id="edit-desc" class="w-full bg-black border border-zinc-800 p-4 text-white h-32 focus:border-[#b8860b] outline-none transition-all"></textarea>
+                    <textarea id="edit-desc" placeholder="Brief description of duties..." class="w-full bg-black border border-zinc-800 p-4 text-white h-32 focus:border-[#b8860b] outline-none transition-all text-sm"></textarea>
                 </div>
-                <div class="flex items-center space-x-3">
+                <div class="flex items-center space-x-3 bg-black/50 p-4 border border-zinc-800">
                     <input type="checkbox" id="edit-locked" class="w-4 h-4 accent-[#b8860b]">
-                    <label class="text-[10px] uppercase font-black text-zinc-400">Classify as Restricted</label>
+                    <label class="text-[10px] uppercase font-black text-zinc-400">Classify as Restricted / Locked</label>
                 </div>
                 <div class="flex space-x-4 pt-4">
-                    <button onclick="saveApp()" class="flex-1 bg-[#b8860b] text-black font-black py-4 uppercase text-[10px] tracking-widest">Update Database</button>
+                    <button onclick="saveApp()" class="flex-1 bg-[#b8860b] text-black font-black py-4 uppercase text-[10px] tracking-widest hover:bg-white transition-all">Update Database</button>
                     <button onclick="closeEditor()" class="flex-1 bg-zinc-900 text-white font-black py-4 uppercase text-[10px] tracking-widest">Cancel</button>
                 </div>
             </div>
@@ -143,32 +145,28 @@
     </div>
 
     <script>
-        const CLIENT_ID = '1323365609777528962';
         let currentEditingIndex = null;
-
         let apps = JSON.parse(localStorage.getItem('dprt_apps')) || [
-            { title: "Kettlenauts", desc: "Heavy siege infantry tasked with frontline tea-field defense.", locked: false },
-            { title: "Teaian Recons", desc: "Intelligence gathering and high-value target elimination.", locked: true }
+            { title: "Moderator", desc: "Help moderate the discord server with a great team!", locked: false },
+            { title: "Application", desc: "Read inbound applications from developers!", locked: false },
+            { title: "Marketplace", desc: "Keep the marketplace flowing with new posts!", locked: false },
+            { title: "Representative", desc: "Keep the community active with events, giveaways and more!", locked: false },
+            { title: "Scam Investigator", desc: "With an active marketplace it's our job to make sure everyone is safe.", locked: true },
+            { title: "Social Media", desc: "Grow our community by outreaching to other platforms!", locked: false }
         ];
 
         async function loadHeader() {
             try {
                 const resp = await fetch('/dprt/header.html');
-                if (!resp.ok) throw new Error();
-                document.getElementById('header-placeholder').innerHTML = await resp.text();
-                initAuth();
+                if (resp.ok) {
+                    document.getElementById('header-placeholder').innerHTML = await resp.text();
+                    initAuth();
+                }
             } catch (e) { console.error("Header Error", e); }
         }
 
         async function initAuth() {
-            const fragment = new URLSearchParams(window.location.hash.slice(1));
-            let token = fragment.get('access_token') || localStorage.getItem('discord_access_token');
-            
-            if (fragment.get('access_token')) {
-                localStorage.setItem('discord_access_token', token);
-                window.history.replaceState({}, document.title, window.location.pathname);
-            }
-
+            const token = localStorage.getItem('discord_access_token');
             let isAdmin = false;
 
             if (token) {
@@ -176,69 +174,54 @@
                     const response = await fetch('https://discord.com/api/users/@me', {
                         headers: { 'Authorization': `Bearer ${token}` }
                     });
-                    if (!response.ok) throw new Error();
                     const user = await response.json();
 
-                    // Sync UI with header IDs
-                    document.getElementById('nav-username').innerText = user.username;
-                    document.getElementById('menu-user-name').innerText = user.username;
-                    document.getElementById('nav-pfp').src = `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png`;
-                    document.getElementById('nav-rank').innerText = "Teapotian Citizen";
-                    
-                    document.getElementById('login-btn').classList.add('hidden');
-                    document.getElementById('user-display').classList.remove('hidden');
-
-                    // Admin Check (Add your Discord ID here)
+                    // Admin Check
                     if (user.username === 'deathhunter1249' || user.id === '1255927538367332423') {
                         isAdmin = true;
                         document.getElementById('admin-add-trigger').classList.remove('hidden');
                     }
-                } catch (err) {
-                    localStorage.removeItem('discord_access_token');
-                }
+                } catch (err) { console.error("Auth error", err); }
             }
             renderApps(isAdmin);
         }
 
         function renderApps(isAdmin) {
-            const list = document.getElementById('job-list');
-            list.innerHTML = '';
+            const grid = document.getElementById('job-grid');
+            grid.innerHTML = '';
 
             apps.forEach((app, index) => {
-                const row = document.createElement('div');
-                row.className = `job-row ${app.locked ? 'opacity-40' : ''}`;
+                const card = document.createElement('div');
+                card.className = `job-card ${app.locked ? 'status-locked opacity-60' : ''}`;
                 
-                row.innerHTML = `
-                    <div></div>
+                card.innerHTML = `
+                    ${isAdmin ? `
+                    <div class="admin-controls">
+                        <span onclick="openEditor(${index})" class="btn-action">EDIT</span>
+                        <span onclick="deleteApp(${index})" class="btn-action" style="color:#ff4444">ARCHIVE</span>
+                    </div>
+                    ` : ''}
                     <div>
-                        <span class="status-badge ${app.locked ? 'status-locked' : 'status-open'}">
-                            ${app.locked ? 'Classified' : 'Active'}
-                        </span>
-                        <h3 class="text-2xl font-black uppercase italic text-white tracking-tighter">${app.title}</h3>
+                        <div class="mb-4">
+                            <span class="status-dot"></span>
+                            <span class="font-mono text-[9px] uppercase tracking-widest text-zinc-500">
+                                ${app.locked ? 'Classified' : 'Available'}
+                            </span>
+                        </div>
+                        <h3 class="text-xl font-black uppercase text-white mb-3 italic tracking-tight">${app.title}</h3>
+                        <p class="text-zinc-500 text-xs leading-relaxed font-medium mb-8">${app.desc}</p>
                     </div>
-                    <div class="text-zinc-500 text-sm leading-relaxed max-w-xl">
-                        ${app.desc}
-                    </div>
-                    <div class="flex flex-col items-end">
-                        ${isAdmin ? `
-                            <div class="flex space-x-4 mb-4 admin-tag">
-                                <button onclick="openEditor(${index})" class="hover:text-white transition-colors">EDIT</button>
-                                <button onclick="deleteApp(${index})" class="hover:text-white transition-colors">ARCHIVE</button>
-                            </div>
-                        ` : ''}
-                        <button class="btn-enlist w-full ${app.locked ? 'bg-zinc-900 text-zinc-700 cursor-not-allowed' : 'bg-[#b8860b] text-black hover:bg-white transition-all'}">
-                            ${app.locked ? 'Restricted' : 'Enlist'}
-                        </button>
-                    </div>
+                    <button class="w-full py-3 border border-[#b8860b]/30 text-[#b8860b] text-[10px] font-black uppercase tracking-[0.2em] hover:bg-[#b8860b] hover:text-black transition-all">
+                        ${app.locked ? 'Access Denied' : 'Apply Now'}
+                    </button>
                 `;
-                list.appendChild(row);
+                grid.appendChild(card);
             });
         }
 
-        // Editor Functions
         function openEditor(index = null) {
             currentEditingIndex = index;
-            const modal = document.getElementById('admin-editor');
+            document.getElementById('admin-editor').style.display = 'flex';
             if (index !== null) {
                 document.getElementById('edit-title').value = apps[index].title;
                 document.getElementById('edit-desc').value = apps[index].desc;
@@ -248,7 +231,6 @@
                 document.getElementById('edit-desc').value = '';
                 document.getElementById('edit-locked').checked = false;
             }
-            modal.style.display = 'flex';
         }
 
         function closeEditor() { document.getElementById('admin-editor').style.display = 'none'; }
@@ -259,9 +241,8 @@
             const locked = document.getElementById('edit-locked').checked;
             if(!title) return;
 
-            const newData = { title, desc, locked };
-            if (currentEditingIndex !== null) apps[currentEditingIndex] = newData;
-            else apps.push(newData);
+            if (currentEditingIndex !== null) apps[currentEditingIndex] = { title, desc, locked };
+            else apps.push({ title, desc, locked });
 
             localStorage.setItem('dprt_apps', JSON.stringify(apps));
             closeEditor();
@@ -269,30 +250,10 @@
         }
 
         function deleteApp(index) {
-            if(confirm("Archive this directive?")) {
+            if(confirm("Permanently archive this role?")) {
                 apps.splice(index, 1);
                 localStorage.setItem('dprt_apps', JSON.stringify(apps));
                 initAuth();
-            }
-        }
-
-        // Logic for the profile menu to avoid lag
-        function toggleMenu(show) {
-            const menu = document.getElementById('profile-menu');
-            const overlay = document.getElementById('global-overlay');
-            const blur = document.getElementById('blur-container');
-            if (!menu) return;
-
-            if (show) {
-                menu.classList.remove('opacity-0', 'pointer-events-none', '-translate-y-4');
-                overlay.classList.remove('opacity-0', 'pointer-events-none');
-                blur.style.opacity = "0.3";
-                blur.style.transform = "translateX(-10px)";
-            } else {
-                menu.classList.add('opacity-0', 'pointer-events-none', '-translate-y-4');
-                overlay.classList.add('opacity-0', 'pointer-events-none');
-                blur.style.opacity = "1";
-                blur.style.transform = "translateX(0)";
             }
         }
 
