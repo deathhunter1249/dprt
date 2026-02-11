@@ -196,43 +196,61 @@
         window.location.reload();
     }
 
-    async function initAuth() {
-        const fragment = new URLSearchParams(window.location.hash.slice(1));
-        let token = fragment.get('access_token');
-        
-        if (token) {
-            localStorage.setItem('discord_access_token', token);
-            window.history.replaceState({}, document.title, window.location.pathname);
-        } else {
-            token = localStorage.getItem('discord_access_token');
-        }
-
-        if (token) {
-            try {
-                const response = await fetch('https://discord.com/api/users/@me', {
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
-                if (!response.ok) throw new Error();
-                const user = await response.json();
-
-                document.getElementById('nav-username').innerText = user.username;
-                document.getElementById('menu-user-name').innerText = user.username;
-                document.getElementById('nav-pfp').src = `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png`;
-                document.getElementById('nav-rank').innerText = "Teapotian Citizen";
-                
-                document.getElementById('login-btn').classList.add('hidden');
-                document.getElementById('user-display').classList.remove('hidden');
-
-                // Admin Logic
-                if (user.username === 'deathhunter1249' || user.id === '1255927538367332423') {
-                    document.getElementById('nav-rank').innerText = "Supreme Brewer";
-                    document.getElementById('menu-user-rank').innerText = "Administrator";
-                }
-            } catch (err) {
-                localStorage.removeItem('discord_access_token');
-            }
-        }
+async function initAuth() {
+    const fragment = new URLSearchParams(window.location.hash.slice(1));
+    let token = fragment.get('access_token') || localStorage.getItem('discord_access_token');
+    
+    // 1. Handle Token Storage
+    if (fragment.get('access_token')) {
+        localStorage.setItem('discord_access_token', token);
+        window.history.replaceState({}, document.title, window.location.pathname);
     }
+
+    if (!token) return;
+
+    try {
+        const response = await fetch('https://discord.com/api/users/@me', {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        
+        if (!response.ok) throw new Error();
+        const user = await response.json();
+
+        // 2. Update Basic Info
+        document.getElementById('nav-username').innerText = user.username;
+        document.getElementById('menu-user-name').innerText = user.username;
+        document.getElementById('nav-pfp').src = `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png`;
+        
+        // 3. Set Default Rank
+        document.getElementById('nav-rank').innerText = "Teapotian Citizen";
+        document.getElementById('menu-user-rank').innerText = "Verified Citizen";
+        
+        // 4. Show User Display
+        document.getElementById('login-btn').classList.add('hidden');
+        document.getElementById('user-display').classList.remove('hidden');
+
+        // 5. Admin Overwrite (CRITICAL FIX)
+        // Check both ID and Username for redundancy
+        if (user.id === '1255927538367332423' || user.username === 'deathhunter1249') {
+            document.getElementById('nav-rank').innerText = "Supreme Brewer";
+            document.getElementById('menu-user-rank').innerText = "Overseer / Admin";
+            
+            // Show the admin button if it exists on the page
+            const adminBtn = document.getElementById('admin-add-trigger');
+            if (adminBtn) adminBtn.classList.remove('hidden');
+        }
+
+        // Run app rendering if on the Jobs page
+        if (typeof renderApps === "function") {
+            const isAdmin = (user.id === '1255927538367332423' || user.username === 'deathhunter1249');
+            renderApps(isAdmin);
+        }
+
+    } catch (err) {
+        console.error("Auth failed:", err);
+        localStorage.removeItem('discord_access_token');
+    }
+}
 
     // Run auth on load
     window.addEventListener('DOMContentLoaded', initAuth);
