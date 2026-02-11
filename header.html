@@ -1,7 +1,72 @@
-<div id="global-overlay" class="fixed inset-0 bg-black/40 z-[80] opacity-0 pointer-events-none transition-opacity duration-500" onclick="toggleMenu(false)"></div>
+<style>
+    .nav-btn { 
+        font-size: 11px; 
+        font-weight: 700; 
+        text-transform: uppercase; 
+        letter-spacing: 0.2em; 
+        color: #a0a0a0; 
+        transition: all 0.3s ease; 
+        cursor: pointer; 
+    }
+    .nav-btn:hover { 
+        color: #b8860b; 
+        text-shadow: 0 0 10px rgba(184, 134, 11, 0.4); 
+    }
+    
+    .btn-verify { 
+        border: 1px solid #b8860b; 
+        color: #b8860b; 
+        padding: 10px 24px; 
+        font-size: 10px; 
+        font-weight: 900; 
+        text-transform: uppercase; 
+        letter-spacing: 0.3em; 
+        transition: 0.3s; 
+        background: transparent; 
+        cursor: pointer; 
+    }
+    .btn-verify:hover { 
+        background: #b8860b; 
+        color: black; 
+        box-shadow: 0 0 20px rgba(184, 134, 11, 0.4); 
+    }
+
+    .menu-item { 
+        padding: 16px 20px; 
+        border-bottom: 1px solid rgba(184, 134, 11, 0.1); 
+        display: flex; 
+        justify-content: space-between; 
+        align-items: center; 
+        cursor: pointer; 
+        font-size: 11px; 
+        color: #888; 
+        text-transform: uppercase;
+        font-weight: 700;
+        transition: 0.3s; 
+    }
+    .menu-item:hover { 
+        background: rgba(184, 134, 11, 0.05); 
+        color: #fff; 
+    }
+
+    .notif-badge { 
+        background: #b8860b; 
+        color: black; 
+        font-size: 9px; 
+        font-weight: 900; 
+        padding: 2px 6px; 
+        border-radius: 2px; 
+    }
+
+    /* Fix for the Chinese character font */
+    .chinese-font { font-family: 'Noto Serif SC', serif; }
+</style>
+
+<div id="global-overlay" class="fixed inset-0 bg-black/60 z-[80] opacity-0 pointer-events-none transition-opacity duration-500 backdrop-blur-sm" onclick="toggleMenu(false)"></div>
 
 <header class="relative z-[101] border-b border-white/5 bg-black/40 backdrop-blur-md">
     <nav class="flex items-center justify-between px-10 py-5 max-w-7xl mx-auto">
+        
         <div class="flex items-center space-x-5 cursor-pointer group" onclick="window.location.href='index.html'">
             <div class="w-11 h-11 border border-[#b8860b] flex items-center justify-center bg-[#b8860b] group-hover:shadow-[0_0_15px_rgba(184,134,11,0.5)] transition-all">
                 <span class="text-black text-2xl chinese-font font-black">茶</span>
@@ -21,34 +86,38 @@
         </div>
 
         <div class="relative flex items-center justify-end min-w-[150px]">
+            
             <button id="login-btn" onclick="login()" class="btn-verify">Log In</button>
             
             <div id="user-display" class="hidden flex items-center space-x-4">
                 <div class="text-right hidden sm:block">
                     <p id="nav-username" class="text-white text-[11px] font-black uppercase italic tracking-wider">Citizen</p>
-                    <p id="nav-rank" class="text-[#b8860b] text-[9px] font-bold uppercase tracking-[0.2em] opacity-80">Verifying...</p>
+                    <p id="nav-rank" class="text-[#b8860b] text-[9px] font-bold uppercase tracking-[0.2em] opacity-80 italic">Verifying...</p>
                 </div>
                 <div class="relative group">
                     <img id="nav-pfp" class="w-11 h-11 border border-[#b8860b]/50 hover:border-[#b8860b] rounded-sm cursor-pointer transition-all active:scale-95" onclick="toggleMenu(true)">
-                    <div class="absolute -top-1 -right-1 w-3 h-3 bg-[#b8860b] border-2 border-[#0a0a0c] rounded-full animate-pulse"></div>
+                    <div class="absolute -top-1 -right-1 w-3 h-3 bg-[#b8860b] border-2 border-[#0a0a0c] rounded-full animate-pulse shadow-[0_0_8px_#b8860b]"></div>
                 </div>
             </div>
 
-            <div id="profile-menu" class="absolute top-[70px] right-0 w-[280px] bg-[#0c0c0e] border border-[#b8860b]/30 z-[110] transform -translate-y-4 opacity-0 pointer-events-none transition-all duration-300 ease-out shadow-[0_20px_50px_rgba(0,0,0,0.8)]">
+            <div id="profile-menu" class="absolute top-[75px] right-0 w-[280px] bg-[#0c0c0e] border border-[#b8860b]/30 z-[110] transform -translate-y-4 opacity-0 pointer-events-none transition-all duration-300 ease-out shadow-[0_20px_50px_rgba(0,0,0,0.8)]">
                 <div class="p-6 border-b border-[#b8860b]/20 bg-gradient-to-b from-[#b8860b]/10 to-transparent">
-                    <p id="menu-user-name" class="font-black text-white uppercase italic text-lg tracking-tighter">Citizen</p>
-                    <p id="menu-user-rank" class="text-[10px] text-[#b8860b] tracking-[0.3em] font-black uppercase mt-1">Verifying Rank</p>
+                    <p id="menu-user-name" class="font-black text-white uppercase italic text-lg tracking-tighter leading-none">Citizen</p>
+                    <p id="menu-user-rank" class="text-[9px] text-[#b8860b] tracking-[0.3em] font-black uppercase mt-1">Verifying Rank</p>
                 </div>
-                <div class="menu-item group" onclick="alert('System secure. No new threats.')">
+                
+                <div class="menu-item group" onclick="alert('Directive: Maintain the Eternal Brew.')">
                     <span class="group-hover:translate-x-1 transition-transform">Notifications</span>
                     <span id="notif-count" class="notif-badge">0</span>
                 </div>
+                
                 <div class="menu-item group" onclick="window.location.href='settings.html'">
                     <span class="group-hover:translate-x-1 transition-transform">Citizen Settings</span>
                 </div>
-                <div class="p-4">
+                
+                <div class="p-4 bg-black/20">
                     <button onclick="logout()" class="w-full py-3 border border-red-900/30 text-red-500 hover:bg-red-500/10 text-[10px] font-black uppercase tracking-[0.3em] transition-all">
-                        Log out
+                        Log Out
                     </button>
                 </div>
             </div>
