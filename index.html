@@ -15,7 +15,7 @@
             margin: 0; height: 100vh; overflow: hidden; position: relative;
         }
 
-        /* ATMOSPHERIC BACKGROUNDS */
+        /* BACKGROUND EFFECTS */
         .mist {
             position: absolute; inset: 0; background: url('https://www.transparenttextures.com/patterns/natural-paper.png');
             opacity: 0.03; pointer-events: none; z-index: 1; animation: drift 60s linear infinite;
@@ -37,7 +37,7 @@
             100% { transform: translateY(-10vh) scale(1.2); opacity: 0; }
         }
 
-        /* BLUR & OVERLAY */
+        /* BLUR & MENU */
         #blur-container { transition: filter 0.4s ease, opacity 0.4s ease; z-index: 10; position: relative; }
         body.menu-open #blur-container { filter: blur(4px); opacity: 0.5; pointer-events: none; }
 
@@ -47,7 +47,6 @@
         }
         body.menu-open #global-overlay { opacity: 1; pointer-events: auto; }
 
-        /* DROPDOWN MENU */
         #profile-menu {
             position: absolute; top: 85px; right: 40px; width: 280px;
             background: #121214; border: 1px solid var(--dprt-bronze);
@@ -65,7 +64,6 @@
         .menu-item:hover { background: rgba(184, 134, 11, 0.05); color: var(--dprt-bronze); }
         .notif-badge { background: var(--dprt-bronze); color: black; font-size: 10px; font-weight: 900; padding: 1px 6px; border-radius: 2px; }
 
-        /* NAV & TYPOGRAPHY */
         .chinese-font { font-family: 'Noto Serif SC', serif; }
         .nav-btn { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.2em; color: #a0a0a0; transition: 0.4s ease; }
         .nav-btn:hover { color: var(--dprt-bronze); letter-spacing: 0.3em; }
@@ -75,6 +73,25 @@
             width: 44px; height: 44px; border: 1px solid var(--dprt-bronze);
             border-radius: 2px; cursor: pointer; display: none;
             position: relative; z-index: 101; 
+        }
+
+        /* THE "OLD" LOGIN BUTTON STYLE */
+        .btn-verify {
+            border: 1px solid var(--dprt-bronze);
+            color: var(--dprt-bronze);
+            padding: 10px 24px;
+            font-size: 10px;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 0.3em;
+            transition: all 0.3s ease;
+            background: transparent;
+            cursor: pointer;
+        }
+        .btn-verify:hover {
+            background: var(--dprt-bronze);
+            color: black;
+            box-shadow: 0 0 20px rgba(184, 134, 11, 0.4);
         }
     </style>
 </head>
@@ -94,7 +111,7 @@
                     </div>
                     <div class="flex flex-col leading-none">
                         <span class="text-3xl font-black tracking-widest text-white">DPRT</span>
-                        <span class="text-[9px] uppercase tracking-[0.4em] text-zinc-500 font-bold mt-1">Sovereign Estate</span>
+                        <span class="text-[9px] uppercase tracking-[0.4em] text-zinc-500 font-bold mt-1">Teapotian State</span>
                     </div>
                 </div>
 
@@ -106,7 +123,8 @@
                     <a href="https://republicofteapots.miraheze.org/" target="_blank" class="nav-btn">Wiki</a>
                 </div>
 
-                <div style="width: 44px;"></div> </nav>
+                <div style="width: 44px;"></div>
+            </nav>
         </header>
 
         <main class="max-w-7xl mx-auto px-12 h-[calc(100vh-100px)] flex flex-col justify-center">
@@ -121,8 +139,8 @@
         </main>
     </div>
 
-    <div class="fixed top-5 right-10 z-[110] flex flex-col items-end">
-        <button id="login-btn" onclick="login()" class="border border-[#b8860b] text-[#b8860b] px-6 py-2 text-[10px] font-bold tracking-widest hover:bg-[#b8860b] hover:text-black transition duration-300 mt-2">
+    <div class="fixed top-6 right-10 z-[110] flex flex-col items-end">
+        <button id="login-btn" onclick="login()" class="btn-verify">
             Identity Verify
         </button>
         <img id="user-pfp" class="user-pfp" onclick="toggleMenu(true)">
@@ -148,14 +166,14 @@
     <script>
         // --- 1. CONFIGURATION ---
         const CLIENT_ID = '1323365609777528962';
-        const GUILD_ID = '1255926408312655963'; // Replace with your Server ID
+        const GUILD_ID = '1255926408312655963'; 
         const REDIRECT_URI = window.location.origin + window.location.pathname;
 
         const ROLE_IDS = {
             'COUNCIL': '1256196665199558726', 
             'OFFICER': '1255950197746438357',
             'CIVILIAN': '1255941719199977585',
-            'PEASENT': '1389026114554560562'
+            'PEASANT': '1389026114554560562'
         };
 
         // Ember Generation
@@ -200,7 +218,9 @@
                         localStorage.setItem('dprt_user', JSON.stringify(userData));
                         window.history.replaceState({}, document.title, window.location.pathname);
                     }
-                } catch (e) { console.error("Identity verify failed:", e); }
+                } catch (e) { 
+                    console.error("Identity verify failed:", e); 
+                }
             }
             renderUser();
         }
@@ -218,7 +238,8 @@
             let rank = "Civilian";
             if (user.roles.includes(ROLE_IDS.COUNCIL)) rank = "High Council";
             else if (user.roles.includes(ROLE_IDS.OFFICER)) rank = "Imperial Officer";
-            else if (user.roles.includes(ROLE_IDS.CITIZEN)) rank = "Verified Citizen";
+            else if (user.roles.includes(ROLE_IDS.CIVILIAN)) rank = "Verified Citizen";
+            else if (user.roles.includes(ROLE_IDS.PEASANT)) rank = "Peasant";
             
             document.getElementById('user-rank').innerText = rank;
             document.getElementById('notif-count').innerText = "2";
