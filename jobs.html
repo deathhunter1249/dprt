@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DPRT | Imperial Careers</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@500;900&family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root { --dprt-bronze: #b8860b; --dprt-ink: #0a0a0c; }
+        body {
+            background: radial-gradient(circle at 50% 50%, #1a1a1c 0%, var(--dprt-ink) 100%);
+            color: #e0e0e0; font-family: 'Inter', sans-serif; 
+            margin: 0; min-height: 100vh; overflow-x: hidden; position: relative;
+        }
+
+        /* ATMOSPHERIC BACKGROUNDS */
+        .mist { position: absolute; inset: 0; background: url('https://www.transparenttextures.com/patterns/natural-paper.png'); opacity: 0.03; pointer-events: none; z-index: 1; animation: drift 60s linear infinite; }
+        @keyframes drift { from { background-position: 0 0; } to { background-position: 1000px 1000px; } }
+        
+        /* JOB CARD STYLE */
+        .job-card {
+            background: rgba(20, 20, 22, 0.6);
+            border: 1px solid rgba(184, 134, 11, 0.3);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        .job-card:hover { border-color: var(--dprt-bronze); transform: translateY(-2px); box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        
+        /* ADMIN CONTROLS */
+        #admin-panel { display: none; }
+        .admin-only { display: none; }
+        .page-owner .admin-only { display: flex; }
+
+        .chinese-font { font-family: 'Noto Serif SC', serif; }
+        .nav-btn { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.2em; color: #a0a0a0; transition: 0.4s ease; }
+        .nav-btn:hover { color: var(--dprt-bronze); }
+
+        /* MODAL */
+        #job-modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 200; align-items: center; justify-content: center; }
+    </style>
+</head>
+<body id="body">
+
+    <div class="mist"></div>
+
+    <header class="relative z-50 border-b border-white/5 bg-black/20">
+        <nav class="flex items-center justify-between px-10 py-5 max-w-7xl mx-auto">
+            <div class="flex items-center space-x-5">
+                <div class="w-11 h-11 border border-[#b8860b] flex items-center justify-center bg-[#b8860b]">
+                    <span class="text-black text-2xl chinese-font font-black">茶</span>
+                </div>
+                <div class="flex flex-col leading-none">
+                    <span class="text-3xl font-black tracking-widest text-white">DPRT</span>
+                    <span class="text-[9px] uppercase tracking-[0.4em] text-zinc-500 font-bold mt-1">Sovereign Estate</span>
+                </div>
+            </div>
+            <div class="hidden lg:flex items-center space-x-10">
+                <a href="index.html" class="nav-btn">Home</a>
+                <a href="info.html" class="nav-btn">Info</a>
+                <a href="jobs.html" class="nav-btn text-[#b8860b]">Jobs</a>
+                <a href="#" class="nav-btn">Group</a>
+                <a href="#" class="nav-btn">Wiki</a>
+            </div>
+            <div id="auth-section">
+                <button onclick="login()" id="login-btn" class="border border-[#b8860b] text-[#b8860b] px-6 py-2 text-[10px] font-bold tracking-widest hover:bg-[#b8860b] hover:text-black transition">Verify</button>
+            </div>
+        </nav>
+    </header>
+
+    <main class="relative z-10 max-w-7xl mx-auto px-10 py-20">
+        <div class="text-center mb-16">
+            <h3 class="text-[#b8860b] font-bold text-sm mb-4 tracking-[0.6em] uppercase opacity-60 chinese-font">求職 — JOIN THE ORDER</h3>
+            <h1 class="text-5xl md:text-6xl font-black tracking-tighter text-white uppercase italic">Imperial Careers</h1>
+            <p class="text-zinc-500 mt-4 max-w-lg mx-auto">Select a path to serve the Republic. Each role requires absolute dedication to the Eternal Brew.</p>
+        </div>
+
+        <div id="job-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            </div>
+
+        <div class="admin-only justify-center mt-12">
+            <button onclick="openModal()" class="w-16 h-16 border-2 border-dashed border-zinc-700 rounded-xl flex items-center justify-center text-zinc-600 hover:border-[#b8860b] hover:text-[#b8860b] transition-all">
+                <span class="text-3xl">+</span>
+            </button>
+        </div>
+    </main>
+
+    <div id="job-modal">
+        <div class="bg-[#121214] border border-[#b8860b] p-8 w-full max-w-md">
+            <h2 class="text-xl font-bold text-white mb-6 uppercase tracking-widest">Create Job Application</h2>
+            <div class="space-y-4">
+                <input type="text" id="new-job-title" placeholder="Job Title" class="w-full bg-black border border-zinc-800 p-3 text-white outline-none focus:border-[#b8860b]">
+                <textarea id="new-job-desc" placeholder="Description" class="w-full bg-black border border-zinc-800 p-3 text-white outline-none focus:border-[#b8860b] h-32"></textarea>
+                <input type="text" id="new-job-link" placeholder="Application URL (Google Form/Discord)" class="w-full bg-black border border-zinc-800 p-3 text-white outline-none focus:border-[#b8860b]">
+                <div class="flex space-x-2">
+                    <button onclick="saveJob()" class="flex-1 bg-[#b8860b] text-black font-bold py-3 uppercase text-xs tracking-widest">Create</button>
+                    <button onclick="closeModal()" class="flex-1 bg-zinc-900 text-white font-bold py-3 uppercase text-xs tracking-widest">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const GUILD_ID = '1255926408312655963';
+        const OWNER_ID = 'YOUR_DISCORD_ID_HERE'; // <--- PUT YOUR DISCORD ID HERE!
+
+        // Initial Sample Data
+        const defaultJobs = [
+            { title: "Kettlenauts", desc: "Heavy siege infantry. Forged in the heat of the greatest battles.", link: "#" },
+            { title: "Teaian Recons", desc: "Long-range precision and intelligence. We bag threats before they arrive.", link: "#" }
+        ];
+
+        let jobs = JSON.parse(localStorage.getItem('dprt_custom_jobs')) || defaultJobs;
+
+        function renderJobs() {
+            const grid = document.getElementById('job-grid');
+            grid.innerHTML = '';
+            
+            jobs.forEach((job, index) => {
+                grid.innerHTML += `
+                    <div class="job-card p-8 rounded-sm flex flex-col justify-between">
+                        <div>
+                            <div class="w-10 h-10 border border-[#b8860b] flex items-center justify-center mb-6">
+                                <span class="text-[#b8860b] text-xs">★</span>
+                            </div>
+                            <h2 class="text-2xl font-black text-white uppercase italic mb-3">${job.title}</h2>
+                            <p class="text-zinc-500 text-sm leading-relaxed mb-8">${job.desc}</p>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <a href="${job.link}" class="bg-[#b8860b] text-black px-6 py-2 text-[10px] font-black uppercase tracking-widest hover:brightness-110 transition">Open</a>
+                            ${document.body.classList.contains('page-owner') ? `<button onclick="deleteJob(${index})" class="text-red-900 text-[10px] hover:text-red-500 uppercase font-bold">Delete</button>` : ''}
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function checkPermissions() {
+            const user = JSON.parse(localStorage.getItem('dprt_user'));
+            if (user && user.id === OWNER_ID) {
+                document.body.classList.add('page-owner');
+            }
+            renderJobs();
+        }
+
+        // Modal Logic
+        function openModal() { document.getElementById('job-modal').style.display = 'flex'; }
+        function closeModal() { document.getElementById('job-modal').style.display = 'none'; }
+
+        function saveJob() {
+            const title = document.getElementById('new-job-title').value;
+            const desc = document.getElementById('new-job-desc').value;
+            const link = document.getElementById('new-job-link').value;
+
+            if(title && desc) {
+                jobs.push({ title, desc, link });
+                localStorage.setItem('dprt_custom_jobs', JSON.stringify(jobs));
+                renderJobs();
+                closeModal();
+            }
+        }
+
+        function deleteJob(index) {
+            if(confirm("Burn this record?")) {
+                jobs.splice(index, 1);
+                localStorage.setItem('dprt_custom_jobs', JSON.stringify(jobs));
+                renderJobs();
+            }
+        }
+
+        window.onload = checkPermissions;
+    </script>
+</body>
+</html>
