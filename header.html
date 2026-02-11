@@ -1,5 +1,5 @@
 <style>
-    /* The core navigation button animation */
+    /* 1. Base Styles & Animations */
     .nav-btn { 
         position: relative;
         font-size: 11px; 
@@ -12,7 +12,6 @@
         padding: 4px 0;
     }
 
-    /* The "Dark Orange Line" (Underline) */
     .nav-btn::after {
         content: '';
         position: absolute;
@@ -26,18 +25,17 @@
         transform: translateX(-50%);
     }
 
-    /* Hover State: Line grows, text gets bigger/wider */
-    .nav-btn:hover { 
+    /* Active & Hover state */
+    .nav-btn:hover, .nav-btn.active-page { 
         color: #fff; 
-        letter-spacing: 0.3em; /* Makes it "bigger" horizontally */
+        letter-spacing: 0.3em; 
         transform: translateY(-1px);
     }
 
-    .nav-btn:hover::after {
+    .nav-btn:hover::after, .nav-btn.active-page::after {
         width: 100%;
     }
 
-    /* Profile Menu Item Animation */
     .menu-item { 
         position: relative;
         padding: 16px 20px; 
@@ -57,10 +55,9 @@
     .menu-item:hover { 
         background: rgba(184, 134, 11, 0.08); 
         color: #fff; 
-        padding-left: 28px; /* Slight slide effect */
+        padding-left: 28px;
     }
 
-    /* Dark orange accent for menu items */
     .menu-item::before {
         content: '';
         position: absolute;
@@ -72,9 +69,7 @@
         transition: 0.3s ease;
     }
 
-    .menu-item:hover::before {
-        width: 4px;
-    }
+    .menu-item:hover::before { width: 4px; }
 
     .btn-verify { 
         border: 1px solid #b8860b; 
@@ -104,7 +99,7 @@
 <header class="relative z-[101] border-b border-white/5 bg-black/40 backdrop-blur-md">
     <nav class="flex items-center justify-between px-10 py-5 max-w-7xl mx-auto">
         
-        <div class="flex items-center space-x-5 cursor-pointer group" onclick="window.location.href='index.html'">
+        <div class="flex items-center space-x-5 cursor-pointer group" onclick="window.location.href='home'">
             <div class="w-11 h-11 border border-[#b8860b] flex items-center justify-center bg-[#b8860b] group-hover:shadow-[0_0_15px_rgba(184,134,11,0.5)] transition-all">
                 <span class="text-black text-2xl chinese-font font-black">茶</span>
             </div>
@@ -131,7 +126,7 @@
                     <p id="nav-rank" class="text-[#b8860b] text-[9px] font-bold uppercase tracking-[0.2em] opacity-80 italic">Verifying...</p>
                 </div>
                 <div class="relative group">
-                    <img id="nav-pfp" class="w-11 h-11 border border-[#b8860b]/50 hover:border-[#b8860b] rounded-sm cursor-pointer transition-all active:scale-95 shadow-[0_0_10px_rgba(0,0,0,0.5)]" onclick="toggleMenu(true)">
+                    <img id="nav-pfp" src="" class="w-11 h-11 border border-[#b8860b]/50 hover:border-[#b8860b] rounded-sm cursor-pointer transition-all active:scale-95 shadow-[0_0_10px_rgba(0,0,0,0.5)]" onclick="toggleMenu(true)">
                     <div class="absolute -top-1 -right-1 w-3 h-3 bg-[#b8860b] border-2 border-[#0a0a0c] rounded-full animate-pulse"></div>
                 </div>
             </div>
@@ -160,3 +155,68 @@
         </div>
     </nav>
 </header>
+
+<script>
+    // --- Discord OAuth2 Config ---
+    function login() {
+        const clientId = '1323365609777528962';
+        
+        // This ensures it uses the exact URL (e.g., .../home or .../jobs)
+        const currentUrl = window.location.origin + window.location.pathname.replace(/\/$/, "");
+        const redirectUri = encodeURIComponent(currentUrl);
+        
+        const authUrl = `https://discord.com/api/oauth2/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=token&scope=identify%20guilds.members.read`;
+        
+        window.location.href = authUrl;
+    }
+
+    function logout() {
+        localStorage.removeItem('discord_access_token');
+        window.location.reload();
+    }
+
+    // --- UI State Management ---
+    function toggleMenu(show) {
+        const menu = document.getElementById('profile-menu');
+        const overlay = document.getElementById('global-overlay');
+        if (show) {
+            menu.classList.remove('opacity-0', 'pointer-events-none', '-translate-y-4');
+            overlay.classList.remove('opacity-0', 'pointer-events-none');
+        } else {
+            menu.classList.add('opacity-0', 'pointer-events-none', '-translate-y-4');
+            overlay.classList.add('opacity-0', 'pointer-events-none');
+        }
+    }
+
+    // --- Active Page Animation Logic ---
+    function highlightNav() {
+        const path = window.location.pathname;
+        // Remove active class from all first
+        document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active-page'));
+
+        if (path.includes('home')) {
+            document.getElementById('nav-home')?.classList.add('active-page');
+        } else if (path.includes('info')) {
+            document.getElementById('nav-info')?.classList.add('active-page');
+        } else if (path.includes('jobs')) {
+            document.getElementById('nav-jobs')?.classList.add('active-page');
+        }
+    }
+
+    // Initial load
+    window.addEventListener('DOMContentLoaded', () => {
+        highlightNav();
+        
+        // Check for token in URL (returning from login)
+        const fragment = new URLSearchParams(window.location.hash.slice(1));
+        const token = fragment.get('access_token');
+        
+        if (token) {
+            localStorage.setItem('discord_access_token', token);
+            window.location.hash = ""; // Clean URL
+            // Here you would normally fetch user data from Discord API
+            document.getElementById('login-btn').classList.add('hidden');
+            document.getElementById('user-display').classList.remove('hidden');
+        }
+    });
+</script>
