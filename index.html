@@ -8,108 +8,123 @@
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@500;900&family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
         :root { --dprt-bronze: #b8860b; --dprt-ink: #0a0a0c; }
+        
         body {
             background: radial-gradient(circle at 50% 50%, #1a1a1c 0%, var(--dprt-ink) 100%);
             color: #e0e0e0; font-family: 'Inter', sans-serif; 
             margin: 0; height: 100vh; overflow: hidden; position: relative;
         }
-        .chinese-font { font-family: 'Noto Serif SC', serif; }
 
-        /* UI BLUR LAYER */
+        /* THE BLUR LOGIC */
+        /* Everything inside #blur-container will blur when menu is open */
+        #blur-container {
+            transition: filter 0.5s ease, opacity 0.5s ease;
+        }
+        body.menu-open #blur-container {
+            filter: blur(4px); /* Softened from 10px */
+            opacity: 0.6;      /* Subtle darkening */
+            pointer-events: none;
+        }
+
+        /* OVERLAY - Now behind the menu */
         #global-overlay {
-            position: fixed; inset: 0; background: rgba(0,0,0,0.6);
-            backdrop-filter: blur(8px); z-index: 100; opacity: 0;
-            pointer-events: none; transition: opacity 0.3s ease;
+            position: fixed; inset: 0; 
+            background: rgba(0,0,0,0.3); /* Much lighter */
+            z-index: 80; opacity: 0;
+            pointer-events: none; transition: opacity 0.4s ease;
         }
         body.menu-open #global-overlay { opacity: 1; pointer-events: auto; }
 
-        /* DROPDOWN MENU */
+        /* DROPDOWN MENU - Stays sharp (Z-INDEX 110) */
         #profile-menu {
-            position: absolute; top: 80px; right: 40px; width: 260px;
-            background: #151517; border: 1px solid var(--dprt-bronze);
+            position: absolute; top: 85px; right: 40px; width: 280px;
+            background: #121214; border: 1px solid var(--dprt-bronze);
             z-index: 110; transform: translateY(-10px); opacity: 0;
             pointer-events: none; transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-            box-shadow: 0 20px 50px rgba(0,0,0,0.8);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.6);
         }
         body.menu-open #profile-menu { transform: translateY(0); opacity: 1; pointer-events: auto; }
 
-        .menu-item {
-            padding: 16px 20px; border-bottom: 1px solid rgba(184, 134, 11, 0.1);
-            display: flex; justify-content: space-between; align-items: center;
-            transition: background 0.2s; cursor: pointer;
-        }
-        .menu-item:hover { background: rgba(184, 134, 11, 0.05); color: var(--dprt-bronze); }
-        .menu-item:last-child { border-bottom: none; }
-
-        .notif-badge {
-            background: var(--dprt-bronze); color: black; font-size: 10px;
-            font-weight: 900; padding: 2px 6px; border-radius: 2px;
-        }
-
-        /* PFPs */
+        /* PFP - Stays sharp (Z-INDEX 100) */
         .user-pfp {
-            width: 42px; height: 42px; border: 1px solid var(--dprt-bronze);
+            width: 44px; height: 44px; border: 1px solid var(--dprt-bronze);
             border-radius: 2px; cursor: pointer; display: none;
-            transition: transform 0.2s;
+            position: relative; z-index: 101; 
+            transition: all 0.3s ease;
         }
-        .user-pfp:hover { transform: scale(1.05); }
 
-        /* HERO STUFF */
-        .hero-title { font-size: clamp(3rem, 10vw, 7rem); line-height: 0.9; color: #fff; font-family: 'Noto Serif SC', serif; font-weight: 900; }
+        .chinese-font { font-family: 'Noto Serif SC', serif; }
+        .nav-btn { font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.2em; color: #a0a0a0; transition: 0.4s ease; }
+        .nav-btn:hover { color: var(--dprt-bronze); letter-spacing: 0.3em; }
+        .hero-title { font-size: clamp(3rem, 10vw, 7rem); line-height: 0.85; color: #fff; font-family: 'Noto Serif SC', serif; font-weight: 900; }
         
-        /* Mobile adjustment */
-        @media (max-width: 768px) {
-            #profile-menu { right: 10px; width: calc(100% - 20px); }
+        .menu-item {
+            padding: 16px 20px; border-bottom: 1px solid rgba(184,134,11,0.1);
+            display: flex; justify-content: space-between; align-items: center;
+            cursor: pointer; font-size: 13px;
         }
+        .menu-item:hover { background: rgba(184,134,11,0.05); color: var(--dprt-bronze); }
+        .notif-badge { background: var(--dprt-bronze); color: black; font-size: 10px; font-weight: 900; padding: 1px 6px; border-radius: 2px; }
     </style>
 </head>
 <body id="body">
 
     <div id="global-overlay" onclick="toggleMenu(false)"></div>
 
-    <header class="relative z-[60] bg-black/50 backdrop-blur-md border-b border-white/5">
-        <nav class="flex items-center justify-between px-8 py-4 max-w-7xl mx-auto">
-            <div class="flex items-center space-x-4">
-                <div class="w-10 h-10 border border-[#b8860b] flex items-center justify-center">
-                    <span class="text-[#b8860b] text-xl chinese-font">茶</span>
+    <div id="blur-container">
+        <header class="relative z-50 border-b border-white/5 bg-black/20">
+            <nav class="flex items-center justify-between px-10 py-5 max-w-7xl mx-auto">
+                <div class="flex items-center space-x-5">
+                    <div class="w-10 h-10 border border-[#b8860b] flex items-center justify-center">
+                        <span class="text-[#b8860b] text-xl chinese-font">茶</span>
+                    </div>
+                    <span class="text-3xl font-black tracking-widest text-white">DPRT</span>
                 </div>
-                <span class="text-2xl font-black tracking-widest text-white">DPRT</span>
-            </div>
 
-            <div id="auth-area" class="relative">
-                <button id="login-btn" onclick="login()" class="border border-[#b8860b] text-[#b8860b] px-6 py-2 text-[10px] uppercase font-bold tracking-widest hover:bg-[#b8860b] hover:text-black transition">Verify</button>
-                <img id="user-pfp" class="user-pfp" onclick="toggleMenu(true)">
-                
-                <div id="profile-menu">
-                    <div class="p-5 border-b border-[#b8860b]/20 bg-[#b8860b]/5">
-                        <p id="user-name" class="font-black text-white uppercase tracking-tighter italic">Citizen</p>
-                        <p class="text-[9px] text-zinc-500 tracking-widest uppercase">Republic Resident</p>
-                    </div>
-                    <div class="menu-item">
-                        <span>Notifications</span>
-                        <span id="notif-count" class="notif-badge">3</span>
-                    </div>
-                    <div class="menu-item" onclick="alert('System Settings: Restricted to High Council.')">
-                        <span>Settings</span>
-                    </div>
-                    <div class="menu-item text-red-500" onclick="logout()">
-                        <span>Log Out</span>
-                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg>
-                    </div>
+                <div class="hidden lg:flex items-center space-x-10">
+                    <a href="index.html" class="nav-btn text-[#b8860b]">Home</a>
+                    <a href="info.html" class="nav-btn">Info</a>
+                    <a href="jobs.html" class="nav-btn">Jobs</a>
+                    <a href="https://discord.gg/KBNqanJDfa" target="_blank" class="nav-btn">Group</a>
+                    <a href="https://republicofteapots.miraheze.org/" target="_blank" class="nav-btn">Wiki</a>
                 </div>
-            </div>
-        </nav>
-    </header>
 
-    <main class="relative z-10 max-w-7xl mx-auto px-12 h-[calc(100vh-100px)] flex flex-col justify-center">
-        <div class="max-w-4xl border-l-[1px] border-[#b8860b]/40 pl-12">
-            <h3 class="text-[#b8860b] font-medium text-sm mb-4 tracking-[0.5em] uppercase opacity-70 chinese-font">大同茶國</h3>
-            <h1 class="hero-title mb-8">TRANQUILITY <br> THROUGH ORDER</h1>
-            <p class="text-zinc-500 text-xl max-w-2xl font-light leading-relaxed">
-                Welcome back to the Estate. Your presence is noted by the Council.
-            </p>
+                <div style="width: 44px;"></div>
+            </nav>
+        </header>
+
+        <main class="max-w-7xl mx-auto px-12 h-[calc(100vh-100px)] flex flex-col justify-center">
+            <div class="max-w-4xl border-l-2 border-[#b8860b]/30 pl-16">
+                <h3 class="text-[#b8860b] font-bold text-sm mb-6 tracking-[0.6em] uppercase opacity-60 chinese-font">大同茶國</h3>
+                <h1 class="hero-title mb-10">TRANQUILITY<br>THROUGH ORDER</h1>
+                <p class="text-zinc-500 text-xl font-light">Serve the kettle; protect the leaf.</p>
+            </div>
+        </main>
+    </div>
+
+    <div class="fixed top-5 right-10 z-[110]">
+        <button id="login-btn" onclick="login()" class="border border-[#b8860b] text-[#b8860b] px-6 py-2 text-[10px] font-bold tracking-widest hover:bg-[#b8860b] hover:text-black transition duration-300 mt-2">
+            Identity Verify
+        </button>
+        <img id="user-pfp" class="user-pfp" onclick="toggleMenu(true)">
+        
+        <div id="profile-menu">
+            <div class="p-6 border-b border-[#b8860b]/20 bg-[#b8860b]/5">
+                <p id="user-name" class="font-black text-white uppercase italic">Citizen</p>
+                <p class="text-[9px] text-zinc-500 tracking-widest font-bold">REPUBLIC VERIFIED</p>
+            </div>
+            <div class="menu-item">
+                <span>Notifications</span>
+                <span id="notif-count" class="notif-badge">0</span>
+            </div>
+            <div class="menu-item" onclick="window.location.href='settings.html'">
+                <span>Settings</span>
+            </div>
+            <div class="menu-item text-red-500" onclick="logout()">
+                <span class="font-bold uppercase tracking-widest text-[11px]">Relinquish Duty</span>
+            </div>
         </div>
-    </main>
+    </div>
 
     <script>
         const CLIENT_ID = '1323365609777528962';
@@ -126,7 +141,6 @@
         async function init() {
             const fragment = new URLSearchParams(window.location.hash.slice(1));
             const accessToken = fragment.get('access_token');
-
             if (accessToken) {
                 try {
                     const res = await fetch('https://discord.com/api/users/@me', {
@@ -147,9 +161,7 @@
                 const pfp = document.getElementById('user-pfp');
                 pfp.style.display = 'block';
                 pfp.src = `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png`;
-                
-                // Set random notif number for flavor
-                document.getElementById('notif-count').innerText = Math.floor(Math.random() * 9) + 1;
+                document.getElementById('notif-count').innerText = "2";
             }
         }
 
