@@ -5,71 +5,81 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DPRT | Republic of Teapots</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@900&family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@500;900&family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
         :root {
-            --dprt-gold: #d4af37;
-            --dprt-gold-bright: #ffdf00;
-            --dprt-bg: #050505;
+            --dprt-bronze: #b8860b;
+            --dprt-crimson: #8b0000;
+            --dprt-ink: #0a0a0c;
         }
         body {
-            background: radial-gradient(circle at 50% 50%, #151515 0%, #050505 100%);
-            color: #ffffff; font-family: 'Inter', sans-serif; margin: 0; height: 100vh; overflow: hidden;
+            /* Deeper, more atmospheric background */
+            background: radial-gradient(circle at 50% 50%, #1a1a1c 0%, var(--dprt-ink) 100%);
+            color: #e0e0e0; 
+            font-family: 'Inter', sans-serif; 
+            margin: 0; height: 100vh; overflow: hidden;
         }
         .chinese-font { font-family: 'Noto Serif SC', serif; }
 
-        /* STATIONARY DRAGON DESIGNS */
+        /* REFINED DRAGON FRAME (Less intrusive, more "Silk-like") */
         .dragon-frame {
             position: absolute; inset: 0; z-index: 0; pointer-events: none;
             display: flex; flex-direction: column; justify-content: space-between;
-            padding: 2vh 0; opacity: 0.15;
+            opacity: 0.1; mix-blend-mode: overlay;
         }
-        .dragon-svg { width: 100%; height: 35vh; stroke: var(--dprt-gold); stroke-width: 2; fill: none; }
+        .dragon-svg { width: 100%; height: 40vh; stroke: var(--dprt-bronze); stroke-width: 1; fill: none; }
 
-        /* LOGO BOX UPGRADE */
+        /* BRONZE LOGO BOX */
         .logo-box {
-            background: linear-gradient(145deg, #d4af37, #b8860b);
-            box-shadow: inset 2px 2px 5px rgba(255,255,255,0.3), 0 5px 15px rgba(0,0,0,0.5);
-            border: 1px solid rgba(255,215,0,0.4);
+            background: linear-gradient(145deg, #8b6508, #4a3304);
+            border: 1px solid rgba(184, 134, 11, 0.5);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.8);
         }
 
-        /* STARFIELD */
-        .star {
-            position: absolute; background: white; border-radius: 50%;
-            opacity: 0; animation: twinkle 3s ease-in-out infinite;
-        }
-        @keyframes twinkle { 50% { opacity: 0.7; } }
-
+        /* NAVIGATION UPGRADE */
         .nav-frame {
-            background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(20px);
-            border-bottom: 1px solid rgba(212, 175, 55, 0.2); z-index: 50;
+            background: rgba(10, 10, 12, 0.85); 
+            backdrop-filter: blur(15px);
+            border-bottom: 1px solid rgba(184, 134, 11, 0.15); 
+            z-index: 50;
         }
-
         .nav-btn {
-            font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.2em;
-            color: #777; transition: all 0.3s ease;
+            font-size: 15px; font-weight: 500; text-transform: uppercase; 
+            letter-spacing: 0.15em; color: #a0a0a0; transition: all 0.4s ease;
+            padding: 10px 20px;
         }
-        .nav-btn:hover { color: var(--dprt-gold); text-shadow: 0 0 8px var(--dprt-gold); }
+        .nav-btn:hover { 
+            color: var(--dprt-bronze); 
+            text-shadow: 0 0 10px rgba(184, 134, 11, 0.4);
+            letter-spacing: 0.25em; /* Smooth expansion */
+        }
 
         .discord-btn {
-            background: linear-gradient(135deg, #fff 0%, #e0e0e0 100%);
-            color: #000; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            background: var(--dprt-ink);
+            color: var(--dprt-bronze);
+            border: 1px solid var(--dprt-bronze);
+            transition: all 0.3s ease;
+            box-shadow: inset 0 0 5px rgba(184, 134, 11, 0.2);
         }
         .discord-btn:hover { 
-            background: var(--dprt-gold); 
-            transform: scale(1.05) translateY(-2px);
-            box-shadow: 0 10px 20px rgba(212, 175, 55, 0.3);
-        }
-
-        .user-pfp {
-            width: 42px; height: 42px; border-radius: 50%;
-            border: 2px solid var(--dprt-gold); display: none; cursor: pointer;
-            box-shadow: 0 0 15px var(--dprt-gold);
+            background: var(--dprt-bronze); 
+            color: var(--dprt-ink);
+            transform: translateY(-1px);
         }
 
         .hero-title {
-            font-size: clamp(3.5rem, 11vw, 8rem); line-height: 0.8; letter-spacing: -0.05em;
-            text-shadow: 0 20px 50px rgba(0,0,0,0.9);
+            font-size: clamp(3rem, 10vw, 7rem); 
+            line-height: 0.9; letter-spacing: -0.02em;
+            color: #ffffff;
+            font-family: 'Noto Serif SC', serif;
+            font-weight: 900;
+        }
+
+        /* VINTAGE PAPER TEXTURE OVERLAY */
+        body::after {
+            content: ""; position: absolute; inset: 0;
+            background-image: url('https://www.transparenttextures.com/patterns/paper.png');
+            opacity: 0.05; pointer-events: none; z-index: 1;
         }
     </style>
 </head>
@@ -77,84 +87,69 @@
 
     <div class="dragon-frame">
         <svg class="dragon-svg" viewBox="0 0 1000 100" preserveAspectRatio="none">
-            <path d="M0,50 C150,0 350,100 500,50 S850,0 1000,50 L1000,0 L0,0 Z" fill="url(#grad1)" stroke="none" opacity="0.5"/>
-            <path d="M0,50 C150,0 350,100 500,50 S850,0 1000,50" />
-            <defs>
-                <linearGradient id="grad1" x1="0%" y1="0%" x2="0%" y2="100%">
-                    <stop offset="0%" style="stop-color:var(--dprt-gold);stop-opacity:1" />
-                    <stop offset="100%" style="stop-color:var(--dprt-gold);stop-opacity:0" />
-                </linearGradient>
-            </defs>
+            <path d="M0,20 Q250,80 500,20 T1000,20" />
         </svg>
         <svg class="dragon-svg" viewBox="0 0 1000 100" preserveAspectRatio="none" style="transform: scaleY(-1);">
-            <path d="M0,50 C150,0 350,100 500,50 S850,0 1000,50 L1000,0 L0,0 Z" fill="url(#grad2)" stroke="none" opacity="0.5"/>
-            <path d="M0,50 C150,0 350,100 500,50 S850,0 1000,50" />
-            <defs>
-                <linearGradient id="grad2" x1="0%" y1="0%" x2="0%" y2="100%">
-                    <stop offset="0%" style="stop-color:var(--dprt-gold);stop-opacity:1" />
-                    <stop offset="100%" style="stop-color:var(--dprt-gold);stop-opacity:0" />
-                </linearGradient>
-            </defs>
+            <path d="M0,20 Q250,80 500,20 T1000,20" />
         </svg>
     </div>
 
-    <div id="stars"></div>
+    <div id="stars" style="opacity: 0.3;"></div>
 
     <header class="nav-frame sticky top-0">
-        <nav class="flex items-center justify-between px-10 py-4 max-w-7xl mx-auto">
+        <nav class="flex items-center justify-between px-12 py-5 max-w-7xl mx-auto">
             <div class="flex items-center space-x-6">
-                <div class="logo-box w-14 h-14 rounded-xl flex items-center justify-center">
-                    <span class="text-black text-3xl font-black chinese-font">茶</span>
+                <div class="logo-box w-12 h-12 rounded-sm flex items-center justify-center">
+                    <span class="text-white text-2xl chinese-font">茶</span>
                 </div>
                 <div class="flex flex-col leading-none">
-                    <span class="text-4xl font-black tracking-tighter italic">DPRT</span>
-                    <span class="text-[10px] uppercase tracking-[0.4em] text-zinc-500 font-bold">Republic of Teapots</span>
+                    <span class="text-3xl font-black tracking-widest text-white">DPRT</span>
+                    <span class="text-[9px] uppercase tracking-[0.5em] text-zinc-600 font-bold">The Sovereign Estate</span>
                 </div>
             </div>
 
-            <div class="hidden lg:flex items-center space-x-10">
-                <a href="#" class="nav-btn text-[#d4af37]">Home</a>
-                <a href="#" class="nav-btn">Info</a>
-                <a href="#" class="nav-btn">Apps</a>
-                <a href="https://discord.gg/KBNqanJDfa" target="_blank" class="nav-btn">Group</a>
-                <a href="https://republicofteapots.miraheze.org/" target="_blank" class="nav-btn">Wiki</a>
+            <div class="hidden lg:flex items-center space-x-4">
+                <a href="#" class="nav-btn text-[#b8860b]">Archive</a>
+                <a href="#" class="nav-btn">Protocol</a>
+                <a href="#" class="nav-btn">Systems</a>
+                <a href="https://discord.gg/KBNqanJDfa" target="_blank" class="nav-btn">Enclave</a>
+                <a href="https://republicofteapots.miraheze.org/" target="_blank" class="nav-btn">Codicil</a>
             </div>
 
             <div id="auth-area">
-                <button id="login-btn" onclick="login()" class="discord-btn flex items-center px-6 py-2.5 rounded-lg font-black text-[10px] uppercase tracking-wider gap-2">
-                    <svg width="16" height="16" viewBox="0 0 71 55" fill="currentColor"><path d="M60.1,4.9C55.6,2.8,50.7,1.3,45.7,0.4c-0.1,0-0.2,0-0.3,0.1c-0.6,1.1-1.3,2.6-1.8,3.7c-5.5-0.8-10.9-0.8-16.2,0c-0.5-1.1-1.2-2.6-1.8-3.7c-0.1-0.1-0.2-0.1-0.3-0.1C20.3,1.3,15.4,2.8,10.9,4.9C10.8,4.9,10.8,5,10.8,5C1.6,18.7-0.9,32.1,0.3,45.4c0,0.1,0,0.1,0.1,0.2c6.1,4.5,12,7.2,17.7,9c0.1,0,0.2,0,0.2-0.1c1.4-1.9,2.6-3.8,3.6-5.9c0.1-0.1,0-0.3-0.1-0.3c-1.9-0.7-3.8-1.6-5.5-2.6c-0.1-0.1-0.1-0.3,0-0.4c0.4-0.3,0.7-0.6,1.1-0.9c0.1-0.1,0.2-0.1,0.2-0.1c11.6,5.3,24.2,5.3,35.7,0c0.1,0,0.2,0,0.2,0.1c0.4,0.3,0.7,0.6,1.1,0.9c0.1,0.1,0.1,0.3,0,0.4c-1.8,1-3.6,1.9-5.5,2.6c-0.1,0.1-0.1,0.2-0.1,0.3c1.1,2.1,2.3,4,3.6,5.9c0.1,0.1,0.2,0.1,0.2,0.1c5.8-1.8,11.7-4.5,17.7-9c0.1-0.1,0.1-0.1,0.1-0.2C72.2,30.1,68.2,16.8,60.1,5C60.1,5,60.1,4.9,60.1,4.9z M23.7,37.3c-3.5,0-6.4-3.2-6.4-7.2s2.8-7.2,6.4-7.2c3.6,0,6.4,3.2,6.4,7.2S27.3,37.3,23.7,37.3z M47.3,37.3c-3.5,0-6.4-3.2-6.4-7.2s2.8-7.2,6.4-7.2c3.6,0,6.4,3.2,6.4,7.2S50.9,37.3,47.3,37.3z"/></svg>
-                    Discord Login
+                <button id="login-btn" onclick="login()" class="discord-btn flex items-center px-6 py-2 rounded-sm font-bold text-[10px] uppercase tracking-widest gap-2">
+                    Identity Verification
                 </button>
                 <img id="user-pfp" class="user-pfp" onclick="logout()" src="">
             </div>
         </nav>
     </header>
 
-    <main class="relative z-10 max-w-7xl mx-auto px-10 h-[calc(100vh-100px)] flex flex-col justify-center">
-        <div class="max-w-4xl border-l-4 border-[#d4af37] pl-10">
-            <h3 class="text-[#d4af37] font-bold text-xl mb-6 tracking-[0.3em] uppercase opacity-80">Democratic People's Republic of Teapots</h3>
-            <h1 class="hero-title font-black uppercase text-white mb-10 italic">GLORY TO <br> YOSOFO</h1>
-            <p class="text-zinc-500 text-2xl max-w-2xl font-light leading-relaxed">
-                <span class="text-white font-bold italic underline decoration-[#d4af37] decoration-4">MOTIVE 01:</span> <br> 
-                Maintain peace. Protect the motherland. Serve the eternal Republic.
+    <main class="relative z-10 max-w-7xl mx-auto px-12 h-[calc(100vh-100px)] flex flex-col justify-center">
+        <div class="max-w-4xl border-l-[1px] border-[#b8860b] pl-12">
+            <h3 class="text-[#b8860b] font-medium text-lg mb-4 tracking-[0.4em] uppercase opacity-60 chinese-font">大同茶國</h3>
+            <h1 class="hero-title mb-8">TRANQUILITY <br> THROUGH ORDER</h1>
+            <p class="text-zinc-400 text-xl max-w-2xl font-light leading-relaxed">
+                The Republic is built upon the <span class="text-white border-b border-[#b8860b]">Eternal Brew</span>. 
+                We maintain the balance between heat and water, strength and grace. 
+                Serve the kettle; protect the leaf.
             </p>
         </div>
     </main>
 
-    <footer class="fixed bottom-10 left-0 w-full text-center">
-        <div class="flex justify-center items-center space-x-12 text-zinc-600 uppercase tracking-[0.6em] text-[10px] font-black">
-            <span>忠诚 LOYALTY</span> <span class="text-[#d4af37]">•</span> 
-            <span>纪律 DISCIPLINE</span> <span class="text-[#d4af37]">•</span> 
-            <span>茶 TEA</span>
+    <footer class="fixed bottom-8 left-0 w-full text-center z-10">
+        <div class="flex justify-center items-center space-x-12 text-zinc-700 uppercase tracking-[0.8em] text-[9px] font-bold">
+            <span>RESPECT</span> <span>•</span> <span>PURITY</span> <span>•</span> <span>HARMONY</span>
         </div>
     </footer>
 
     <script>
+        // Star generator (fewer, subtle stars)
         const starContainer = document.getElementById('stars');
-        for (let i = 0; i < 50; i++) {
+        for (let i = 0; i < 30; i++) {
             const star = document.createElement('div');
             star.className = 'star';
-            star.style.width = star.style.height = (Math.random() * 2 + 1) + 'px';
+            star.style.width = star.style.height = (Math.random() * 1.5) + 'px';
             star.style.left = Math.random() * 100 + '%';
             star.style.top = Math.random() * 100 + '%';
             star.style.animationDelay = Math.random() * 5 + 's';
@@ -163,9 +158,6 @@
 
         const CLIENT_ID = '1323365609777528962';
         const REDIRECT_URI = window.location.origin + window.location.pathname;
-        
-        // IMPORTANT: Change this to your actual netlify URL once you have it!
-        // Example: https://dprt-site.netlify.app/.netlify/functions/auth
         const FUNCTION_URL = 'https://sparkly-gelato-78da1b.netlify.app/.netlify/functions/auth';
 
         function login() {
@@ -176,9 +168,7 @@
             const code = new URLSearchParams(window.location.search).get('code');
             if (code) {
                 try {
-                    // We use the full URL if we are on GitHub Pages
-                    const target = FUNCTION_URL.startsWith('http') ? FUNCTION_URL : window.location.origin + FUNCTION_URL;
-                    const res = await fetch(`${target}?code=${code}`);
+                    const res = await fetch(`${FUNCTION_URL}?code=${code}`);
                     const data = await res.json();
                     if (data.user) {
                         localStorage.setItem('dprt_user', JSON.stringify(data.user));
@@ -197,7 +187,7 @@
         }
 
         function logout() {
-            if(confirm("Logout from the Republic?")) {
+            if(confirm("Relinquish your duties to the Republic?")) {
                 localStorage.removeItem('dprt_user');
                 window.location.reload();
             }
