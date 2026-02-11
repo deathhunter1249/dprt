@@ -37,7 +37,6 @@
             100% { transform: translateY(-10vh) scale(1.2); opacity: 0; }
         }
 
-        /* BLUR & MENU */
         #blur-container { transition: filter 0.4s ease, opacity 0.4s ease; z-index: 10; position: relative; }
         body.menu-open #blur-container { filter: blur(4px); opacity: 0.5; pointer-events: none; }
 
@@ -75,7 +74,6 @@
             position: relative; z-index: 101; 
         }
 
-        /* THE "OLD" LOGIN BUTTON STYLE */
         .btn-verify {
             border: 1px solid var(--dprt-bronze);
             color: var(--dprt-bronze);
@@ -140,9 +138,7 @@
     </div>
 
     <div class="fixed top-6 right-10 z-[110] flex flex-col items-end">
-        <button id="login-btn" onclick="login()" class="btn-verify">
-            Log In
-        </button>
+        <button id="login-btn" onclick="login()" class="btn-verify">Log In</button>
         <img id="user-pfp" class="user-pfp" onclick="toggleMenu(true)">
         
         <div id="profile-menu">
@@ -164,7 +160,6 @@
     </div>
 
     <script>
-        // --- 1. CONFIGURATION ---
         const CLIENT_ID = '1323365609777528962';
         const GUILD_ID = '1255926408312655963'; 
         const REDIRECT_URI = window.location.origin + window.location.pathname;
@@ -188,7 +183,6 @@
             embers.appendChild(e);
         }
 
-        // --- 2. LOGIC ---
         function toggleMenu(show) {
             document.getElementById('body').classList.toggle('menu-open', show);
         }
@@ -219,9 +213,7 @@
                         localStorage.setItem('dprt_user', JSON.stringify(userData));
                         window.history.replaceState({}, document.title, window.location.pathname);
                     }
-                } catch (e) { 
-                    console.error("Identity verify failed:", e); 
-                }
+                } catch (e) { console.error("Identity verify failed:", e); }
             }
             renderUser();
         }
@@ -236,8 +228,10 @@
             pfp.style.display = 'block';
             pfp.src = `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png`;
 
+            // Updated Rank Hierarchy
             let rank = "Civilian";
-            if (user.roles.includes(ROLE_IDS.COUNCIL)) rank = "High Council";
+            if (user.roles.includes(ROLE_IDS.OWNER)) rank = "State Owner";
+            else if (user.roles.includes(ROLE_IDS.COUNCIL)) rank = "High Council";
             else if (user.roles.includes(ROLE_IDS.OFFICER)) rank = "Imperial Officer";
             else if (user.roles.includes(ROLE_IDS.CIVILIAN)) rank = "Verified Citizen";
             else if (user.roles.includes(ROLE_IDS.PEASANT)) rank = "Peasant";
