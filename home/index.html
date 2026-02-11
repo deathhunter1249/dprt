@@ -85,7 +85,7 @@
         // 1. LOAD HEADER & SYNC UI
         async function loadGlobalHeader() {
             try {
-                const resp = await fetch('header.html');
+                const resp = await fetch('/dprt/styling/header.html');
                 if (!resp.ok) throw new Error("Header file not found");
                 const html = await resp.text();
                 document.getElementById('header-placeholder').innerHTML = html;

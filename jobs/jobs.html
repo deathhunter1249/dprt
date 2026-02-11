@@ -112,7 +112,7 @@
 
         async function loadHeader() {
             try {
-                const resp = await fetch('header.html');
+                const resp = await fetch('/dprt/styling/header.html');
                 document.getElementById('header-placeholder').innerHTML = await resp.text();
                 
                 // Highlight Jobs link
