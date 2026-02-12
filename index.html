@@ -12,25 +12,25 @@
         body {
             background: var(--dprt-ink);
             color: #e0e0e0; font-family: 'Inter', sans-serif; 
-            margin: 0; height: 100vh; overflow: hidden; position: relative;
+            margin: 0; min-height: 100vh; overflow-x: hidden; position: relative;
+            display: flex; flex-direction: column;
         }
 
         /* Subtle Background Glow */
         .bg-overlay {
             position: fixed; inset: 0;
-            background: radial-gradient(circle at 50% 40%, #16161a 0%, #050506 100%);
+            background: radial-gradient(circle at 50% 50%, #16161a 0%, #050506 100%);
             z-index: -1;
         }
 
         /* Initial Hidden State for Animation */
         .reveal-node { 
             opacity: 0; 
-            transform: translateY(40px); 
-            filter: blur(20px); 
-            transition: all 1.4s cubic-bezier(0.16, 1, 0.3, 1); 
+            transform: translateY(30px); 
+            filter: blur(15px); 
+            transition: all 1.2s cubic-bezier(0.16, 1, 0.3, 1); 
         }
         
-        /* The state triggered by JS */
         .reveal-active { 
             opacity: 1; 
             transform: translateY(0); 
@@ -38,9 +38,9 @@
         }
 
         /* Staggered Timing */
-        .delay-1 { transition-delay: 0.3s; }
-        .delay-2 { transition-delay: 0.6s; }
-        .delay-3 { transition-delay: 0.9s; }
+        .delay-1 { transition-delay: 0.2s; }
+        .delay-2 { transition-delay: 0.4s; }
+        .delay-3 { transition-delay: 0.6s; }
 
         /* Embers Animation */
         .ember {
@@ -56,24 +56,24 @@
 
         /* CRT Scanline Overlay */
         body::before {
-            content: " "; display: block; position: absolute; inset: 0;
+            content: " "; display: block; position: fixed; inset: 0;
             background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%);
             z-index: 100; background-size: 100% 4px; pointer-events: none;
         }
 
-        .hero-title { font-size: clamp(3.5rem, 12vw, 8rem); line-height: 0.85; color: #fff; font-family: 'Noto Serif SC', serif; font-weight: 900; }
+        .hero-title { font-size: clamp(3rem, 10vw, 7.5rem); line-height: 0.9; color: #fff; font-family: 'Noto Serif SC', serif; font-weight: 900; }
         .chinese-font { font-family: 'Noto Serif SC', serif; }
         
-        /* Floating border accent animation */
+        /* Floating border accent */
         .accent-line {
-            position: absolute; -left: [2px]; top: 0; width: 2px;
+            position: absolute; left: -2px; top: 0; width: 2px;
             background: var(--dprt-bronze);
             box-shadow: 0 0 20px var(--dprt-bronze);
             height: 0;
             transition: height 1.5s cubic-bezier(0.16, 1, 0.3, 1);
             transition-delay: 0.1s;
         }
-        .reveal-active .accent-line { height: 120px; }
+        .reveal-active .accent-line { height: 100px; }
     </style>
 </head>
 <body>
@@ -82,9 +82,11 @@
     
     <div id="global-overlay" class="fixed inset-0 bg-black/60 z-[80] opacity-0 pointer-events-none transition-opacity duration-300 backdrop-blur-[2px]" onclick="toggleMenu(false)"></div>
 
-    <div id="blur-container" class="relative z-10">
-        <main class="max-w-7xl mx-auto px-12 h-screen flex flex-col justify-center">
-            <div class="max-w-4xl border-l-2 border-[#b8860b]/20 pl-16 relative">
+    <div id="header-placeholder" class="relative z-[90]"></div>
+
+    <div id="blur-container" class="flex-grow flex flex-col justify-center relative z-10">
+        <main class="max-w-7xl mx-auto px-12 py-20 w-full">
+            <div class="max-w-4xl border-l-2 border-[#b8860b]/20 pl-16 relative content-wrapper">
                 <div class="accent-line"></div>
                 
                 <div class="reveal-node delay-1">
@@ -114,14 +116,13 @@
     <script>
         // Smooth reveal on load
         window.addEventListener('load', () => {
-            // Short delay to ensure browser is ready
             setTimeout(() => {
                 const nodes = document.querySelectorAll('.reveal-node');
-                const mainWrapper = document.querySelector('.max-w-4xl');
+                const wrapper = document.querySelector('.content-wrapper');
                 
-                mainWrapper.classList.add('reveal-active');
+                wrapper.classList.add('reveal-active');
                 nodes.forEach(node => node.classList.add('reveal-active'));
-            }, 100);
+            }, 200);
         });
 
         // Ambient Embers
