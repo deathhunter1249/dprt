@@ -7,11 +7,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@200;900&family=Zhi+Mang+Xing&family=Ma+Shan+Zheng&display=swap" rel="stylesheet">
     <style>
-        :root { 
-            --ink: #1a1a1a; 
-            --cinnabar: #bc2f32; 
-            --paper: #e6e4e0;
-        }
+        :root { --ink: #1a1a1a; --cinnabar: #bc2f32; --paper: #e6e4e0; }
 
         body { 
             background-color: var(--paper);
@@ -22,62 +18,63 @@
         }
 
         .brush-font { font-family: 'Ma Shan Zheng', cursive !important; }
+
+        /* Restored Ink Splash */
+        .ink-accent {
+            position: fixed; top: 0; right: 0; width: 600px; height: 600px;
+            background: url('https://googleusercontent.com/image_collection/image_retrieval/1204424196626481903_0') no-repeat;
+            background-size: contain; opacity: 0.1; pointer-events: none; z-index: -1;
+        }
         
-        /* THE SCROLL (Application Card) */
+        /* THE APPLICATION SCROLL */
         .job-scroll { 
             background: #fdfcf8;
             border: 1px solid rgba(0,0,0,0.1);
-            padding: 2.5rem; 
-            position: relative; 
-            transition: all 0.4s ease;
+            padding: 2.5rem; position: relative; 
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
             box-shadow: 5px 5px 0px rgba(0,0,0,0.05);
-            max-width: 550px;
-            margin: 0 auto;
+            max-width: 450px; margin: 0 auto;
+            border-top: 4px solid var(--ink);
         }
-
-        /* Decorative "Paper Fasteners" */
-        .job-scroll::before, .job-scroll::after {
-            content: ""; position: absolute; top: 15px; width: 10px; height: 10px;
-            background: var(--ink); border-radius: 50%; opacity: 0.1;
-        }
-        .job-scroll::before { left: 15px; }
-        .job-scroll::after { right: 15px; }
 
         .job-scroll:hover { 
-            transform: translateY(-5px);
-            box-shadow: 15px 15px 0px rgba(188, 47, 50, 0.1);
+            transform: translateY(-8px);
+            box-shadow: 20px 20px 0px rgba(188, 47, 50, 0.05);
         }
 
-        /* Side Vertical Label */
+        /* Side metadata */
         .vertical-label {
-            position: absolute; left: -25px; top: 20px;
+            position: absolute; left: -30px; top: 30px;
             writing-mode: vertical-rl; text-transform: uppercase;
-            font-size: 9px; letter-spacing: 2px; color: #aaa;
+            font-size: 8px; letter-spacing: 2px; color: #aaa; transform: rotate(180deg);
         }
 
-        /* Application Watermark */
         .status-watermark {
-            position: absolute; top: 20px; right: 20px;
-            font-family: 'Zhi Mang Xing'; font-size: 1.2rem;
-            color: var(--cinnabar); opacity: 0.2;
-            border: 2px solid var(--cinnabar); padding: 2px 8px;
-            transform: rotate(15deg);
+            position: absolute; top: 15px; right: 15px;
+            font-family: 'Zhi Mang Xing'; font-size: 1rem;
+            color: var(--cinnabar); opacity: 0.15;
+            border: 1px solid var(--cinnabar); padding: 1px 6px;
+            transform: rotate(10deg);
         }
 
         .btn-initiate {
-            background: var(--ink);
-            color: white; padding: 0.5rem 2rem;
-            font-family: 'Zhi Mang Xing', cursive; font-size: 1.2rem;
+            background: var(--ink); color: white; padding: 0.6rem 2.5rem;
+            font-family: 'Zhi Mang Xing', cursive; font-size: 1.3rem;
             transition: 0.3s; border: none; cursor: pointer;
+            box-shadow: 0 4px 0 rgba(0,0,0,0.2);
         }
-        .btn-initiate:hover { background: var(--cinnabar); letter-spacing: 1px; }
+        .btn-initiate:hover { 
+            background: var(--cinnabar); 
+            transform: translateY(-2px);
+            box-shadow: 0 6px 0 rgba(0,0,0,0.1);
+        }
 
-        /* Sidebar Editor */
+        /* ADMIN TERMINAL */
         #admin-editor {
             position: fixed; top: 0; right: -450px; width: 450px; height: 100%;
             background: #0d0d0d; color: #d1d1d1;
             transition: right 0.5s cubic-bezier(0.8, 0, 0.2, 1);
-            z-index: 2000; display: flex; flex-direction: column;
+            z-index: 2000; border-left: 1px solid #222;
         }
         #admin-editor.open { right: 0; }
         .input-field { background: #141414; border: 1px solid #222; color: #fff; width: 100%; padding: 0.8rem; margin-top: 5px; outline: none; }
@@ -85,46 +82,54 @@
 </head>
 <body>
 
-    <div id="main-content" class="py-20 px-10">
-        <header class="max-w-7xl mx-auto mb-20 text-center">
-            <h1 class="text-8xl brush-font text-zinc-900">Imperial <span class="text-[#bc2f32]">Archive</span></h1>
-            <p class="text-zinc-500 font-mono text-[10px] tracking-[0.5em] mt-4 uppercase">Directives & Applications</p>
+    <div class="ink-accent"></div>
+    <div id="header-placeholder" class="relative z-[1001]"></div>
+
+    <div id="main-content" class="py-24 px-10">
+        <header class="max-w-7xl mx-auto mb-32">
+            <div class="flex items-center gap-4 mb-4">
+                <div class="bg-black text-white px-3 py-1 font-bold text-[10px] tracking-widest">VER. 1970</div>
+                <div class="h-[1px] w-12 bg-zinc-300"></div>
+            </div>
+            <h1 class="text-[clamp(4rem,12vw,10rem)] brush-font leading-none text-zinc-900">
+                Community <span class="text-[#bc2f32]">Jobs</span>
+            </h1>
         </header>
 
-        <div id="job-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 max-w-7xl mx-auto"></div>
+        <div id="job-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12 max-w-7xl mx-auto"></div>
 
-        <button id="admin-trigger" onclick="openEditor()" class="hidden fixed bottom-10 right-10 w-16 h-16 bg-black text-[#bc2f32] rounded-full shadow-2xl flex items-center justify-center text-2xl font-['Zhi_Mang_Xing'] border-2 border-[#bc2f32] z-[1500]">改</button>
+        <button id="admin-trigger" onclick="openEditor()" class="hidden fixed bottom-12 right-12 w-20 h-20 bg-black text-[#bc2f32] rounded-full shadow-2xl flex items-center justify-center text-4xl font-['Zhi_Mang_Xing'] border-2 border-[#bc2f32] z-[1500] hover:bg-[#bc2f32] hover:text-white transition-all">改</button>
     </div>
 
     <div id="admin-editor">
-        <div class="p-8 border-b border-[#222]">
-            <h2 class="text-3xl brush-font text-white">Modify Archive</h2>
+        <div class="p-10 border-b border-[#222]">
+            <h2 class="text-4xl brush-font text-white">Modify Archive</h2>
         </div>
-        <div class="p-8 space-y-6 overflow-y-auto">
+        <div class="p-10 space-y-8 overflow-y-auto">
             <input type="hidden" id="edit-index" value="-1">
             <div>
-                <label class="text-[9px] uppercase tracking-widest text-zinc-500">Post Title</label>
-                <input type="text" id="edit-title" class="input-field">
+                <label class="text-[9px] uppercase tracking-widest text-zinc-500">Post Designation</label>
+                <input type="text" id="edit-title" class="input-field" placeholder="Job Title">
             </div>
             <div>
-                <label class="text-[9px] uppercase tracking-widest text-zinc-500">Requirements</label>
-                <textarea id="edit-desc" class="input-field h-24"></textarea>
+                <label class="text-[9px] uppercase tracking-widest text-zinc-500">Directives</label>
+                <textarea id="edit-desc" class="input-field h-32" placeholder="Responsibilities..."></textarea>
             </div>
             <div>
-                <label class="text-[9px] uppercase tracking-widest text-zinc-500">Decal (./decals/name.png)</label>
+                <label class="text-[9px] uppercase tracking-widest text-zinc-500">Decal Selection</label>
                 <select id="edit-icon" class="input-field">
                     <option value="seal">Imperial Seal</option>
-                    <option value="dragon">Dragon Emblem</option>
-                    <option value="lotus">Lotus Flower</option>
-                    <option value="sword">Officer Blade</option>
+                    <option value="dragon">Dragon Spirit</option>
+                    <option value="lotus">Peaceful Lotus</option>
+                    <option value="sword">Imperial Blade</option>
                 </select>
             </div>
             <div>
-                <label class="text-[9px] uppercase tracking-widest text-zinc-500">Accent Hue</label>
-                <input type="color" id="edit-color" class="w-full h-10 mt-2 bg-transparent border-none cursor-pointer" value="#bc2f32">
+                <label class="text-[9px] uppercase tracking-widest text-zinc-500">Accent Color</label>
+                <input type="color" id="edit-color" class="w-full h-12 mt-2 bg-transparent border-none cursor-pointer" value="#bc2f32">
             </div>
-            <button onclick="saveApp()" class="w-full bg-[#bc2f32] py-4 font-bold text-white uppercase tracking-widest text-xs">Commit to Archive</button>
-            <button onclick="closeEditor()" class="w-full text-[10px] text-zinc-600 uppercase">Cancel</button>
+            <button onclick="saveApp()" class="w-full bg-[#bc2f32] py-4 font-bold text-white uppercase tracking-widest text-xs hover:brightness-110 transition-all">Seal Archive Entry</button>
+            <button onclick="closeEditor()" class="w-full text-[10px] text-zinc-600 uppercase tracking-widest text-center">Discard Changes</button>
         </div>
     </div>
 
@@ -143,36 +148,38 @@
         function renderApps(isAdmin = false) {
             currentAdmin = isAdmin;
             const grid = document.getElementById('job-grid');
-            if(isAdmin) document.getElementById('admin-trigger')?.classList.remove('hidden');
+            const trigger = document.getElementById('admin-trigger');
+            if(isAdmin && trigger) trigger.classList.remove('hidden');
             grid.innerHTML = '';
 
             apps.forEach((app, i) => {
                 const scroll = document.createElement('div');
                 scroll.className = 'job-scroll';
+                scroll.style.borderTopColor = app.color || '#1a1a1a';
                 
                 scroll.innerHTML = `
-                    <div class="vertical-label">Ref. #${2024 + i} // DP-RT</div>
-                    <div class="status-watermark">VACANT</div>
+                    <div class="vertical-label">ARC-ID: ${100 + i} // DP-RT</div>
+                    <div class="status-watermark">OPEN</div>
                     
                     <div class="flex justify-center mb-6">
-                        <img src="./decals/${app.icon || 'seal'}.png" class="w-12 h-12 opacity-80" alt="Icon">
+                        <img src="./decals/${app.icon || 'seal'}.png" class="w-14 h-14 opacity-90" alt="Decal">
                     </div>
 
-                    <div class="text-center border-b border-zinc-100 pb-4 mb-4">
-                        <h3 class="text-3xl brush-font text-zinc-800">${app.title}</h3>
-                        <p class="text-[10px] text-zinc-400 font-mono tracking-widest uppercase mt-1">Personnel Directive</p>
+                    <div class="text-center border-b border-zinc-100 pb-6 mb-6">
+                        <h3 class="text-4xl brush-font text-zinc-800">${app.title}</h3>
+                        <p class="text-[9px] text-zinc-400 font-mono tracking-[0.3em] uppercase mt-2">Ministry Application</p>
                     </div>
 
-                    <div class="mb-8">
-                        <p class="text-zinc-600 text-sm leading-relaxed italic text-center">"${app.desc}"</p>
+                    <div class="mb-10">
+                        <p class="text-zinc-600 text-sm leading-relaxed italic text-center px-4">"${app.desc}"</p>
                     </div>
 
                     <div class="flex flex-col items-center gap-4">
                         <button class="btn-initiate" style="background:${app.color || '#1a1a1a'}">Apply Now</button>
                         ${isAdmin ? `
-                            <div class="flex gap-4">
-                                <span onclick="editApp(${i})" class="cursor-pointer text-zinc-400 hover:text-black text-[9px] uppercase tracking-tighter">Edit</span>
-                                <span onclick="deleteApp(${i})" class="cursor-pointer text-zinc-400 hover:text-red-700 text-[9px] uppercase tracking-tighter">Redact</span>
+                            <div class="flex gap-6 mt-2">
+                                <span onclick="editApp(${i})" class="cursor-pointer text-zinc-400 hover:text-black text-[10px] uppercase tracking-widest border-b border-transparent hover:border-black">Edit</span>
+                                <span onclick="deleteApp(${i})" class="cursor-pointer text-zinc-400 hover:text-red-700 text-[10px] uppercase tracking-widest border-b border-transparent hover:border-red-700">Redact</span>
                             </div>
                         ` : ''}
                     </div>
@@ -211,21 +218,22 @@
             else apps[idx] = newData;
 
             navigator.clipboard.writeText(JSON.stringify(apps, null, 2)).then(() => {
-                alert("Archive Copied! Paste into jobsdata.json");
+                alert("Data copied! Update jobsdata.json on GitHub.");
             });
             renderApps(currentAdmin);
             closeEditor();
         }
 
         function deleteApp(i) {
-            if(confirm("Redact?")) {
+            if(confirm("Confirm Redaction?")) {
                 apps.splice(i, 1);
                 navigator.clipboard.writeText(JSON.stringify(apps, null, 2));
                 renderApps(currentAdmin);
             }
         }
 
-        window.addEventListener('load', loadArchive);
+        // Wait for page to be ready for auth.js
+        window.addEventListener('DOMContentLoaded', loadArchive);
     </script>
     <script src="/dprt/styling/auth.js"></script>
 </body>
