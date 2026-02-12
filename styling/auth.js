@@ -99,18 +99,28 @@ function toggleMenu(show) {
     }
 }
 
-// LOAD HEADER
 async function loadGlobalHeader() {
     try {
-        const resp = await fetch('/dprt/styling/header.html');
-        if (!resp.ok) throw new Error("Header not found");
+        // Detect if we are on GitHub Pages subfolder or local
+        const isGitHub = window.location.hostname.includes('github.io');
+        const basePath = isGitHub ? '/dprt' : '';
+        const headerUrl = `${basePath}/styling/header.html`;
+
+        console.log("📡 Attempting to fetch header from:", headerUrl);
+
+        const resp = await fetch(headerUrl);
+        
+        if (!resp.ok) {
+            throw new Error(`Status: ${resp.status} at ${headerUrl}`);
+        }
+        
         const html = await resp.text();
         document.getElementById('header-placeholder').innerHTML = html;
         
-        // Auth is triggered here
+        // Highlight logic...
         initAuth();
     } catch (e) {
-        console.error("Header load error:", e);
+        console.error("⛔ Header Load Failed:", e.message);
     }
 }
 
