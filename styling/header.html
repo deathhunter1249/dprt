@@ -1,35 +1,50 @@
 <style>
-    /* 1. Base Styles & Animations */
-    .nav-btn { 
-        position: relative;
-        font-size: 17px; 
-        font-weight: 700; 
-        text-transform: uppercase; 
-        letter-spacing: 0.15em; 
-        color: #a0a0a0; 
-        transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); 
-        cursor: pointer;
-        padding: 4px 0;
-        text-decoration: none;
+    /* 1. Sumi-e Aesthetic Overrides */
+    :root {
+        --ink: #1a1a1a;
+        --cinnabar: #bc2f32;
+        --paper-textured: #e2dfd8;
     }
 
+    /* Textured Background for the Nav */
+    .ink-header {
+        background-color: rgba(226, 223, 216, 0.95);
+        background-image: url('https://www.transparenttextures.com/patterns/natural-paper.png');
+        border-bottom: 2px solid var(--ink);
+        box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+    }
+
+    .nav-btn { 
+        position: relative;
+        font-family: 'Noto Serif SC', serif;
+        font-size: 15px; 
+        font-weight: 900; 
+        text-transform: uppercase; 
+        letter-spacing: 0.1em; 
+        color: var(--ink); 
+        transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1); 
+        cursor: pointer;
+        padding: 8px 0;
+        text-decoration: none;
+        opacity: 0.7;
+    }
+
+    /* Ink Bleed Hover Effect */
     .nav-btn::after {
         content: '';
         position: absolute;
-        bottom: 0;
-        left: 50%;
+        bottom: -2px;
+        left: 0;
         width: 0;
-        height: 2px;
-        background: #b8860b;
-        box-shadow: 0 0 10px #b8860b;
-        transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-        transform: translateX(-50%);
+        height: 3px;
+        background: var(--cinnabar);
+        transition: width 0.4s ease;
+        filter: blur(0.5px); /* Mimics ink spreading on paper */
     }
 
-    /* Active & Hover state */
     .nav-btn:hover, .nav-btn.active-page { 
-        color: #fff; 
-        letter-spacing: 0.3em; 
+        color: var(--cinnabar); 
+        opacity: 1;
         transform: translateY(-1px);
     }
 
@@ -37,132 +52,108 @@
         width: 100%;
     }
 
-    .menu-item { 
-        position: relative;
-        padding: 16px 20px; 
-        border-bottom: 1px solid rgba(184, 134, 11, 0.1); 
-        display: flex; 
-        justify-content: space-between; 
-        align-items: center; 
-        cursor: pointer; 
-        font-size: 11px; 
-        color: #888; 
-        text-transform: uppercase;
-        font-weight: 700;
-        transition: all 0.3s ease; 
-        overflow: hidden;
-    }
-
-    .menu-item:hover { 
-        background: rgba(184, 134, 11, 0.08); 
-        color: #fff; 
-        padding-left: 28px;
-    }
-
-    .menu-item::before {
-        content: '';
-        position: absolute;
-        left: 0;
-        top: 0;
-        height: 100%;
-        width: 0;
-        background: #b8860b;
-        transition: 0.3s ease;
-    }
-
-    .menu-item:hover::before { width: 4px; }
-
+    /* Red Stamp Button */
     .btn-verify { 
-        border: 1px solid #b8860b; 
-        color: #b8860b; 
-        padding: 10px 24px; 
-        font-size: 10px; 
-        font-weight: 900; 
-        text-transform: uppercase; 
-        letter-spacing: 0.3em; 
-        transition: 0.4s; 
+        border: 2px solid var(--cinnabar); 
+        color: var(--cinnabar); 
+        padding: 8px 20px; 
+        font-family: 'Zhi Mang Xing', cursive;
+        font-size: 1.2rem; 
+        font-weight: normal;
+        text-transform: none; 
+        letter-spacing: normal; 
+        transition: all 0.3s ease; 
         background: transparent; 
         cursor: pointer; 
     }
 
     .btn-verify:hover { 
-        background: #b8860b; 
-        color: black; 
-        box-shadow: 0 0 25px rgba(184, 134, 11, 0.5);
-        transform: scale(1.05);
+        background: var(--cinnabar); 
+        color: #fff; 
+        box-shadow: 4px 4px 0px var(--ink);
+        transform: translate(-2px, -2px);
+    }
+
+    /* User Display Adjustments */
+    #nav-username { color: var(--ink); font-family: 'Ma Shan Zheng', cursive; font-size: 1.2rem; }
+    #nav-rank { color: var(--cinnabar); letter-spacing: 0.1em; }
+    
+    #nav-pfp { 
+        border: 2px solid var(--ink); 
+        border-radius: 0; /* Traditional square look */
+        filter: grayscale(0.5) contrast(1.1);
     }
 
     .chinese-font { font-family: 'Noto Serif SC', serif; }
 
-    /* Performance Fix for Lag */
-    #global-overlay {
-        will-change: opacity;
-    }
-    
-    .notif-badge {
-        background: #b8860b;
-        color: black;
-        padding: 2px 6px;
-        font-size: 9px;
-        border-radius: 2px;
+    /* Vertical Detail */
+    .vertical-accent {
+        writing-mode: vertical-rl;
+        font-family: 'Zhi Mang Xing', cursive;
+        font-size: 12px;
+        color: var(--cinnabar);
+        border-right: 1px solid rgba(0,0,0,0.1);
+        padding-right: 8px;
+        margin-right: 15px;
+        height: 40px;
     }
 </style>
 
-<div id="global-overlay" class="fixed inset-0 bg-black/60 z-[80] opacity-0 pointer-events-none transition-opacity duration-300 backdrop-blur-[2px]" onclick="toggleMenu(false)"></div>
+<div id="global-overlay" class="fixed inset-0 bg-black/20 z-[80] opacity-0 pointer-events-none transition-opacity duration-300 backdrop-blur-[1px]" onclick="toggleMenu(false)"></div>
 
-<header class="relative z-[101] border-b border-white/5 bg-black/40 backdrop-blur-md">
-    <nav class="flex items-center justify-between px-10 py-5 max-w-7xl mx-auto">
+<header class="relative z-[101] ink-header">
+    <nav class="flex items-center justify-between px-8 py-4 max-w-7xl mx-auto">
         
-        <div class="flex items-center space-x-5 cursor-pointer group" onclick="window.location.href='/dprt/'">
-            <div class="w-11 h-11 border border-[#b8860b] flex items-center justify-center bg-[#b8860b] group-hover:shadow-[0_0_15px_rgba(184,134,11,0.5)] transition-all">
-                <span class="text-black text-2xl chinese-font font-black">茶</span>
+        <div class="flex items-center cursor-pointer group" onclick="window.location.href='/dprt/'">
+            <div class="vertical-accent hidden sm:block">大同茶國</div>
+            <div class="w-12 h-12 border-2 border-black flex items-center justify-center bg-black transition-all">
+                <span class="text-[#f4f1ea] text-3xl chinese-font font-black">茶</span>
             </div>
-            <div class="flex flex-col leading-none">
-                <span class="text-3xl font-black tracking-widest text-white">DPRT</span>
-                <span class="text-[9px] uppercase tracking-[0.4em] text-[#b8860b] font-bold mt-1 opacity-80">Teapotian State</span>
+            <div class="flex flex-col leading-none ml-4">
+                <span class="text-3xl font-black tracking-tighter text-black brush-title" style="font-family: 'Ma Shan Zheng', cursive;">DPRT</span>
+                <span class="text-[9px] uppercase tracking-[0.5em] text-[#bc2f32] font-bold mt-1">Sovereign State</span>
             </div>
         </div>
 
-        <div class="hidden lg:flex items-center space-x-10">
+        <div class="hidden lg:flex items-center space-x-12">
             <a href="/dprt/" class="nav-btn" id="nav-home">Home</a>
             <a href="/dprt/info/" class="nav-btn" id="nav-info">Info</a>
-            <a href="/dprt/jobs/" class="nav-btn" id="nav-jobs">Jobs</a>
+            <a href="/dprt/jobs/" class="nav-btn" id="nav-jobs">Archive</a>
             <a href="https://discord.gg/KBNqanJDfa" target="_blank" class="nav-btn">Group</a>
-            <a href="https://republicofteapots.miraheze.org/" target="_blank" class="nav-btn">Wiki</a>
         </div>
 
-        <div class="relative flex items-center justify-end min-w-[150px]">
-            <button id="login-btn" onclick="login()" class="btn-verify">Log In</button>
+        <div class="relative flex items-center justify-end min-w-[180px]">
+            <button id="login-btn" onclick="login()" class="btn-verify">登錄 Log In</button>
             
             <div id="user-display" class="hidden flex items-center space-x-4">
-                <div class="text-right hidden sm:block">
-                    <p id="nav-username" class="text-white text-[11px] font-black uppercase italic tracking-wider">Citizen</p>
-                    <p id="nav-rank" class="text-[#b8860b] text-[9px] font-bold uppercase tracking-[0.2em] opacity-80 italic">Verifying...</p>
+                <div class="text-right hidden sm:block leading-tight">
+                    <p id="nav-username" class="uppercase">Citizen</p>
+                    <p id="nav-rank" class="text-[9px] font-bold uppercase tracking-[0.2em] opacity-80">Authenticated</p>
                 </div>
                 <div class="relative group">
-                    <img id="nav-pfp" src="" class="w-11 h-11 border border-[#b8860b]/50 hover:border-[#b8860b] rounded-sm cursor-pointer transition-all active:scale-95 shadow-[0_0_10px_rgba(0,0,0,0.5)]" onclick="toggleMenu(true)">
-                    <div class="absolute -top-1 -right-1 w-3 h-3 bg-[#b8860b] border-2 border-[#0a0a0c] rounded-full animate-pulse"></div>
+                    <img id="nav-pfp" src="" class="w-12 h-12 cursor-pointer transition-all active:scale-95 shadow-md" onclick="toggleMenu(true)">
+                    <div class="absolute -top-1 -right-1 w-3 h-3 bg-[#bc2f32] border-2 border-[#f4f1ea] rounded-full"></div>
                 </div>
             </div>
 
-            <div id="profile-menu" class="absolute top-[75px] right-0 w-[280px] bg-[#0c0c0e] border border-[#b8860b]/30 z-[110] transform -translate-y-4 opacity-0 pointer-events-none transition-all duration-300 ease-out shadow-[0_20px_50px_rgba(0,0,0,0.8)]">
-                <div class="p-6 border-b border-[#b8860b]/20 bg-gradient-to-b from-[#b8860b]/10 to-transparent">
-                    <p id="menu-user-name" class="font-black text-white uppercase italic text-lg tracking-tighter leading-none">Citizen</p>
-                    <p id="menu-user-rank" class="text-[9px] text-[#b8860b] tracking-[0.3em] font-black uppercase mt-1">Verifying Rank</p>
+            <div id="profile-menu" class="absolute top-[80px] right-0 w-[260px] bg-[#f4f1ea] border-2 border-black z-[110] transform -translate-y-4 opacity-0 pointer-events-none transition-all duration-300 ease-out shadow-2xl">
+                <div class="p-6 border-b-2 border-black bg-white">
+                    <p id="menu-user-name" class="font-black text-black uppercase text-xl leading-none" style="font-family: 'Ma Shan Zheng';">Citizen</p>
+                    <p id="menu-user-rank" class="text-[9px] text-[#bc2f32] tracking-[0.2em] font-black uppercase mt-1">Imperial Subject</p>
                 </div>
                 
-                <div class="menu-item group" onclick="alert('Directive: Maintain the Eternal Brew.')">
-                    <span>Notifications</span>
-                    <span id="notif-count" class="notif-badge">67</span>
+                <div class="menu-item hover:bg-black hover:text-white transition-colors p-4 flex justify-between cursor-pointer border-b border-black/10" onclick="alert('Directive Active.')">
+                    <span class="font-bold text-[11px] uppercase tracking-widest">Notifications</span>
+                    <span id="notif-count" class="bg-[#bc2f32] text-white px-2 py-0.5 text-[9px]">67</span>
                 </div>
                 
-                <div class="menu-item group" onclick="window.location.href='/dprt/settings/'">
-                    <span>Settings</span>
+                <div class="menu-item hover:bg-black hover:text-white transition-colors p-4 cursor-pointer border-b border-black/10" onclick="window.location.href='/dprt/settings/'">
+                    <span class="font-bold text-[11px] uppercase tracking-widest">Settings</span>
                 </div>
                 
-                <div class="p-4 bg-black/20">
-                    <button onclick="logout()" class="w-full py-3 border border-red-900/30 text-red-500 hover:bg-red-500/10 text-[10px] font-black uppercase tracking-[0.3em] transition-all">
-                        Log Out
+                <div class="p-4 bg-zinc-100">
+                    <button onclick="logout()" class="w-full py-3 border-2 border-black text-black hover:bg-black hover:text-white text-[10px] font-black uppercase tracking-[0.3em] transition-all">
+                        Abandon Post
                     </button>
                 </div>
             </div>
