@@ -20,6 +20,7 @@
             z-index: -1;
         }
 
+        /* Ember Animation */
         .ember {
             position: absolute; background: var(--dprt-bronze); border-radius: 50%; opacity: 0;
             pointer-events: none; z-index: 1; will-change: transform;
@@ -31,6 +32,7 @@
             100% { transform: translate3d(0, -10vh, 0) scale(1.2); opacity: 0; }
         }
 
+        /* Scanline CRT Effect */
         body::before {
             content: " "; display: block; position: absolute; inset: 0;
             background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.15) 50%), 
@@ -50,6 +52,8 @@
 <body>
     <div class="bg-overlay"></div>
     <div id="embers-container"></div>
+    
+    <div id="global-overlay" class="fixed inset-0 bg-black/60 z-[80] opacity-0 pointer-events-none transition-opacity duration-300 backdrop-blur-[2px]" onclick="toggleMenu(false)"></div>
     <div id="header-placeholder"></div>
 
     <div id="blur-container" class="relative z-10">
@@ -74,7 +78,7 @@
     </div>
 
     <script>
-        // Embers animation only
+        // Embers animation
         const embersContainer = document.getElementById('embers-container');
         for (let i = 0; i < 15; i++) {
             const e = document.createElement('div');
@@ -86,7 +90,6 @@
         }
     </script>
     
-    <!-- Load auth system -->
-    <script src="./styling/auth.js"></script>
+    <script src="/dprt/styling/auth.js"></script>
 </body>
 </html>
