@@ -11,29 +11,24 @@
             --ink: #1a1a1a; 
             --cinnabar: #bc2f32; 
             --paper: #e6e4e0;
-            --wood: #2c1e14;
+            --silk-dark: #b0aaa0;
+            --silk-light: #d4cfc5;
+            --inner-paper: #f4f1e8; /* Antique Bone color */
         }
 
-        /* FIX: Double Scrollbar & Shake */
-        html {
-            overflow: hidden; /* Lock the base layer */
-            height: 100%;
-        }
+        html { overflow: hidden; height: 100%; }
 
         body {
             background-image: url('https://www.transparenttextures.com/patterns/natural-paper.png');
             background-color: var(--paper);
             color: var(--ink); 
             font-family: 'Noto Serif SC', serif; 
-            margin: 0;
-            height: 100%;
-            overflow-y: auto; /* Only allow scrolling here */
-            overflow-x: hidden;
-            display: flex;
-            flex-direction: column;
+            margin: 0; height: 100%;
+            overflow-y: auto; overflow-x: hidden;
+            display: flex; flex-direction: column;
         }
 
-        /* 1. BACKGROUND & LAYERS */
+        /* 1. BACKGROUND */
         .bg-watermark {
             position: fixed; top: 50%; right: -5%; transform: translateY(-50%);
             font-family: 'Ma Shan Zheng', cursive;
@@ -41,26 +36,20 @@
             pointer-events: none; z-index: 0; user-select: none;
         }
 
-        #ink-container { 
-            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; 
-            pointer-events: none; z-index: 1; overflow: hidden; 
-        }
-
+        #ink-container { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 1; overflow: hidden; }
         .ink-drop {
             position: absolute; background: var(--ink); border-radius: 50%; opacity: 0;
             filter: blur(1px); animation: fall 12s infinite linear;
         }
-
         @keyframes fall {
             0% { transform: translateY(-10px); opacity: 0; }
             20% { opacity: 0.1; }
             100% { transform: translateY(100vh); opacity: 0; }
         }
 
-        /* 2. THE IMPROVED SCROLL (KAKEMONO) */
+        /* 2. THE KAKEMONO - SEAMLESS LOOK */
         .scroll-container {
-            opacity: 0; 
-            transform: translateY(40px);
+            opacity: 0; transform: translateY(40px);
             transition: all 1s cubic-bezier(0.22, 1, 0.36, 1);
             perspective: 1200px;
         }
@@ -68,89 +57,85 @@
 
         .kakemono {
             position: relative;
-            width: 300px;
+            width: 310px;
             margin: 0 auto;
-            /* Silk Border Gradient */
-            background: linear-gradient(to right, #b0aaa0, #d4cfc5 15%, #d4cfc5 85%, #b0aaa0);
-            padding: 20px 15px 40px 15px;
-            box-shadow: 0 30px 60px -12px rgba(0,0,0,0.25);
+            /* Heavy Silk Gradient */
+            background: linear-gradient(to right, var(--silk-dark), var(--silk-light) 12%, var(--silk-light) 88%, var(--silk-dark));
+            padding: 18px 14px 45px 14px;
+            box-shadow: 0 35px 70px -15px rgba(0,0,0,0.3);
             transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
             transform-origin: top center;
         }
 
-        /* The 3D Sway Animation */
         .scroll-container:hover .kakemono {
-            transform: rotateX(4deg) rotateY(-4deg) scale(1.02);
+            transform: rotateX(5deg) rotateY(-3deg) translateY(-5px);
         }
 
-        /* The Inner Paper with a "Torn" bottom edge effect */
+        /* Seamless Inner Paper */
         .scroll-inner {
-            background: #fdfcf8;
+            background-color: var(--inner-paper);
             background-image: url('https://www.transparenttextures.com/patterns/handmade-paper.png');
-            min-height: 400px;
-            padding: 30px 20px;
-            border: 1px solid rgba(0,0,0,0.08);
+            min-height: 420px;
+            padding: 30px 22px;
             display: flex;
             flex-direction: column;
             position: relative;
+            /* Inner shadow makes the paper look recessed into the silk */
+            box-shadow: inset 0 0 40px rgba(0,0,0,0.08); 
         }
 
-        /* Top Hanging Bar */
+        /* Top Bar */
         .kakemono::before {
-            content: ""; position: absolute; top: -5px; left: -2%; width: 104%; height: 12px;
-            background: var(--wood); border-radius: 3px; z-index: 10;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            content: ""; position: absolute; top: -6px; left: -1%; width: 102%; height: 14px;
+            background: #2c1e14; border-radius: 2px; z-index: 10;
         }
 
-        /* Bottom Heavy Roller */
+        /* Bottom Roller with realistic shading */
         .roller {
-            position: absolute; bottom: -15px; left: -8%; width: 116%; height: 28px;
-            background: linear-gradient(to bottom, #3d2b1d, var(--wood), #1a110a);
-            border-radius: 14px;
+            position: absolute; bottom: -18px; left: -10%; width: 120%; height: 32px;
+            background: linear-gradient(to bottom, #4a3423, #2c1e14, #150d07);
+            border-radius: 16px;
             z-index: 10;
-            box-shadow: 0 8px 15px rgba(0,0,0,0.3);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.4);
             display: flex; justify-content: space-between; align-items: center;
-            padding: 0 4px;
+            padding: 0 6px;
         }
 
         .roller::before, .roller::after {
-            content: ""; width: 10px; height: 10px; background: #1e3a8a; 
-            border-radius: 50%; border: 1px solid rgba(255,255,255,0.1);
+            content: ""; width: 12px; height: 12px; background: #1e3a8a; 
+            border-radius: 50%; box-shadow: inset 0 0 5px black;
         }
 
-        /* 3. ELEMENTS */
+        /* 3. CONTENT */
         .job-icon {
-            width: 55px; height: 55px; margin: 0 auto 20px;
-            filter: grayscale(1) contrast(1.2); opacity: 0.8;
+            width: 50px; height: 50px; margin: 0 auto 18px;
+            opacity: 0.7; filter: sepia(0.5);
             transition: all 0.4s ease;
         }
-        .scroll-container:hover .job-icon {
-            filter: grayscale(0) contrast(1); opacity: 1; transform: scale(1.1);
-        }
+        .scroll-container:hover .job-icon { opacity: 1; filter: sepia(0); transform: scale(1.1); }
 
         .scroll-title {
             font-family: 'Noto Serif SC', serif; font-weight: 900;
-            font-size: 1.6rem; text-align: center; color: var(--ink);
-            letter-spacing: -0.02em; margin-bottom: 8px;
+            font-size: 1.5rem; text-align: center; color: var(--ink);
+            line-height: 1.2; margin-bottom: 6px;
         }
 
         .scroll-meta {
-            color: var(--cinnabar); font-size: 0.7rem; font-weight: 900;
+            color: var(--cinnabar); font-size: 0.65rem; font-weight: 900;
             text-align: center; letter-spacing: 0.4em;
-            margin-bottom: 20px; border-bottom: 1px solid rgba(188, 47, 50, 0.2);
-            padding-bottom: 8px;
+            margin-bottom: 20px; border-bottom: 1px double rgba(188, 47, 50, 0.3);
+            padding-bottom: 10px;
         }
 
         .btn-apply {
             margin-top: auto;
-            border: 1.5px solid var(--ink);
-            padding: 10px; font-weight: 900; font-size: 0.75rem;
+            border: 1px solid var(--ink);
+            padding: 10px; font-weight: 900; font-size: 0.7rem;
             letter-spacing: 0.2em; text-transform: uppercase;
             transition: all 0.3s ease;
+            background: rgba(0,0,0,0.02);
         }
-        .btn-apply:hover {
-            background: var(--cinnabar); color: white; border-color: var(--cinnabar);
-        }
+        .btn-apply:hover { background: var(--ink); color: white; letter-spacing: 0.3em; }
 
         .reveal-node { opacity: 0; transform: translateX(-20px); transition: all 1s ease; }
         .reveal-active { opacity: 1; transform: translateX(0); }
@@ -161,20 +146,20 @@
     <div class="bg-watermark">令</div>
     <div id="ink-container"></div>
 
-    <main class="relative z-10 pt-12 pb-24">
-        <header class="max-w-6xl mx-auto px-12 mb-20">
-            <div class="flex items-center gap-8">
-                <div class="reveal-node h-24 border-r-4 border-[#bc2f32] pr-8 flex items-center">
-                    <span class="writing-vertical font-['Zhi_Mang_Xing'] text-3xl text-[#bc2f32]">職務指令</span>
+    <main class="relative z-10 pt-16 pb-24">
+        <header class="max-w-6xl mx-auto px-12 mb-24">
+            <div class="flex items-center gap-10">
+                <div class="reveal-node h-28 border-r-4 border-[#bc2f32] pr-10 flex items-center">
+                    <span class="writing-vertical font-['Zhi_Mang_Xing'] text-4xl text-[#bc2f32]">職務指令</span>
                 </div>
                 <div>
-                    <h1 class="font-['ZCOOL_XiaoWei'] text-6xl uppercase tracking-tighter">Imperial Bureau</h1>
-                    <p class="font-serif italic text-zinc-500 text-xs tracking-[0.5em] mt-2">ACTIVE MANDATES & ASSIGNMENTS</p>
+                    <h1 class="font-['ZCOOL_XiaoWei'] text-7xl uppercase tracking-tighter">Imperial Bureau</h1>
+                    <p class="font-serif italic text-zinc-500 text-xs tracking-[0.6em] mt-3">PROCLAIMED MANDATES OF THE STATE</p>
                 </div>
             </div>
         </header>
 
-        <div id="job-grid" class="flex flex-wrap justify-center gap-x-16 gap-y-24 px-6"></div>
+        <div id="job-grid" class="flex flex-wrap justify-center gap-x-20 gap-y-28 px-8"></div>
     </main>
 
     <script src="/dprt/styling/auth.js"></script>
@@ -194,7 +179,7 @@
                             <img src="./decals/${job.icon}" class="job-icon" onerror="this.style.display='none'">
                             <div class="scroll-meta">DIRECTIVE #${job.id}</div>
                             <h2 class="scroll-title">${job.title}</h2>
-                            <p class="text-zinc-600 text-[12px] leading-relaxed font-serif italic mb-8 text-center">
+                            <p class="text-zinc-600 text-[11px] leading-relaxed font-serif italic mb-8 text-center px-2">
                                 "${job.desc}"
                             </p>
                             <button onclick="window.location.href='https://deathhunter1249.github.io/dprt/apply/'" class="btn-apply">
@@ -208,13 +193,12 @@
             
             setTimeout(() => {
                 document.querySelectorAll('.scroll-container').forEach((el, idx) => {
-                    setTimeout(() => el.classList.add('visible'), idx * 200);
+                    setTimeout(() => el.classList.add('visible'), idx * 250);
                 });
                 document.querySelectorAll('.reveal-node').forEach(n => n.classList.add('reveal-active'));
             }, 100);
         }
 
-        // Ink Physics (Now strictly vertical to prevent overflow)
         const inkContainer = document.getElementById('ink-container');
         for (let i = 0; i < 15; i++) {
             const drop = document.createElement('div');
