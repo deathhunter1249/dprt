@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DPRT | State Directives</title>
+    <title>DPRT | Republic of Teapots</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@500;900&family=Zhi+Mang+Xing&family=Ma+Shan+Zheng&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@600;900&family=Zhi+Mang+Xing&family=Ma+Shan+Zheng&family=ZCOOL+XiaoWei&display=swap" rel="stylesheet">
     <style>
         :root { 
             --ink: #1a1a1a; 
@@ -13,217 +13,183 @@
             --paper: #e6e4e0;
         }
 
-        body {
+        /* Essential Fix: Prevents "Wobble" and Scrollbars */
+        html, body {
+            max-width: 100%;
+            height: 100%;
+            overflow: hidden; /* No scroll on landing page */
             background-color: var(--paper);
+        }
+
+        body {
             background-image: url('https://www.transparenttextures.com/patterns/natural-paper.png');
             color: var(--ink); 
             font-family: 'Noto Serif SC', serif; 
-            margin: 0; min-height: 100vh; overflow-x: hidden;
+            margin: 0;
+            display: flex; flex-direction: column;
         }
 
-        /* 1. BACKGROUND ELEMENTS */
-        .bg-dragon {
-            position: fixed; top: 50%; right: -5%; transform: translateY(-50%);
-            width: 60vw; height: 90vh;
-            background-image: url('../decals/dragon-background.png'); 
-            background-size: contain; background-repeat: no-repeat;
-            background-position: center right;
-            opacity: 0.06; pointer-events: none; z-index: 0;
-            filter: grayscale(1) contrast(1.2);
-            animation: dragonPulse 20s ease-in-out infinite;
-        }
-        @keyframes dragonPulse {
-            0%, 100% { transform: translateY(-50%) scale(1); opacity: 0.05; }
-            50% { transform: translateY(-52%) scale(1.05); opacity: 0.08; }
+        /* 1. BACKGROUND ELEMENTS - FIXED POSITIONS */
+        .bg-watermark {
+            position: fixed; top: 50%; right: -2%; transform: translateY(-50%);
+            font-family: 'Ma Shan Zheng', cursive;
+            font-size: 45rem; color: rgba(0, 0, 0, 0.04);
+            pointer-events: none; z-index: 0; line-height: 0.8; user-select: none;
         }
 
         .cinnabar-glow {
-            position: fixed; top: -10%; left: -10%; width: 60vw; height: 60vw;
-            background: radial-gradient(circle, rgba(188, 47, 50, 0.05) 0%, transparent 70%);
-            z-index: 0; pointer-events: none;
+            position: fixed; top: -15%; left: -10%; width: 40vw; height: 40vw;
+            background: radial-gradient(circle, rgba(188, 47, 50, 0.06) 0%, transparent 70%);
+            pointer-events: none; z-index: 0;
         }
 
         /* 2. REVEAL ANIMATIONS */
-        .reveal-node { opacity: 0; transform: translateX(-30px); transition: all 1.5s cubic-bezier(0.16, 1, 0.3, 1); }
+        .reveal-node { 
+            opacity: 0; transform: translateX(-20px); 
+            transition: all 1s cubic-bezier(0.16, 1, 0.3, 1); 
+        }
         .reveal-active { opacity: 1; transform: translateX(0); }
-        .delay-1 { transition-delay: 0.3s; }
-        .delay-2 { transition-delay: 0.6s; }
+        .delay-1 { transition-delay: 0.2s; }
+        .delay-2 { transition-delay: 0.4s; }
+        .delay-3 { transition-delay: 0.6s; }
 
-        /* 3. PHYSICAL SCROLLS (Kakemono) */
-        .scroll-container {
-            perspective: 1000px; opacity: 0; transform: translateY(40px);
-            transition: all 1s cubic-bezier(0.16, 1, 0.3, 1);
+        /* 3. STABLE INK DROPS */
+        #ink-container { 
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            pointer-events: none; z-index: 1; overflow: hidden; 
         }
-        .scroll-container.visible { opacity: 1; transform: translateY(0); }
-
-        .kakemono {
-            background: #f4f1ea;
-            background-image: url('https://www.transparenttextures.com/patterns/handmade-paper.png');
-            width: 300px; min-height: 420px;
-            margin: 0 auto; position: relative;
-            box-shadow: 10px 20px 40px rgba(0,0,0,0.15);
-            padding: 40px 30px; display: flex; flex-direction: column;
-            transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
-            transform-origin: top center;
-        }
-
-        .scroll-container:hover .kakemono {
-            transform: rotateX(8deg) rotateY(4deg);
-            box-shadow: 25px 50px 70px rgba(0,0,0,0.25);
-        }
-
-        /* Scroll Hardware */
-        .kakemono::before { 
-            content: ""; position: absolute; top: -8px; left: -5%; width: 110%; height: 12px;
-            background: #222; border-radius: 2px;
-        }
-        .hanging-string {
-            position: absolute; top: -45px; left: 50%; transform: translateX(-50%);
-            width: 110px; height: 45px; border-top: 2px solid #555;
-            border-left: 2px solid #555; border-right: 2px solid #555;
-            border-radius: 55px 55px 0 0; opacity: 0.3;
-        }
-        .roller {
-            position: absolute; bottom: -12px; left: -8%; width: 116%; height: 26px;
-            background: linear-gradient(to bottom, #1a1a1a, #000, #222);
-            border-radius: 13px; box-shadow: 0 8px 15px rgba(0,0,0,0.4);
-        }
-
-        /* 4. TYPOGRAPHY */
-        .hero-title { 
-            font-family: 'Ma Shan Zheng', cursive; 
-            font-size: clamp(3rem, 8vw, 6rem); 
-            line-height: 0.85; 
-        }
-
-        .accent-stamp { 
-            writing-mode: vertical-rl; 
-            font-family: 'Zhi Mang Xing', cursive; 
-            font-size: 1.5rem; 
-            color: var(--cinnabar); 
-            border-right: 1px solid var(--cinnabar); 
-            padding-right: 1rem; margin-right: 2rem; opacity: 0.8; 
-        }
-
-        .scroll-title { 
-            font-family: 'Noto Serif SC', serif; 
-            font-weight: 900; 
-            font-size: 1.8rem; 
-            color: var(--ink); 
-            margin-bottom: 0.5rem; 
-            line-height: 1.1;
-        }
-
-        .scroll-meta { 
-            font-family: 'Noto Serif SC'; 
-            font-weight: 900; 
-            color: var(--cinnabar); 
-            font-size: 0.7rem; 
-            letter-spacing: 0.3em; 
-            margin-bottom: 1.5rem; 
-            border-bottom: 1px solid rgba(0,0,0,0.1); 
-            padding-bottom: 5px; 
-        }
-
-        .btn-seal {
-            margin-top: auto; border: 1.5px solid var(--ink); padding: 10px;
-            font-family: 'Noto Serif SC', serif; font-weight: 700;
-            font-size: 0.8rem; letter-spacing: 0.2em; text-transform: uppercase;
-            color: var(--ink); transition: all 0.3s; background: transparent;
-            cursor: pointer;
-        }
-        .btn-seal:hover { background: var(--ink); color: white; }
-
-        /* 5. INK EFFECTS */
-        #ink-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; }
         .ink-drop {
             position: absolute; background: var(--ink); border-radius: 50%; opacity: 0;
-            filter: blur(1px); animation: fall 15s infinite linear;
+            filter: blur(1px); animation: fall 12s infinite linear;
         }
         @keyframes fall {
-            0% { transform: translate3d(0, -10vh, 0) scale(0); opacity: 0; }
-            20% { opacity: 0.1; }
-            100% { transform: translate3d(10vw, 110vh, 0) scale(2); opacity: 0; }
+            0% { transform: translate3d(0, -2vh, 0) scale(0); opacity: 0; }
+            15% { opacity: 0.12; }
+            100% { transform: translate3d(5vw, 102vh, 0) scale(1.2); opacity: 0; }
+        }
+
+        /* 4. TYPOGRAPHY - Clean & Strong */
+        .hero-title { 
+            font-family: 'ZCOOL XiaoWei', serif;
+            font-size: clamp(3rem, 9vw, 6.5rem); 
+            line-height: 0.95;
+            letter-spacing: -0.02em;
+        }
+
+        .accent-stamp {
+            writing-mode: vertical-rl;
+            font-family: 'Zhi Mang Xing', cursive;
+            font-size: 1.3rem;
+            color: var(--cinnabar);
+            border-right: 2px solid var(--cinnabar);
+            padding-right: 0.8rem;
+            margin-right: 2rem;
+            opacity: 0.85;
+            letter-spacing: 0.1em;
+        }
+
+        /* 5. SEAL BUTTONS - High Readability */
+        .btn-seal {
+            padding: 0.75rem 2rem;
+            font-family: 'Noto Serif SC', serif;
+            font-weight: 900;
+            font-size: 0.85rem;
+            letter-spacing: 0.2em;
+            color: var(--ink);
+            border: 2px solid var(--ink);
+            transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+            background: transparent;
+            cursor: pointer;
+            text-transform: uppercase;
+        }
+        .btn-seal:hover {
+            background-color: var(--cinnabar);
+            border-color: var(--cinnabar);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
         }
     </style>
 </head>
-<body>
-    <div class="bg-dragon"></div>
+<body id="blur-container">
+    <div id="header-placeholder" class="relative z-[100]"></div>
+
+    <div class="bg-watermark">龍</div>
     <div class="cinnabar-glow"></div>
     <div id="ink-container"></div>
-
-    <main class="relative z-10">
-        <div class="max-w-7xl mx-auto px-12 py-16 w-full">
+    
+    <div class="flex-grow flex flex-col justify-center relative z-10">
+        <main class="max-w-5xl mx-auto px-12 py-10 w-full"> 
             <div class="flex items-start">
-                <div class="reveal-node delay-1 accent-stamp">君子不憂不懼 — Eternal Peace</div>
-                <div>
-                    <div class="reveal-node delay-1 mb-4">
-                        <span class="bg-black text-white px-4 py-1 text-[10px] tracking-[0.5em] font-bold uppercase">
-                            State Archives: Directives
+                <div class="reveal-node delay-1 accent-stamp">
+                    君子不憂不懼 — ETERNAL PEACE
+                </div>
+
+                <div class="content-wrapper">
+                    <div class="reveal-node delay-1 mb-5">
+                        <span class="bg-zinc-900 text-white px-3 py-1 text-[9px] tracking-[0.5em] font-bold uppercase">
+                            DPRT System Link
                         </span>
                     </div>
+
                     <div class="reveal-node delay-2">
-                        <h1 class="hero-title text-zinc-900">
-                            REPUBLIC <br>
-                            <span class="text-[#bc2f32]">APPLICATIONS</span>
+                        <h1 class="hero-title text-zinc-900 mb-6">
+                            ORDER IN <br>
+                            <span class="text-[#bc2f32]">EVERY DROP</span>
                         </h1>
+                    </div>
+
+                    <div class="reveal-node delay-3">
+                        <p class="text-zinc-600 text-lg font-serif max-w-lg leading-relaxed italic border-l-4 border-[#bc2f32] pl-6 mb-10">
+                            The Republic is a scroll yet to be written. 
+                            Loyalty is the ink; tranquility is the result.
+                        </p>
+                        
+                        <div class="flex flex-wrap gap-5">
+                            <button 
+                                onclick="window.location.href='https://deathhunter1249.github.io/dprt/jobs/'" 
+                                class="btn-seal">
+                                View Directives
+                            </button>
+                            <button 
+                                onclick="window.location.href='https://deathhunter1249.github.io/dprt/protocol/'" 
+                                class="btn-seal" 
+                                style="opacity: 0.6; border-style: dotted;">
+                                Protocol
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
+        </main>
+    </div>
 
-        <div id="job-grid" class="flex flex-wrap justify-center gap-24 px-12 pb-40"></div>
-    </main>
+    <script src="/dprt/styling/auth.js"></script>
 
     <script>
-        // 1. DATA: Add or edit jobs here
-        const jobs = [
-            { 
-                id: "01", 
-                title: "Template", 
-                desc: "This is a test template for the application scroll." 
-            },
-        ];
-
-        // 2. RENDER FUNCTION
-        function renderJobs() {
-            const grid = document.getElementById('job-grid');
-            grid.innerHTML = jobs.map((job, i) => `
-                <div class="scroll-container" style="transition-delay: ${i * 0.2}s">
-                    <div class="hanging-string"></div>
-                    <div class="kakemono">
-                        <div class="scroll-meta">DIRECTIVE #0${job.id}</div>
-                        <h2 class="scroll-title">${job.title}</h2>
-                        <p class="text-zinc-600 text-[13px] leading-relaxed font-serif italic mb-6">
-                            "${job.desc}"
-                        </p>
-                        <button class="btn-seal">APPLY</button>
-                        <div class="roller"></div>
-                    </div>
-                </div>
-            `).join('');
-
-            // Trigger animations after content is injected
+        // Smooth Reveal Logic
+        window.addEventListener('load', () => {
+            const nodes = document.querySelectorAll('.reveal-node');
             setTimeout(() => {
-                document.querySelectorAll('.scroll-container').forEach(el => el.classList.add('visible'));
-                document.querySelectorAll('.reveal-node').forEach(node => node.classList.add('reveal-active'));
+                nodes.forEach(node => node.classList.add('reveal-active'));
             }, 100);
-        }
+        });
 
-        // 3. INK DROP ANIMATION
+        // Stable Ink Generation (Performance Optimized)
         const inkContainer = document.getElementById('ink-container');
-        for (let i = 0; i < 15; i++) {
+        const dropCount = 10; 
+        
+        for (let i = 0; i < dropCount; i++) {
             const drop = document.createElement('div');
             drop.className = 'ink-drop';
-            drop.style.left = Math.random() * 100 + '%';
-            const size = (Math.random() * 4 + 2) + 'px';
-            drop.style.width = size; drop.style.height = size;
-            drop.style.animationDelay = Math.random() * 15 + 's';
+            drop.style.left = (Math.random() * 95) + 'vw'; // Keep away from right edge
+            const size = (Math.random() * 3 + 2) + 'px';
+            drop.style.width = size;
+            drop.style.height = size;
+            drop.style.animationDelay = Math.random() * 10 + 's';
+            drop.style.animationDuration = (Math.random() * 4 + 12) + 's';
             inkContainer.appendChild(drop);
         }
-
-        // Start render on load
-        window.addEventListener('DOMContentLoaded', renderJobs);
     </script>
 </body>
 </html>
