@@ -3,227 +3,125 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DPRT | State Personnel Database</title>
+    <title>DPRT | Imperial Archive</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@900&family=Inter:wght@400;700;900&family=Zhi+Mang+Xing&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;900&family=Zhi+Mang+Xing&family=Ma+Shan+Zheng&display=swap" rel="stylesheet">
     <style>
-        :root { 
-            --dprt-bronze: #b8860b; 
-            --dprt-ink: #050505; 
-            --dprt-red: #8b0000;
-        }
-        
-        body {
-            background-color: var(--dprt-ink);
-            /* Subtle Dragon-scale texture overlay */
-            background-image: url('https://www.transparenttextures.com/patterns/dark-matter.png');
-            color: #e0e0e0;
-            font-family: 'Inter', sans-serif;
-            margin: 0;
-            min-height: 100vh;
-            overflow-x: hidden;
-        }
-
-        /* The Gold Frame */
-        body::after {
-            content: "";
-            position: fixed;
-            inset: 15px;
-            border: 1px solid rgba(184, 134, 11, 0.3);
-            pointer-events: none;
-            z-index: 100;
-        }
-
-        /* Chinese Calligraphy Background Watermark */
-        .ink-watermark {
-            position: fixed;
-            right: -5%;
-            top: 10%;
-            font-family: 'Zhi+Mang+Xing', cursive;
-            font-size: 40rem;
-            color: rgba(184, 134, 11, 0.03);
-            pointer-events: none;
-            z-index: -1;
-            user-select: none;
-        }
-
-        /* Startup Loader */
-        #loader {
-            position: fixed;
-            inset: 0;
-            background: #000;
-            z-index: 9999;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            transition: opacity 0.8s ease-out;
-        }
-
-        .loader-progress {
-            width: 0%;
-            height: 1px;
-            background: var(--dprt-bronze);
-            box-shadow: 0 0 15px var(--dprt-bronze);
-            animation: load 2.5s forwards cubic-bezier(0.23, 1, 0.32, 1);
-        }
-
-        @keyframes load { 0% { width: 0%; } 100% { width: 240px; } }
-
-        /* Ink-Wash Job Cards */
-        .job-card {
-            background: linear-gradient(145deg, rgba(20, 20, 22, 0.9), rgba(10, 10, 12, 0.9));
-            border-left: 3px solid var(--dprt-red);
-            border-right: 1px solid rgba(184, 134, 11, 0.1);
-            padding: 2.5rem;
-            position: relative;
-            transition: all 0.4s ease;
-        }
-
-        .job-card::before {
-            content: "龍"; /* Dragon Character */
-            position: absolute;
-            bottom: 10px;
-            right: 10px;
-            font-size: 5rem;
-            font-family: 'Noto Serif SC';
-            color: rgba(255, 255, 255, 0.02);
-        }
-
-        .job-card:hover {
-            border-left-color: var(--dprt-bronze);
-            transform: scale(1.02);
-            background: rgba(30, 30, 35, 1);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.6);
-        }
-
-        #main-content {
-            opacity: 0;
-            transition: opacity 1.5s ease;
-        }
-
-        #main-content.visible { opacity: 1; }
-
-        /* Typography */
-        .chinese-header { font-family: 'Noto Serif SC', serif; }
+        :root { --imperial-gold: #c5a059; --cinnabar-red: #8b0000; --charcoal-ink: #0a0a0b; --paper-dark: #141416; }
+        body { background-color: var(--charcoal-ink); background-image: url('https://www.transparenttextures.com/patterns/shattered-island.png'); color: #d1d1d1; font-family: 'Noto Serif SC', serif; margin: 0; min-height: 100vh; overflow-x: hidden; }
+        .imperial-frame { position: fixed; inset: 0; border: 1px solid rgba(197, 160, 89, 0.2); pointer-events: none; z-index: 100; }
+        .ink-dragon { position: fixed; bottom: -5%; right: -2%; font-size: 35rem; font-family: 'Ma Shan Zheng', cursive; color: rgba(197, 160, 89, 0.02); pointer-events: none; z-index: -1; user-select: none; }
+        #loader { position: fixed; inset: 0; background: #000; z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: opacity 1s ease; }
+        .loader-seal { width: 90px; height: 90px; border: 3px solid var(--cinnabar-red); display: flex; align-items: center; justify-content: center; font-family: 'Zhi Mang Xing'; font-size: 2.5rem; color: var(--cinnabar-red); box-shadow: 0 0 25px var(--cinnabar-red); animation: seal-pulse 2s infinite ease-in-out; }
+        @keyframes seal-pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.1); } }
+        .job-card { background: var(--paper-dark); border-top: 2px solid var(--imperial-gold); border-bottom: 2px solid var(--imperial-gold); padding: 3.5rem 2.5rem; position: relative; transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1); box-shadow: 0 15px 40px rgba(0,0,0,0.6); }
+        .job-card:hover { transform: translateY(-8px); border-top-color: var(--cinnabar-red); background: #1c1c1f; }
+        .admin-label { position: absolute; top: 0; right: 0; background: var(--cinnabar-red); color: white; font-size: 9px; padding: 4px 12px; font-weight: 900; letter-spacing: 2px; text-transform: uppercase; }
         .calligraphy { font-family: 'Zhi Mang Xing', cursive; }
-
-        .custom-scroll::-webkit-scrollbar { width: 3px; }
-        .custom-scroll::-webkit-scrollbar-thumb { background: var(--dprt-bronze); }
+        .imperial-title { font-family: 'Ma Shan Zheng', cursive; }
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-thumb { background: var(--imperial-gold); }
+        #main-content { opacity: 0; transition: all 1.2s ease; }
+        #main-content.visible { opacity: 1; }
     </style>
 </head>
-<body class="custom-scroll">
-
-    <div class="ink-watermark calligraphy">茶</div>
-
+<body>
+    <div class="imperial-frame"></div>
+    <div class="ink-dragon">茶</div>
     <div id="loader">
-        <div class="font-mono text-[10px] text-[#b8860b] tracking-[0.8em] uppercase mb-4">Establishing Imperial Link</div>
-        <div class="loader-progress"></div>
+        <div class="loader-seal">茶</div>
+        <div class="mt-8 font-mono text-[9px] text-[#c5a059] tracking-[0.6em] uppercase">Authenticating Imperial Lineage</div>
     </div>
-
+    <div id="header-placeholder" class="relative z-[1001]"></div>
     <div id="main-content">
-        <main class="max-w-7xl mx-auto px-12 py-32">
-            
-            <div class="mb-24 relative">
-                <div class="flex items-center space-x-4 mb-8">
-                    <span class="text-red-700 text-2xl calligraphy">大同茶國</span>
-                    <div class="h-[1px] w-24 bg-[#b8860b]/30"></div>
-                    <span class="text-[#b8860b] font-mono text-[10px] tracking-[0.5em] uppercase">Personnel Directorate</span>
-                </div>
-                
-                <h1 class="text-8xl font-black uppercase italic tracking-tighter text-white chinese-header">
-                    The Archive<span class="text-[#b8860b]">.</span>
-                </h1>
-                
-                <p class="text-zinc-500 mt-8 max-w-2xl text-base leading-relaxed border-l-2 border-red-900 pl-10">
-                    Restricted to high-ranking officials of the <span class="text-zinc-200">Republic of Teapots</span>. 
-                    Every soul documented is a leaf in the eternal brew. Ensure your credentials are authenticated before proceeding with enlistment.
-                </p>
+        <main class="max-w-6xl mx-auto px-8 py-32">
+            <div class="text-center mb-32">
+                <div class="inline-block border-b border-gold-500/20 pb-4 mb-8"><span class="text-cinnabar-red text-3xl calligraphy tracking-widest">大同茶國</span></div>
+                <h1 class="text-7xl md:text-9xl font-black text-white imperial-title tracking-tighter">THE ARCHIVE</h1>
             </div>
-
-            <div id="job-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10"></div>
-
-            <button id="admin-add-trigger" onclick="openEditor()" class="hidden w-full mt-20 border border-zinc-800 py-16 text-zinc-500 hover:text-red-700 hover:border-red-900 transition-all uppercase text-[11px] tracking-[1em] calligraphy">
-                + Append New Imperial Record
-            </button>
+            <div id="job-grid" class="grid grid-cols-1 md:grid-cols-2 gap-12"></div>
+            <button id="admin-add-trigger" onclick="openEditor()" class="hidden w-full mt-24 border border-zinc-800 py-16 text-zinc-600 hover:text-cinnabar-red hover:border-cinnabar-red transition-all uppercase text-xs tracking-[1em] calligraphy">+ Draft New Imperial Edict</button>
         </main>
     </div>
-
-    <div id="admin-editor" class="fixed inset-0 bg-black/95 z-[2000] hidden items-center justify-center backdrop-blur-sm">
-        <div class="bg-[#0a0a0c] border-t-4 border-red-800 p-12 w-full max-w-xl shadow-2xl">
-            <h2 class="text-white font-black uppercase mb-10 italic text-2xl chinese-header">Update Record</h2>
+    <div id="admin-editor" class="fixed inset-0 bg-black/98 z-[2000] hidden items-center justify-center backdrop-blur-xl">
+        <div class="bg-[#0c0c0e] border-t-2 border-cinnabar-red p-12 w-full max-w-xl">
+            <h2 class="text-white text-3xl mb-10 imperial-title">Archive New Entry</h2>
             <div class="space-y-8">
-                <div>
-                    <label class="text-[10px] uppercase font-bold text-zinc-600 block mb-3">Record Designation</label>
-                    <input type="text" id="edit-title" class="w-full bg-black/40 border border-zinc-800 p-5 text-white focus:border-red-800 outline-none transition-all font-bold">
-                </div>
-                <div>
-                    <label class="text-[10px] uppercase font-bold text-zinc-600 block mb-3">Directives</label>
-                    <textarea id="edit-desc" class="w-full bg-black/40 border border-zinc-800 p-5 text-white h-40 focus:border-red-800 outline-none transition-all text-sm"></textarea>
-                </div>
-                <div class="flex space-x-6 pt-6">
-                    <button onclick="saveApp()" class="flex-1 bg-red-900 text-white font-bold py-5 uppercase text-[10px] tracking-widest hover:bg-red-700 transition-all">Seal Entry</button>
-                    <button onclick="closeEditor()" class="flex-1 bg-zinc-900 text-zinc-400 font-bold py-5 uppercase text-[10px] tracking-widest hover:text-white">Discard</button>
+                <input type="text" id="edit-title" placeholder="Designation" class="w-full bg-black border border-zinc-900 p-5 text-white outline-none">
+                <textarea id="edit-desc" placeholder="Directives" class="w-full bg-black border border-zinc-900 p-5 text-white h-40 outline-none"></textarea>
+                <div class="flex gap-4">
+                    <button onclick="saveApp()" class="flex-1 bg-cinnabar-red text-white py-5 font-bold uppercase text-[10px] tracking-[0.3em]">Seal Record</button>
+                    <button onclick="closeEditor()" class="flex-1 bg-zinc-900 text-zinc-500 py-5 font-bold uppercase text-[10px]">Discard</button>
                 </div>
             </div>
         </div>
     </div>
-
     <script>
-        // --- Page Loader Logic ---
-        window.addEventListener('load', () => {
-            setTimeout(() => {
-                const loader = document.getElementById('loader');
-                const mainContent = document.getElementById('main-content');
-                loader.style.opacity = '0';
-                setTimeout(() => {
-                    loader.style.display = 'none';
-                    mainContent.classList.add('visible');
-                    if (typeof initAuth !== "function") renderApps(true); 
-                }, 800);
-            }, 2300);
-        });
-
-        // --- Data Logic (Same as before) ---
-        let apps = JSON.parse(localStorage.getItem('dprt_apps')) || [
-            { title: "Imperial Guard", desc: "The primary shield of the Republic. Maintain order in the capital.", locked: false },
-            { title: "Teapot Artisan", desc: "Curators of the Eternal Brew. Mastery of tea is mandatory.", locked: false },
-            { title: "Spy Network", desc: "Shadow operatives monitoring regional stability.", locked: true }
-        ];
-
-        function renderApps(isAdmin) {
+        let apps = [];
+        async function loadArchive() {
+            try {
+                const response = await fetch('./jobsdata.json'); 
+                apps = await response.json();
+            } catch (e) {
+                apps = [{ title: "Imperial Guard", desc: "Shield of the Palace.", locked: false }];
+            }
+            renderApps();
+        }
+        function renderApps() {
             const grid = document.getElementById('job-grid');
-            if(!grid) return;
             grid.innerHTML = '';
-
+            const isAdmin = window.location.search.includes('admin=true');
+            if(isAdmin) document.getElementById('admin-add-trigger').classList.remove('hidden');
             apps.forEach((app, index) => {
                 const card = document.createElement('div');
-                card.className = `job-card ${app.locked ? 'opacity-50' : ''}`;
+                card.className = `job-card ${app.locked ? 'opacity-40' : ''}`;
                 card.innerHTML = `
-                    <div>
-                        <div class="mb-6 flex items-center">
-                            <div class="w-2 h-2 rounded-full ${app.locked ? 'bg-zinc-800' : 'bg-red-700 shadow-[0_0_10px_red]'} mr-3"></div>
-                            <span class="font-mono text-[9px] uppercase tracking-[0.3em] text-zinc-500">${app.locked ? 'CLASSIFIED' : 'OPEN RECORD'}</span>
+                    ${isAdmin ? `<div class="admin-label">Admin Control</div>` : ''}
+                    <div class="relative z-10">
+                        <div class="flex justify-between items-center mb-8">
+                            <span class="text-cinnabar-red calligraphy text-2xl">敕令</span>
+                            <span class="text-[9px] tracking-[0.5em] text-[#c5a059] uppercase font-mono">${app.locked ? 'Restricted' : 'Open Entry'}</span>
                         </div>
-                        <h3 class="text-3xl font-black uppercase text-white mb-4 chinese-header">${app.title}</h3>
-                        <p class="text-zinc-500 text-sm leading-relaxed mb-12 italic">${app.desc}</p>
-                    </div>
-                    <button class="w-full py-5 border ${app.locked ? 'border-zinc-800 text-zinc-700 cursor-not-allowed' : 'border-red-900/40 text-red-700 hover:bg-red-900 hover:text-white'} text-[10px] font-black uppercase tracking-[0.3em] transition-all">
-                        ${app.locked ? 'ACCESS DENIED' : 'INITIATE RECORD'}
-                    </button>
-                `;
+                        <h3 class="text-4xl text-white mb-6 imperial-title">${app.title}</h3>
+                        <p class="text-zinc-500 italic mb-12 text-base">${app.desc}</p>
+                        <div class="flex justify-between items-center border-t border-zinc-900 pt-8">
+                            <button class="text-cinnabar-red hover:text-white calligraphy text-xl">奉命 Initiate</button>
+                            ${isAdmin ? `<button onclick="deleteApp(${index})" class="text-[9px] text-zinc-700 hover:text-red-600 font-bold uppercase">Dismiss</button>` : ''}
+                        </div>
+                    </div>`;
                 grid.appendChild(card);
             });
-
-            if(isAdmin) document.getElementById('admin-add-trigger')?.classList.remove('hidden');
         }
-
-        function openEditor(index = null) {
-            document.getElementById('admin-editor').style.display = 'flex';
+        function saveApp() {
+            const title = document.getElementById('edit-title').value;
+            const desc = document.getElementById('edit-desc').value;
+            if(!title) return;
+            apps.push({ title, desc, locked: false });
+            navigator.clipboard.writeText(JSON.stringify(apps, null, 2)).then(() => {
+                alert("JSON copied! Paste into jobsdata.json on GitHub.");
+            });
+            renderApps(); closeEditor();
         }
-        function closeEditor() {
-            document.getElementById('admin-editor').style.display = 'none';
+        function deleteApp(i) {
+            if(confirm("Destroy record?")) {
+                apps.splice(i, 1);
+                navigator.clipboard.writeText(JSON.stringify(apps, null, 2));
+                renderApps();
+            }
         }
+        window.addEventListener('load', () => {
+            loadArchive();
+            setTimeout(() => {
+                document.getElementById('loader').style.opacity = '0';
+                setTimeout(() => {
+                    document.getElementById('loader').style.display = 'none';
+                    document.getElementById('main-content').classList.add('visible');
+                }, 1000);
+            }, 2000);
+        });
+        function openEditor() { document.getElementById('admin-editor').style.display = 'flex'; }
+        function closeEditor() { document.getElementById('admin-editor').style.display = 'none'; }
     </script>
+    <script src="/dprt/styling/auth.js"></script>
 </body>
 </html>
