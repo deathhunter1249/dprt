@@ -5,16 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DPRT | State Personnel Database</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@900&family=Inter:wght@400;700;900&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@900&family=Inter:wght@400;700;900&family=Zhi+Mang+Xing&display=swap" rel="stylesheet">
     <style>
         :root { 
             --dprt-bronze: #b8860b; 
-            --dprt-ink: #08080a; 
-            --dprt-card: rgba(255, 255, 255, 0.04);
+            --dprt-ink: #050505; 
+            --dprt-red: #8b0000;
         }
         
         body {
-            background: radial-gradient(circle at 50% 50%, #151518 0%, var(--dprt-ink) 100%);
+            background-color: var(--dprt-ink);
+            /* Subtle Dragon-scale texture overlay */
+            background-image: url('https://www.transparenttextures.com/patterns/dark-matter.png');
             color: #e0e0e0;
             font-family: 'Inter', sans-serif;
             margin: 0;
@@ -22,24 +24,34 @@
             overflow-x: hidden;
         }
 
-        /* Scanline Overlay Effect */
-        body::before {
-            content: " ";
-            display: block;
+        /* The Gold Frame */
+        body::after {
+            content: "";
             position: fixed;
-            top: 0; left: 0; bottom: 0; right: 0;
-            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.15) 50%), 
-                        linear-gradient(90deg, rgba(255, 0, 0, 0.02), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.02));
-            z-index: 100;
-            background-size: 100% 3px, 3px 100%;
+            inset: 15px;
+            border: 1px solid rgba(184, 134, 11, 0.3);
             pointer-events: none;
+            z-index: 100;
+        }
+
+        /* Chinese Calligraphy Background Watermark */
+        .ink-watermark {
+            position: fixed;
+            right: -5%;
+            top: 10%;
+            font-family: 'Zhi+Mang+Xing', cursive;
+            font-size: 40rem;
+            color: rgba(184, 134, 11, 0.03);
+            pointer-events: none;
+            z-index: -1;
+            user-select: none;
         }
 
         /* Startup Loader */
         #loader {
             position: fixed;
             inset: 0;
-            background: #050505;
+            background: #000;
             z-index: 9999;
             display: flex;
             flex-direction: column;
@@ -48,145 +60,110 @@
             transition: opacity 0.8s ease-out;
         }
 
-        .loader-bar {
-            width: 240px;
-            height: 2px;
-            background: rgba(184, 134, 11, 0.1);
-            position: relative;
-            overflow: hidden;
-            margin-top: 24px;
-        }
-
         .loader-progress {
-            position: absolute;
-            height: 100%;
             width: 0%;
+            height: 1px;
             background: var(--dprt-bronze);
             box-shadow: 0 0 15px var(--dprt-bronze);
-            animation: load 2.2s forwards cubic-bezier(0.23, 1, 0.32, 1);
+            animation: load 2.5s forwards cubic-bezier(0.23, 1, 0.32, 1);
         }
 
-        @keyframes load {
-            0% { width: 0%; }
-            40% { width: 30%; }
-            70% { width: 85%; }
-            100% { width: 100%; }
-        }
+        @keyframes load { 0% { width: 0%; } 100% { width: 240px; } }
 
-        /* Glass Cards */
+        /* Ink-Wash Job Cards */
         .job-card {
-            background: var(--dprt-card);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            backdrop-filter: blur(12px);
+            background: linear-gradient(145deg, rgba(20, 20, 22, 0.9), rgba(10, 10, 12, 0.9));
+            border-left: 3px solid var(--dprt-red);
+            border-right: 1px solid rgba(184, 134, 11, 0.1);
             padding: 2.5rem;
             position: relative;
-            transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
+            transition: all 0.4s ease;
+        }
+
+        .job-card::before {
+            content: "龍"; /* Dragon Character */
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            font-size: 5rem;
+            font-family: 'Noto Serif SC';
+            color: rgba(255, 255, 255, 0.02);
         }
 
         .job-card:hover {
-            background: rgba(184, 134, 11, 0.07);
-            border-color: var(--dprt-bronze);
-            transform: translateY(-10px);
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
+            border-left-color: var(--dprt-bronze);
+            transform: scale(1.02);
+            background: rgba(30, 30, 35, 1);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.6);
         }
 
-        /* Content Fade-in after loader */
         #main-content {
             opacity: 0;
-            transform: translateY(15px);
-            transition: opacity 1s ease, transform 1s ease;
+            transition: opacity 1.5s ease;
         }
 
-        #main-content.visible {
-            opacity: 1;
-            transform: translateY(0);
-        }
+        #main-content.visible { opacity: 1; }
 
-        .status-dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            display: inline-block;
-            margin-right: 12px;
-            background: var(--dprt-bronze);
-            box-shadow: 0 0 10px var(--dprt-bronze);
-        }
+        /* Typography */
+        .chinese-header { font-family: 'Noto Serif SC', serif; }
+        .calligraphy { font-family: 'Zhi Mang Xing', cursive; }
 
-        .admin-controls {
-            position: absolute;
-            top: 0; left: 0; right: 0;
-            padding: 10px 15px;
-            background: rgba(184, 134, 11, 0.15);
-            display: flex;
-            justify-content: flex-end;
-            gap: 15px;
-            opacity: 0;
-            transition: 0.3s;
-            z-index: 10;
-        }
-        .job-card:hover .admin-controls { opacity: 1; }
-
-        .custom-scroll::-webkit-scrollbar { width: 4px; }
-        .custom-scroll::-webkit-scrollbar-track { background: transparent; }
+        .custom-scroll::-webkit-scrollbar { width: 3px; }
         .custom-scroll::-webkit-scrollbar-thumb { background: var(--dprt-bronze); }
     </style>
 </head>
 <body class="custom-scroll">
 
+    <div class="ink-watermark calligraphy">茶</div>
+
     <div id="loader">
-        <div class="font-mono text-[10px] text-[#b8860b] tracking-[0.5em] uppercase">Initialising Database Sequence</div>
-        <div class="loader-bar">
-            <div class="loader-progress"></div>
-        </div>
+        <div class="font-mono text-[10px] text-[#b8860b] tracking-[0.8em] uppercase mb-4">Establishing Imperial Link</div>
+        <div class="loader-progress"></div>
     </div>
 
     <div id="main-content">
-        <div id="global-overlay" class="fixed inset-0 bg-black/60 z-[80] opacity-0 pointer-events-none transition-opacity duration-300 backdrop-blur-[2px]" onclick="toggleMenu(false)"></div>
-        
-        <div id="header-placeholder"></div>
-
-        <main class="max-w-7xl mx-auto px-10 py-24">
-            <div class="mb-20">
-                <div class="flex items-center space-x-3 mb-6">
-                    <div class="h-[1px] w-12 bg-[#b8860b]"></div>
-                    <span class="text-[#b8860b] font-mono text-[10px] tracking-[0.6em] uppercase">Directorate of Personnel</span>
+        <main class="max-w-7xl mx-auto px-12 py-32">
+            
+            <div class="mb-24 relative">
+                <div class="flex items-center space-x-4 mb-8">
+                    <span class="text-red-700 text-2xl calligraphy">大同茶國</span>
+                    <div class="h-[1px] w-24 bg-[#b8860b]/30"></div>
+                    <span class="text-[#b8860b] font-mono text-[10px] tracking-[0.5em] uppercase">Personnel Directorate</span>
                 </div>
-                <h1 class="text-7xl font-black uppercase italic tracking-tighter text-white">Entry Portal<span class="text-[#b8860b]">.</span></h1>
-                <p class="text-zinc-500 mt-6 max-w-xl text-sm leading-relaxed font-medium border-l-2 border-zinc-900 pl-8">
-                    Access restricted to authorized personnel. Select a division to initiate your enlistment protocol. Restricted roles require direct Overseer appointment.
+                
+                <h1 class="text-8xl font-black uppercase italic tracking-tighter text-white chinese-header">
+                    The Archive<span class="text-[#b8860b]">.</span>
+                </h1>
+                
+                <p class="text-zinc-500 mt-8 max-w-2xl text-base leading-relaxed border-l-2 border-red-900 pl-10">
+                    Restricted to high-ranking officials of the <span class="text-zinc-200">Republic of Teapots</span>. 
+                    Every soul documented is a leaf in the eternal brew. Ensure your credentials are authenticated before proceeding with enlistment.
                 </p>
             </div>
 
-            <div id="job-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"></div>
+            <div id="job-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10"></div>
 
-            <button id="admin-add-trigger" onclick="openEditor()" class="hidden w-full mt-16 border border-dashed border-zinc-800 py-12 text-zinc-600 hover:border-[#b8860b] hover:text-[#b8860b] hover:bg-[#b8860b]/5 transition-all font-black uppercase text-[10px] tracking-[0.5em]">
-                + Initialize New Personnel Directive
+            <button id="admin-add-trigger" onclick="openEditor()" class="hidden w-full mt-20 border border-zinc-800 py-16 text-zinc-500 hover:text-red-700 hover:border-red-900 transition-all uppercase text-[11px] tracking-[1em] calligraphy">
+                + Append New Imperial Record
             </button>
         </main>
     </div>
 
-    <div id="admin-editor" class="fixed inset-0 bg-black/95 z-[2000] hidden items-center justify-center backdrop-blur-md">
-        <div class="bg-[#0e0e10] border border-[#b8860b]/30 p-10 w-full max-w-lg shadow-[0_0_80px_rgba(0,0,0,1)]">
-            <h2 class="text-white font-black uppercase mb-8 italic text-xl border-b border-zinc-800 pb-4">Modify Entry</h2>
-            <div class="space-y-6">
+    <div id="admin-editor" class="fixed inset-0 bg-black/95 z-[2000] hidden items-center justify-center backdrop-blur-sm">
+        <div class="bg-[#0a0a0c] border-t-4 border-red-800 p-12 w-full max-w-xl shadow-2xl">
+            <h2 class="text-white font-black uppercase mb-10 italic text-2xl chinese-header">Update Record</h2>
+            <div class="space-y-8">
                 <div>
-                    <label class="text-[9px] uppercase font-bold text-zinc-500 block mb-2">Role Title</label>
-                    <input type="text" id="edit-title" class="w-full bg-black border border-zinc-800 p-4 text-white focus:border-[#b8860b] outline-none transition-all font-bold">
+                    <label class="text-[10px] uppercase font-bold text-zinc-600 block mb-3">Record Designation</label>
+                    <input type="text" id="edit-title" class="w-full bg-black/40 border border-zinc-800 p-5 text-white focus:border-red-800 outline-none transition-all font-bold">
                 </div>
                 <div>
-                    <label class="text-[9px] uppercase font-bold text-zinc-500 block mb-2">Directives</label>
-                    <textarea id="edit-desc" class="w-full bg-black border border-zinc-800 p-4 text-white h-32 focus:border-[#b8860b] outline-none transition-all text-sm"></textarea>
+                    <label class="text-[10px] uppercase font-bold text-zinc-600 block mb-3">Directives</label>
+                    <textarea id="edit-desc" class="w-full bg-black/40 border border-zinc-800 p-5 text-white h-40 focus:border-red-800 outline-none transition-all text-sm"></textarea>
                 </div>
-                <div class="flex items-center space-x-3 bg-black/50 p-4 border border-zinc-800">
-                    <input type="checkbox" id="edit-locked" class="w-4 h-4 accent-[#b8860b]">
-                    <label class="text-[10px] uppercase font-black text-zinc-400">Classify as Restricted / Locked</label>
-                </div>
-                <div class="flex space-x-4 pt-4">
-                    <button onclick="saveApp()" class="flex-1 bg-[#b8860b] text-black font-black py-4 uppercase text-[10px] tracking-widest hover:bg-white transition-all">Update Database</button>
-                    <button onclick="closeEditor()" class="flex-1 bg-zinc-900 text-white font-black py-4 uppercase text-[10px] tracking-widest">Cancel</button>
+                <div class="flex space-x-6 pt-6">
+                    <button onclick="saveApp()" class="flex-1 bg-red-900 text-white font-bold py-5 uppercase text-[10px] tracking-widest hover:bg-red-700 transition-all">Seal Entry</button>
+                    <button onclick="closeEditor()" class="flex-1 bg-zinc-900 text-zinc-400 font-bold py-5 uppercase text-[10px] tracking-widest hover:text-white">Discard</button>
                 </div>
             </div>
         </div>
@@ -202,21 +179,16 @@
                 setTimeout(() => {
                     loader.style.display = 'none';
                     mainContent.classList.add('visible');
-                    // Check if auth.js has run, otherwise render default
                     if (typeof initAuth !== "function") renderApps(true); 
                 }, 800);
-            }, 2300); // Duration matches animation
+            }, 2300);
         });
 
-        // --- Data Logic ---
-        let currentEditingIndex = null;
+        // --- Data Logic (Same as before) ---
         let apps = JSON.parse(localStorage.getItem('dprt_apps')) || [
-            { title: "Moderator", desc: "Help moderate the discord server with a great team!", locked: false },
-            { title: "Application", desc: "Read inbound applications from developers!", locked: false },
-            { title: "Marketplace", desc: "Keep the marketplace flowing with new posts!", locked: false },
-            { title: "Representative", desc: "Keep the community active with events, giveaways and more!", locked: false },
-            { title: "Scam Investigator", desc: "With an active marketplace it's our job to make sure everyone is safe.", locked: true },
-            { title: "Social Media", desc: "Grow our community by outreaching to other platforms!", locked: false }
+            { title: "Imperial Guard", desc: "The primary shield of the Republic. Maintain order in the capital.", locked: false },
+            { title: "Teapot Artisan", desc: "Curators of the Eternal Brew. Mastery of tea is mandatory.", locked: false },
+            { title: "Spy Network", desc: "Shadow operatives monitoring regional stability.", locked: true }
         ];
 
         function renderApps(isAdmin) {
@@ -226,27 +198,18 @@
 
             apps.forEach((app, index) => {
                 const card = document.createElement('div');
-                card.className = `job-card ${app.locked ? 'status-locked opacity-70' : ''}`;
-
+                card.className = `job-card ${app.locked ? 'opacity-50' : ''}`;
                 card.innerHTML = `
-                    ${isAdmin ? `
-                    <div class="admin-controls">
-                        <span onclick="event.stopPropagation(); openEditor(${index})" class="text-[9px] font-mono font-bold cursor-pointer text-white hover:text-[#b8860b]">EDIT</span>
-                        <span onclick="event.stopPropagation(); deleteApp(${index})" class="text-[9px] font-mono font-bold cursor-pointer text-red-500 hover:text-white">ARCHIVE</span>
-                    </div>
-                    ` : ''}
                     <div>
-                        <div class="mb-4 flex items-center">
-                            <span class="status-dot ${app.locked ? 'bg-zinc-700 shadow-none' : ''}"></span>
-                            <span class="font-mono text-[9px] uppercase tracking-widest text-zinc-500">
-                                ${app.locked ? 'Classified' : 'Active Channel'}
-                            </span>
+                        <div class="mb-6 flex items-center">
+                            <div class="w-2 h-2 rounded-full ${app.locked ? 'bg-zinc-800' : 'bg-red-700 shadow-[0_0_10px_red]'} mr-3"></div>
+                            <span class="font-mono text-[9px] uppercase tracking-[0.3em] text-zinc-500">${app.locked ? 'CLASSIFIED' : 'OPEN RECORD'}</span>
                         </div>
-                        <h3 class="text-2xl font-black uppercase text-white mb-3 italic tracking-tight">${app.title}</h3>
-                        <p class="text-zinc-500 text-xs leading-relaxed font-medium mb-10">${app.desc}</p>
+                        <h3 class="text-3xl font-black uppercase text-white mb-4 chinese-header">${app.title}</h3>
+                        <p class="text-zinc-500 text-sm leading-relaxed mb-12 italic">${app.desc}</p>
                     </div>
-                    <button class="w-full py-4 border ${app.locked ? 'border-zinc-800 text-zinc-600' : 'border-[#b8860b]/30 text-[#b8860b]'} text-[10px] font-black uppercase tracking-[0.2em] hover:bg-[#b8860b] hover:text-black transition-all">
-                        ${app.locked ? 'Access Denied' : 'Initiate Application'}
+                    <button class="w-full py-5 border ${app.locked ? 'border-zinc-800 text-zinc-700 cursor-not-allowed' : 'border-red-900/40 text-red-700 hover:bg-red-900 hover:text-white'} text-[10px] font-black uppercase tracking-[0.3em] transition-all">
+                        ${app.locked ? 'ACCESS DENIED' : 'INITIATE RECORD'}
                     </button>
                 `;
                 grid.appendChild(card);
@@ -255,51 +218,12 @@
             if(isAdmin) document.getElementById('admin-add-trigger')?.classList.remove('hidden');
         }
 
-        // --- Admin Interaction Logic ---
         function openEditor(index = null) {
-            currentEditingIndex = index;
-            const editor = document.getElementById('admin-editor');
-            editor.classList.remove('hidden');
-            editor.style.display = 'flex';
-
-            if (index !== null) {
-                document.getElementById('edit-title').value = apps[index].title;
-                document.getElementById('edit-desc').value = apps[index].desc;
-                document.getElementById('edit-locked').checked = apps[index].locked;
-            } else {
-                document.getElementById('edit-title').value = '';
-                document.getElementById('edit-desc').value = '';
-                document.getElementById('edit-locked').checked = false;
-            }
+            document.getElementById('admin-editor').style.display = 'flex';
         }
-
         function closeEditor() {
             document.getElementById('admin-editor').style.display = 'none';
         }
-
-        function saveApp() {
-            const title = document.getElementById('edit-title').value;
-            const desc = document.getElementById('edit-desc').value;
-            const locked = document.getElementById('edit-locked').checked;
-            if(!title) return;
-
-            if (currentEditingIndex !== null) apps[currentEditingIndex] = { title, desc, locked };
-            else apps.push({ title, desc, locked });
-
-            localStorage.setItem('dprt_apps', JSON.stringify(apps));
-            closeEditor();
-            renderApps(true); 
-        }
-
-        function deleteApp(index) {
-            if(confirm("Permanently archive this role?")) {
-                apps.splice(index, 1);
-                localStorage.setItem('dprt_apps', JSON.stringify(apps));
-                renderApps(true);
-            }
-        }
     </script>
-    
-    <script src="/dprt/styling/auth.js"></script>
 </body>
 </html>
