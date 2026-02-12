@@ -46,8 +46,8 @@ async function initAuth() {
             const isAdmin = (user.id === '735531512124145674');
             
             if(isAdmin) {
-                navRank.innerText = "Supreme Brewer";
-                menuRank.innerText = "Overseer / Admin";
+                navRank.innerText = "Site Owner";
+                menuRank.innerText = "Admin";
                 document.getElementById('admin-add-trigger')?.classList.remove('hidden');
             } else {
                 navRank.innerText = "Teapotian Citizen";
