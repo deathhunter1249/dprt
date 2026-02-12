@@ -13,11 +13,18 @@
             --paper: #e6e4e0;
             --silk-dark: #b0aaa0;
             --silk-light: #d4cfc5;
-            --inner-paper: #f4f1e8; /* Antique Bone color */
+            --inner-paper: #f4f1e8;
+            --wood: #2c1e14;
         }
 
-        html { overflow: hidden; height: 100%; }
+        /* --- Custom Scrollbar --- */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--paper); border-left: 1px solid rgba(0, 0, 0, 0.05); }
+        ::-webkit-scrollbar-thumb { background: var(--ink); border: 2px solid var(--paper); }
+        ::-webkit-scrollbar-thumb:hover { background: var(--cinnabar); }
+        * { scrollbar-width: thin; scrollbar-color: var(--ink) var(--paper); }
 
+        html { overflow: hidden; height: 100%; }
         body {
             background-image: url('https://www.transparenttextures.com/patterns/natural-paper.png');
             background-color: var(--paper);
@@ -28,7 +35,6 @@
             display: flex; flex-direction: column;
         }
 
-        /* 1. BACKGROUND */
         .bg-watermark {
             position: fixed; top: 50%; right: -5%; transform: translateY(-50%);
             font-family: 'Ma Shan Zheng', cursive;
@@ -47,7 +53,6 @@
             100% { transform: translateY(100vh); opacity: 0; }
         }
 
-        /* 2. THE KAKEMONO - SEAMLESS LOOK */
         .scroll-container {
             opacity: 0; transform: translateY(40px);
             transition: all 1s cubic-bezier(0.22, 1, 0.36, 1);
@@ -59,9 +64,8 @@
             position: relative;
             width: 310px;
             margin: 0 auto;
-            /* Heavy Silk Gradient */
             background: linear-gradient(to right, var(--silk-dark), var(--silk-light) 12%, var(--silk-light) 88%, var(--silk-dark));
-            padding: 18px 14px 45px 14px;
+            padding: 25px 14px 35px 14px; /* Adjusted padding for new bar sizes */
             box-shadow: 0 35px 70px -15px rgba(0,0,0,0.3);
             transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
             transform-origin: top center;
@@ -71,7 +75,6 @@
             transform: rotateX(5deg) rotateY(-3deg) translateY(-5px);
         }
 
-        /* Seamless Inner Paper */
         .scroll-inner {
             background-color: var(--inner-paper);
             background-image: url('https://www.transparenttextures.com/patterns/handmade-paper.png');
@@ -80,33 +83,37 @@
             display: flex;
             flex-direction: column;
             position: relative;
-            /* Inner shadow makes the paper look recessed into the silk */
             box-shadow: inset 0 0 40px rgba(0,0,0,0.08); 
         }
 
-        /* Top Bar */
+        /* THICKER TOP BAR (The Hanger) */
         .kakemono::before {
-            content: ""; position: absolute; top: -6px; left: -1%; width: 102%; height: 14px;
-            background: #2c1e14; border-radius: 2px; z-index: 10;
+            content: ""; position: absolute; 
+            top: -12px; left: -8%; 
+            width: 116%; height: 24px;
+            background: linear-gradient(to bottom, #3d2b1d, var(--wood), #1a110a);
+            border-radius: 4px; z-index: 10;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
         }
 
-        /* Bottom Roller with realistic shading */
+        /* THINNER BOTTOM ROLLER */
         .roller {
-            position: absolute; bottom: -18px; left: -10%; width: 120%; height: 32px;
-            background: linear-gradient(to bottom, #4a3423, #2c1e14, #150d07);
-            border-radius: 16px;
+            position: absolute; 
+            bottom: -8px; left: -2%; 
+            width: 104%; height: 16px;
+            background: var(--wood);
+            border-radius: 8px;
             z-index: 10;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.4);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.2);
             display: flex; justify-content: space-between; align-items: center;
-            padding: 0 6px;
+            padding: 0 4px;
         }
 
         .roller::before, .roller::after {
-            content: ""; width: 12px; height: 12px; background: #1e3a8a; 
-            border-radius: 50%; box-shadow: inset 0 0 5px black;
+            content: ""; width: 8px; height: 8px; background: #1e3a8a; 
+            border-radius: 50%; box-shadow: inset 0 0 3px black;
         }
 
-        /* 3. CONTENT */
         .job-icon {
             width: 50px; height: 50px; margin: 0 auto 18px;
             opacity: 0.7; filter: sepia(0.5);
@@ -123,7 +130,7 @@
         .scroll-meta {
             color: var(--cinnabar); font-size: 0.65rem; font-weight: 900;
             text-align: center; letter-spacing: 0.4em;
-            margin-bottom: 20px; border-bottom: 1px double rgba(188, 47, 50, 0.3);
+            margin-bottom: 20px; border-bottom: 1px solid rgba(188, 47, 50, 0.2);
             padding-bottom: 10px;
         }
 
@@ -153,7 +160,7 @@
                     <span class="writing-vertical font-['Zhi_Mang_Xing'] text-4xl text-[#bc2f32]">職務指令</span>
                 </div>
                 <div>
-                    <h1 class="font-['ZCOOL_XiaoWei'] text-7xl uppercase tracking-tighter">Imperial Bureau</h1>
+                    <h1 class="font-['ZCOOL_XiaoWei'] text-7xl uppercase tracking-tighter">Republic Jobs</h1>
                     <p class="font-serif italic text-zinc-500 text-xs tracking-[0.6em] mt-3">PROCLAIMED MANDATES OF THE STATE</p>
                 </div>
             </div>
@@ -183,7 +190,7 @@
                                 "${job.desc}"
                             </p>
                             <button onclick="window.location.href='https://deathhunter1249.github.io/dprt/apply/'" class="btn-apply">
-                                Petition Role
+                                Apply
                             </button>
                         </div>
                         <div class="roller"></div>
