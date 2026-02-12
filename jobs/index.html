@@ -11,36 +11,37 @@
 
         body { 
             background-color: var(--paper);
-            /* Background Detail: Added a grain texture overlay */
-            background-image: url('https://www.transparenttextures.com/patterns/pinstripe-light.png');
+            /* Background Detail: Subtle noise/grain texture */
+            background-image: url('https://www.transparenttextures.com/patterns/asfalt-dark.png');
+            background-blend-mode: overlay;
             font-family: 'Noto Serif SC', serif !important; 
             margin: 0; min-height: 100vh;
-            overflow-x: hidden;
         }
 
-        /* Missing Detail: Vignette effect to focus the center */
-        body::after {
+        /* Screen detail: Soft vignette */
+        body::before {
             content: ""; position: fixed; inset: 0;
-            background: radial-gradient(circle, transparent 70%, rgba(0,0,0,0.1) 100%);
-            pointer-events: none; z-index: 50;
+            background: radial-gradient(circle, transparent 60%, rgba(0,0,0,0.15) 100%);
+            pointer-events: none; z-index: 10;
         }
 
         .brush-font { font-family: 'Ma Shan Zheng', cursive !important; }
 
-        /* THE APPLICATION SCROLL - Fixed Scaling */
+        /* THE APPLICATION SCROLL - Fixed Scaling Fix */
         .job-scroll { 
             background: #fdfcf8;
             background-image: url('https://www.transparenttextures.com/patterns/handmade-paper.png');
             border: 1px solid rgba(0,0,0,0.1);
             padding: 2.5rem; position: relative; 
             transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-            box-shadow: 5px 5px 0px rgba(0,0,0,0.05);
-            /* FIX: Forced uniform width and height */
+            box-shadow: 8px 8px 0px rgba(0,0,0,0.05);
+            /* This forces the cards to be identical widths */
             width: 380px; 
             min-height: 580px;
             display: flex;
             flex-direction: column;
-            border-top: 4px solid var(--ink);
+            border-top: 5px solid var(--ink);
+            z-index: 20;
         }
 
         .job-scroll:hover { 
@@ -55,22 +56,22 @@
         }
 
         .status-watermark {
-            position: absolute; top: 15px; right: 15px;
-            font-family: 'Zhi Mang Xing'; font-size: 1.1rem;
-            color: var(--cinnabar); opacity: 0.2;
-            border: 1px solid var(--cinnabar); padding: 1px 6px;
-            transform: rotate(10deg);
+            position: absolute; top: 20px; right: 20px;
+            font-family: 'Zhi Mang Xing'; font-size: 1.2rem;
+            color: var(--cinnabar); opacity: 0.25;
+            border: 1px solid var(--cinnabar); padding: 2px 8px;
+            transform: rotate(12deg);
         }
 
         .btn-initiate {
-            background: var(--ink); color: white; padding: 0.6rem 2.5rem;
-            font-family: 'Zhi Mang Xing', cursive; font-size: 1.3rem;
+            background: var(--ink); color: white; padding: 0.8rem 2rem;
+            font-family: 'Zhi Mang Xing', cursive; font-size: 1.4rem;
             transition: 0.3s; border: none; cursor: pointer;
             box-shadow: 0 4px 0 rgba(0,0,0,0.2);
             width: 100%;
         }
 
-        /* ADMIN TERMINAL - Fixed Scroll & Layout */
+        /* ADMIN TERMINAL - Added Scroll Bar Fix */
         #admin-editor {
             position: fixed; top: 0; right: -450px; width: 450px; height: 100%;
             background: #0d0d0d; color: #d1d1d1;
@@ -80,43 +81,43 @@
         }
         #admin-editor.open { right: 0; }
         
-        .editor-body {
-            flex: 1; overflow-y: auto; padding: 2.5rem;
+        .editor-scroll-area {
+            flex: 1;
+            overflow-y: auto;
+            padding: 2.5rem;
         }
         
-        /* Custom scrollbar for editor */
-        .editor-body::-webkit-scrollbar { width: 5px; }
-        .editor-body::-webkit-scrollbar-thumb { background: #333; }
+        /* Modern Scrollbar styling */
+        .editor-scroll-area::-webkit-scrollbar { width: 5px; }
+        .editor-scroll-area::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
 
         .input-field { background: #141414; border: 1px solid #222; color: #fff; width: 100%; padding: 0.8rem; margin-top: 5px; outline: none; }
     </style>
 </head>
 <body>
 
-    <div class="ink-accent"></div>
-
-    <div id="main-content" class="py-24 px-10">
+    <div id="main-content" class="py-24 px-10 relative z-20">
         <header class="max-w-7xl mx-auto mb-32">
             <div class="flex items-center gap-4 mb-4">
                 <div class="bg-black text-white px-3 py-1 font-bold text-[10px] tracking-widest">VER. 1970</div>
                 <div class="h-[1px] w-12 bg-zinc-300"></div>
             </div>
-            <h1 class="text-[clamp(4rem,12vw,10rem)] brush-font leading-none text-zinc-900">
+            <h1 class="text-[clamp(4rem,10vw,8rem)] brush-font leading-none text-zinc-900">
                 Community <span class="text-[#bc2f32]">Jobs</span>
             </h1>
         </header>
 
-        <div id="job-grid" class="flex flex-wrap justify-center gap-12 max-w-7xl mx-auto"></div>
+        <div id="job-grid" class="flex flex-wrap justify-center gap-16 max-w-7xl mx-auto"></div>
 
-        <button id="admin-trigger" onclick="openEditor()" class="hidden fixed bottom-12 right-12 w-20 h-20 bg-black text-[#bc2f32] rounded-full shadow-2xl flex items-center justify-center text-4xl font-['Zhi_Mang_Xing'] border-2 border-[#bc2f32] z-[1500] hover:bg-[#bc2f32] hover:text-white transition-all">改</button>
+        <button id="admin-trigger" onclick="openEditor()" class="hidden fixed bottom-12 right-12 w-20 h-20 bg-black text-[#bc2f32] rounded-full shadow-2xl flex items-center justify-center text-4xl font-['Zhi_Mang_Xing'] border-2 border-[#bc2f32] z-[1500] hover:scale-110 transition-all">改</button>
     </div>
 
     <div id="admin-editor">
-        <div class="p-10 border-b border-[#222]">
+        <div class="p-10 border-b border-[#222] bg-[#0d0d0d]">
             <h2 class="text-4xl brush-font text-white">Modify Archive</h2>
         </div>
         
-        <div class="editor-body space-y-8">
+        <div class="editor-scroll-area space-y-8">
             <input type="hidden" id="edit-index" value="-1">
             <div>
                 <label class="text-[9px] uppercase tracking-widest text-zinc-500">Post Designation</label>
@@ -127,11 +128,12 @@
                 <textarea id="edit-desc" class="input-field h-32" placeholder="Responsibilities..."></textarea>
             </div>
             <div>
-                <label class="text-[9px] uppercase tracking-widest text-zinc-500">Decal</label>
+                <label class="text-[9px] uppercase tracking-widest text-zinc-500">Decal Selection</label>
                 <select id="edit-icon" class="input-field">
                     <option value="seal">Imperial Seal</option>
                     <option value="dragon">Dragon Spirit</option>
                     <option value="lotus">Peaceful Lotus</option>
+                    <option value="sword">Imperial Blade</option>
                 </select>
             </div>
             <div>
@@ -139,15 +141,15 @@
                 <input type="color" id="edit-color" class="w-full h-12 mt-2 bg-transparent border-none cursor-pointer" value="#bc2f32">
             </div>
             
-            <div class="pt-4 space-y-4">
-                <button onclick="saveApp()" class="w-full bg-[#bc2f32] py-4 font-bold text-white uppercase tracking-widest text-xs hover:brightness-110">Update Preview</button>
+            <div class="pt-6 space-y-4">
+                <button onclick="saveApp()" class="w-full bg-[#bc2f32] py-4 font-bold text-white uppercase tracking-widest text-xs hover:brightness-110 transition-all">Update Preview</button>
                 
                 <button onclick="copyJSON()" class="w-full border border-zinc-700 py-3 text-zinc-400 uppercase tracking-widest text-[10px] hover:bg-zinc-800 transition-all">
                     Copy JSON for File Update
                 </button>
             </div>
-            
-            <button onclick="closeEditor()" class="w-full text-[10px] text-zinc-600 uppercase tracking-widest text-center">Discard Changes</button>
+
+            <button onclick="closeEditor()" class="w-full text-[10px] text-zinc-600 uppercase tracking-widest text-center py-8">Discard Changes</button>
         </div>
     </div>
 
@@ -186,22 +188,22 @@
                 scroll.innerHTML = `
                     <div class="vertical-label">ARC-ID: ${100 + i} // DP-RT</div>
                     <div class="status-watermark">OPEN</div>
-                    <div class="flex justify-center mb-6">
-                        <img src="/dprt/decals/${app.icon || 'seal'}.png" class="w-14 h-14 opacity-90" alt="Decal">
+                    <div class="flex justify-center mb-8">
+                        <img src="/dprt/decals/${app.icon || 'seal'}.png" class="w-16 h-16 opacity-90" alt="Decal">
                     </div>
                     <div class="text-center border-b border-zinc-100 pb-6 mb-6">
-                        <h3 class="text-3xl brush-font text-zinc-800">${app.title}</h3>
+                        <h3 class="text-4xl brush-font text-zinc-800">${app.title}</h3>
                         <p class="text-[9px] text-zinc-400 font-mono tracking-[0.3em] uppercase mt-2">Ministry Application</p>
                     </div>
-                    <div class="flex-grow">
-                        <p class="text-zinc-600 text-sm leading-relaxed italic text-center px-4">"${app.desc}"</p>
+                    <div class="flex-grow flex items-center justify-center">
+                        <p class="text-zinc-600 text-sm leading-relaxed italic text-center px-6">"${app.desc}"</p>
                     </div>
                     <div class="mt-8 flex flex-col items-center gap-4">
                         <button class="btn-initiate" style="background:${app.color || '#1a1a1a'}">Apply Now</button>
                         ${isAdmin ? `
-                            <div class="flex gap-6">
-                                <span onclick="editApp(${i})" class="cursor-pointer text-zinc-400 hover:text-black text-[10px] uppercase tracking-widest">Edit</span>
-                                <span onclick="deleteApp(${i})" class="cursor-pointer text-zinc-400 hover:text-red-700 text-[10px] uppercase tracking-widest">Redact</span>
+                            <div class="flex gap-6 mt-2">
+                                <span onclick="editApp(${i})" class="cursor-pointer text-zinc-400 hover:text-black text-[10px] uppercase tracking-widest border-b border-black/10 hover:border-black">Edit</span>
+                                <span onclick="deleteApp(${i})" class="cursor-pointer text-zinc-400 hover:text-red-700 text-[10px] uppercase tracking-widest border-b border-black/10 hover:border-red-700">Redact</span>
                             </div>
                         ` : ''}
                     </div>
@@ -212,15 +214,28 @@
 
         function openEditor() { 
             document.getElementById('edit-index').value = "-1";
+            document.getElementById('edit-title').value = "";
+            document.getElementById('edit-desc').value = "";
             document.getElementById('admin-editor').classList.add('open'); 
         }
+
         function closeEditor() { document.getElementById('admin-editor').classList.remove('open'); }
+
+        function editApp(index) {
+            const app = apps[index];
+            document.getElementById('edit-index').value = index;
+            document.getElementById('edit-title').value = app.title;
+            document.getElementById('edit-desc').value = app.desc;
+            document.getElementById('edit-icon').value = app.icon || 'seal';
+            document.getElementById('edit-color').value = app.color || "#bc2f32";
+            document.getElementById('admin-editor').classList.add('open');
+        }
 
         function saveApp() {
             const idx = parseInt(document.getElementById("edit-index").value);
             const newData = {
-                title: document.getElementById("edit-title").value || "Untitled",
-                desc: document.getElementById("edit-desc").value || "...",
+                title: document.getElementById("edit-title").value.trim() || "Untitled",
+                desc: document.getElementById("edit-desc").value.trim() || "No description.",
                 icon: document.getElementById("edit-icon").value,
                 color: document.getElementById("edit-color").value
             };
@@ -232,15 +247,16 @@
             renderApps(currentAdmin);
         }
 
+        // NEW: Function to get the code for your file
         function copyJSON() {
             const dataStr = JSON.stringify(apps, null, 2);
             navigator.clipboard.writeText(dataStr).then(() => {
-                alert("JSON copied to clipboard! Paste this into your jobsdata.json file.");
+                alert("Archive Data Copied! Paste this into your ./jobs/jobsdata.json file.");
             });
         }
 
         function deleteApp(i) {
-            if (confirm("Redact this entry?")) {
+            if (confirm("Permanently redact this entry from the archive?")) {
                 apps.splice(i, 1);
                 localStorage.setItem("dprt_jobs", JSON.stringify(apps));
                 renderApps(currentAdmin);
@@ -249,5 +265,6 @@
 
         window.addEventListener('DOMContentLoaded', loadArchive);
     </script>
+    <script src="/dprt/styling/auth.js"></script>
 </body>
 </html>
