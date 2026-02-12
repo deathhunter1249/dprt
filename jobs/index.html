@@ -11,29 +11,35 @@
 
         body { 
             background-color: var(--paper);
-            background-image: url('https://googleusercontent.com/image_collection/image_retrieval/6199966141472970469_0');
-            background-blend-mode: multiply;
+            /* Background Detail: Added a grain texture overlay */
+            background-image: url('https://www.transparenttextures.com/patterns/pinstripe-light.png');
             font-family: 'Noto Serif SC', serif !important; 
             margin: 0; min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Missing Detail: Vignette effect to focus the center */
+        body::after {
+            content: ""; position: fixed; inset: 0;
+            background: radial-gradient(circle, transparent 70%, rgba(0,0,0,0.1) 100%);
+            pointer-events: none; z-index: 50;
         }
 
         .brush-font { font-family: 'Ma Shan Zheng', cursive !important; }
 
-        /* Restored Ink Splash */
-        .ink-accent {
-            position: fixed; top: 0; right: 0; width: 600px; height: 600px;
-            background: url('https://googleusercontent.com/image_collection/image_retrieval/1204424196626481903_0') no-repeat;
-            background-size: contain; opacity: 0.1; pointer-events: none; z-index: -1;
-        }
-        
-        /* THE APPLICATION SCROLL */
+        /* THE APPLICATION SCROLL - Fixed Scaling */
         .job-scroll { 
             background: #fdfcf8;
+            background-image: url('https://www.transparenttextures.com/patterns/handmade-paper.png');
             border: 1px solid rgba(0,0,0,0.1);
             padding: 2.5rem; position: relative; 
             transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
             box-shadow: 5px 5px 0px rgba(0,0,0,0.05);
-            max-width: 450px; margin: 0 auto;
+            /* FIX: Forced uniform width and height */
+            width: 380px; 
+            min-height: 580px;
+            display: flex;
+            flex-direction: column;
             border-top: 4px solid var(--ink);
         }
 
@@ -42,7 +48,6 @@
             box-shadow: 20px 20px 0px rgba(188, 47, 50, 0.05);
         }
 
-        /* Side metadata */
         .vertical-label {
             position: absolute; left: -30px; top: 30px;
             writing-mode: vertical-rl; text-transform: uppercase;
@@ -51,8 +56,8 @@
 
         .status-watermark {
             position: absolute; top: 15px; right: 15px;
-            font-family: 'Zhi Mang Xing'; font-size: 1rem;
-            color: var(--cinnabar); opacity: 0.15;
+            font-family: 'Zhi Mang Xing'; font-size: 1.1rem;
+            color: var(--cinnabar); opacity: 0.2;
             border: 1px solid var(--cinnabar); padding: 1px 6px;
             transform: rotate(10deg);
         }
@@ -62,28 +67,33 @@
             font-family: 'Zhi Mang Xing', cursive; font-size: 1.3rem;
             transition: 0.3s; border: none; cursor: pointer;
             box-shadow: 0 4px 0 rgba(0,0,0,0.2);
-        }
-        .btn-initiate:hover { 
-            background: var(--cinnabar); 
-            transform: translateY(-2px);
-            box-shadow: 0 6px 0 rgba(0,0,0,0.1);
+            width: 100%;
         }
 
-        /* ADMIN TERMINAL */
+        /* ADMIN TERMINAL - Fixed Scroll & Layout */
         #admin-editor {
             position: fixed; top: 0; right: -450px; width: 450px; height: 100%;
             background: #0d0d0d; color: #d1d1d1;
             transition: right 0.5s cubic-bezier(0.8, 0, 0.2, 1);
             z-index: 2000; border-left: 1px solid #222;
+            display: flex; flex-direction: column;
         }
         #admin-editor.open { right: 0; }
+        
+        .editor-body {
+            flex: 1; overflow-y: auto; padding: 2.5rem;
+        }
+        
+        /* Custom scrollbar for editor */
+        .editor-body::-webkit-scrollbar { width: 5px; }
+        .editor-body::-webkit-scrollbar-thumb { background: #333; }
+
         .input-field { background: #141414; border: 1px solid #222; color: #fff; width: 100%; padding: 0.8rem; margin-top: 5px; outline: none; }
     </style>
 </head>
 <body>
 
     <div class="ink-accent"></div>
-    <div id="header-placeholder" class="relative z-[1001]"></div>
 
     <div id="main-content" class="py-24 px-10">
         <header class="max-w-7xl mx-auto mb-32">
@@ -96,7 +106,7 @@
             </h1>
         </header>
 
-        <div id="job-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12 max-w-7xl mx-auto"></div>
+        <div id="job-grid" class="flex flex-wrap justify-center gap-12 max-w-7xl mx-auto"></div>
 
         <button id="admin-trigger" onclick="openEditor()" class="hidden fixed bottom-12 right-12 w-20 h-20 bg-black text-[#bc2f32] rounded-full shadow-2xl flex items-center justify-center text-4xl font-['Zhi_Mang_Xing'] border-2 border-[#bc2f32] z-[1500] hover:bg-[#bc2f32] hover:text-white transition-all">改</button>
     </div>
@@ -105,7 +115,8 @@
         <div class="p-10 border-b border-[#222]">
             <h2 class="text-4xl brush-font text-white">Modify Archive</h2>
         </div>
-        <div class="p-10 space-y-8 overflow-y-auto">
+        
+        <div class="editor-body space-y-8">
             <input type="hidden" id="edit-index" value="-1">
             <div>
                 <label class="text-[9px] uppercase tracking-widest text-zinc-500">Post Designation</label>
@@ -116,19 +127,26 @@
                 <textarea id="edit-desc" class="input-field h-32" placeholder="Responsibilities..."></textarea>
             </div>
             <div>
-                <label class="text-[9px] uppercase tracking-widest text-zinc-500">Decal Selection</label>
+                <label class="text-[9px] uppercase tracking-widest text-zinc-500">Decal</label>
                 <select id="edit-icon" class="input-field">
                     <option value="seal">Imperial Seal</option>
                     <option value="dragon">Dragon Spirit</option>
                     <option value="lotus">Peaceful Lotus</option>
-                    <option value="sword">Imperial Blade</option>
                 </select>
             </div>
             <div>
                 <label class="text-[9px] uppercase tracking-widest text-zinc-500">Accent Color</label>
                 <input type="color" id="edit-color" class="w-full h-12 mt-2 bg-transparent border-none cursor-pointer" value="#bc2f32">
             </div>
-            <button onclick="saveApp()" class="w-full bg-[#bc2f32] py-4 font-bold text-white uppercase tracking-widest text-xs hover:brightness-110 transition-all">Seal Archive Entry</button>
+            
+            <div class="pt-4 space-y-4">
+                <button onclick="saveApp()" class="w-full bg-[#bc2f32] py-4 font-bold text-white uppercase tracking-widest text-xs hover:brightness-110">Update Preview</button>
+                
+                <button onclick="copyJSON()" class="w-full border border-zinc-700 py-3 text-zinc-400 uppercase tracking-widest text-[10px] hover:bg-zinc-800 transition-all">
+                    Copy JSON for File Update
+                </button>
+            </div>
+            
             <button onclick="closeEditor()" class="w-full text-[10px] text-zinc-600 uppercase tracking-widest text-center">Discard Changes</button>
         </div>
     </div>
@@ -137,29 +155,21 @@
         let apps = [];
         let currentAdmin = false;
 
-async function loadArchive() {
-
-    const stored = localStorage.getItem("dprt_jobs");
-
-    if (stored) {
-        try {
-            apps = JSON.parse(stored);
-        } catch {
-            apps = [];
+        async function loadArchive() {
+            const stored = localStorage.getItem("dprt_jobs");
+            if (stored) {
+                try { apps = JSON.parse(stored); } catch { apps = []; }
+            } else {
+                try {
+                    const res = await fetch("./jobs/jobsdata.json");
+                    if (res.ok) {
+                        apps = await res.json();
+                        localStorage.setItem("dprt_jobs", JSON.stringify(apps));
+                    }
+                } catch { apps = []; }
+            }
+            renderApps(currentAdmin);
         }
-    } else {
-        try {
-            const res = await fetch("/dprt/jobsdata.json");
-            if (!res.ok) throw new Error("Failed to fetch jobsdata.json");
-            apps = await res.json();
-        } catch {
-            apps = [];
-        }
-    }
-
-    renderApps(currentAdmin);
-}
-
 
         function renderApps(isAdmin = false) {
             currentAdmin = isAdmin;
@@ -176,26 +186,22 @@ async function loadArchive() {
                 scroll.innerHTML = `
                     <div class="vertical-label">ARC-ID: ${100 + i} // DP-RT</div>
                     <div class="status-watermark">OPEN</div>
-                    
                     <div class="flex justify-center mb-6">
                         <img src="/dprt/decals/${app.icon || 'seal'}.png" class="w-14 h-14 opacity-90" alt="Decal">
                     </div>
-
                     <div class="text-center border-b border-zinc-100 pb-6 mb-6">
-                        <h3 class="text-4xl brush-font text-zinc-800">${app.title}</h3>
+                        <h3 class="text-3xl brush-font text-zinc-800">${app.title}</h3>
                         <p class="text-[9px] text-zinc-400 font-mono tracking-[0.3em] uppercase mt-2">Ministry Application</p>
                     </div>
-
-                    <div class="mb-10">
+                    <div class="flex-grow">
                         <p class="text-zinc-600 text-sm leading-relaxed italic text-center px-4">"${app.desc}"</p>
                     </div>
-
-                    <div class="flex flex-col items-center gap-4">
+                    <div class="mt-8 flex flex-col items-center gap-4">
                         <button class="btn-initiate" style="background:${app.color || '#1a1a1a'}">Apply Now</button>
                         ${isAdmin ? `
-                            <div class="flex gap-6 mt-2">
-                                <span onclick="editApp(${i})" class="cursor-pointer text-zinc-400 hover:text-black text-[10px] uppercase tracking-widest border-b border-transparent hover:border-black">Edit</span>
-                                <span onclick="deleteApp(${i})" class="cursor-pointer text-zinc-400 hover:text-red-700 text-[10px] uppercase tracking-widest border-b border-transparent hover:border-red-700">Redact</span>
+                            <div class="flex gap-6">
+                                <span onclick="editApp(${i})" class="cursor-pointer text-zinc-400 hover:text-black text-[10px] uppercase tracking-widest">Edit</span>
+                                <span onclick="deleteApp(${i})" class="cursor-pointer text-zinc-400 hover:text-red-700 text-[10px] uppercase tracking-widest">Redact</span>
                             </div>
                         ` : ''}
                     </div>
@@ -204,66 +210,44 @@ async function loadArchive() {
             });
         }
 
-        function openEditor() {
+        function openEditor() { 
             document.getElementById('edit-index').value = "-1";
-            document.getElementById('admin-editor').classList.add('open');
+            document.getElementById('admin-editor').classList.add('open'); 
         }
-
         function closeEditor() { document.getElementById('admin-editor').classList.remove('open'); }
 
-        function editApp(index) {
-            const app = apps[index];
-            document.getElementById('edit-index').value = index;
-            document.getElementById('edit-title').value = app.title;
-            document.getElementById('edit-desc').value = app.desc;
-            document.getElementById('edit-icon').value = app.icon || 'seal';
-            document.getElementById('edit-color').value = app.color || "#bc2f32";
-            document.getElementById('admin-editor').classList.add('open');
+        function saveApp() {
+            const idx = parseInt(document.getElementById("edit-index").value);
+            const newData = {
+                title: document.getElementById("edit-title").value || "Untitled",
+                desc: document.getElementById("edit-desc").value || "...",
+                icon: document.getElementById("edit-icon").value,
+                color: document.getElementById("edit-color").value
+            };
+
+            if (idx === -1) apps.push(newData);
+            else apps[idx] = newData;
+
+            localStorage.setItem("dprt_jobs", JSON.stringify(apps));
+            renderApps(currentAdmin);
         }
 
-function saveApp() {
+        function copyJSON() {
+            const dataStr = JSON.stringify(apps, null, 2);
+            navigator.clipboard.writeText(dataStr).then(() => {
+                alert("JSON copied to clipboard! Paste this into your jobsdata.json file.");
+            });
+        }
 
-    const idx = parseInt(document.getElementById("edit-index").value);
-    const title = document.getElementById("edit-title").value.trim();
-    const desc = document.getElementById("edit-desc").value.trim();
+        function deleteApp(i) {
+            if (confirm("Redact this entry?")) {
+                apps.splice(i, 1);
+                localStorage.setItem("dprt_jobs", JSON.stringify(apps));
+                renderApps(currentAdmin);
+            }
+        }
 
-    if (!title || !desc) {
-        alert("Title and description required.");
-        return;
-    }
-
-    const newData = {
-        title,
-        desc,
-        icon: document.getElementById("edit-icon").value,
-        color: document.getElementById("edit-color").value
-    };
-
-    if (idx === -1) apps.push(newData);
-    else apps[idx] = newData;
-
-    localStorage.setItem("dprt_jobs", JSON.stringify(apps));
-
-    renderApps(currentAdmin);
-    closeEditor();
-}
-
-
-function deleteApp(i) {
-
-    if (!confirm("Confirm Redaction?")) return;
-
-    apps.splice(i, 1);
-
-    localStorage.setItem("dprt_jobs", JSON.stringify(apps));
-
-    renderApps(currentAdmin);
-}
-
-
-        // Wait for page to be ready for auth.js
         window.addEventListener('DOMContentLoaded', loadArchive);
     </script>
-    <script src="/dprt/styling/auth.js"></script>
 </body>
 </html>
