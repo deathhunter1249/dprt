@@ -11,147 +11,134 @@
 
         body { 
             background-color: var(--paper);
-            background-image: url('https://www.transparenttextures.com/patterns/asfalt-dark.png');
-            background-blend-mode: overlay;
+            background-image: url('https://www.transparenttextures.com/patterns/natural-paper.png');
             font-family: 'Noto Serif SC', serif !important; 
-            margin: 0; min-height: 100vh;
+            margin: 0; min-height: 100vh; overflow-x: hidden;
         }
 
-        /* Subtle Background Vignette */
-        body::before {
-            content: ""; position: fixed; inset: 0;
-            background: radial-gradient(circle, transparent 70%, rgba(0,0,0,0.15) 100%);
-            pointer-events: none; z-index: 10;
+        /* THE HOVERING INK DRAGON */
+        .bg-artwork {
+            position: fixed; 
+            top: 45%; /* Slightly higher to center the sway */
+            right: -2%; 
+            width: 60vw; height: 85vh;
+            background-image: url('background-dragon.png'); 
+            background-size: contain; background-repeat: no-repeat;
+            background-position: center right;
+            opacity: 0.04; pointer-events: none; z-index: 0;
+            filter: grayscale(1) contrast(1.1);
+            /* Sway Animation: 12 seconds for a slow, graceful loop */
+            animation: dragonSway 12s ease-in-out infinite;
         }
 
-        .brush-font { font-family: 'Ma Shan Zheng', cursive !important; }
+        @keyframes dragonSway {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            25% { transform: translate(-15px, 10px) rotate(-0.5deg); }
+            50% { transform: translate(5px, -15px) rotate(0.5deg); }
+            75% { transform: translate(-10px, -5px) rotate(-0.2deg); }
+        }
 
-        /* THE APPLICATION SCROLL - Shortened & Scaled */
+        .cinnabar-glow {
+            position: fixed; top: -15%; left: -10%; width: 60vw; height: 60vw;
+            background: radial-gradient(circle, rgba(188, 47, 50, 0.07) 0%, transparent 75%);
+            pointer-events: none; z-index: 0;
+        }
+
+        /* Ink Droplet Detail */
+        .ink-drop {
+            position: absolute; background: var(--ink); border-radius: 50%; opacity: 0;
+            pointer-events: none; z-index: 1; filter: blur(1.5px);
+            animation: fall 18s infinite linear;
+        }
+        @keyframes fall {
+            0% { transform: translate3d(0, -10vh, 0) scale(0); opacity: 0; }
+            20% { opacity: 0.08; }
+            100% { transform: translate3d(15vw, 110vh, 0) scale(2.5); opacity: 0; }
+        }
+
+        /* JOB SCROLL - Scaled & Professional */
         .job-scroll { 
             background: #fdfcf8;
             background-image: url('https://www.transparenttextures.com/patterns/handmade-paper.png');
-            border: 1px solid rgba(0,0,0,0.1);
-            padding: 1.5rem 2rem; /* Reduced vertical padding */
+            border: 1px solid rgba(0,0,0,0.08);
+            padding: 1.8rem 2rem;
             position: relative; 
             transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-            box-shadow: 6px 6px 0px rgba(0,0,0,0.05);
-            width: 380px; 
-            height: 480px; /* Shortened height */
-            display: flex;
-            flex-direction: column;
-            border-top: 4px solid var(--ink);
+            box-shadow: 6px 6px 0px rgba(0,0,0,0.04);
+            width: 380px; height: 460px;
+            display: flex; flex-direction: column;
+            border-top: 5px solid var(--ink);
             z-index: 20;
         }
 
         .job-scroll:hover { 
-            transform: translateY(-5px);
-            box-shadow: 15px 15px 0px rgba(188, 47, 50, 0.05);
+            transform: translateY(-8px);
+            box-shadow: 20px 20px 0px rgba(188, 47, 50, 0.04);
         }
 
-        .vertical-label {
-            position: absolute; left: -25px; top: 25px;
-            writing-mode: vertical-rl; text-transform: uppercase;
-            font-size: 8px; letter-spacing: 2px; color: #aaa; transform: rotate(180deg);
-        }
-
-        .status-watermark {
-            position: absolute; top: 15px; right: 15px;
-            font-family: 'Zhi Mang Xing'; font-size: 1rem;
-            color: var(--cinnabar); opacity: 0.2;
-            border: 1px solid var(--cinnabar); padding: 1px 6px;
-            transform: rotate(10deg);
-        }
-
-        /* Apply Now Button + Animation */
+        /* APPLY BUTTON */
         .btn-initiate {
-            background: var(--ink); color: white; padding: 0.7rem 1.5rem;
-            font-family: 'Zhi Mang Xing', cursive; font-size: 1.2rem;
-            transition: all 0.2s ease; border: none; cursor: pointer;
-            box-shadow: 0 4px 0 rgba(0,0,0,0.15);
-            width: 80%; align-self: center;
-            text-align: center;
+            background: var(--ink); color: white; padding: 0.8rem;
+            font-family: 'Zhi Mang Xing', cursive; font-size: 1.3rem;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            border: none; cursor: pointer;
+            box-shadow: 0 4px 0 rgba(0,0,0,0.2);
+            width: 90%; align-self: center; text-align: center;
         }
+        .btn-initiate:hover { filter: brightness(1.3); }
+        .btn-initiate:active { transform: translateY(3px); box-shadow: 0 1px 0 rgba(0,0,0,0.2); }
 
-        .btn-initiate:hover {
-            filter: brightness(1.2);
-            transform: translateY(-1px);
-            box-shadow: 0 5px 0 rgba(0,0,0,0.1);
-        }
-
-        .btn-initiate:active {
-            transform: translateY(3px);
-            box-shadow: 0 1px 0 rgba(0,0,0,0.2);
-        }
-
-        /* ADMIN TERMINAL */
+        /* ADMIN PANEL */
         #admin-editor {
             position: fixed; top: 0; right: -450px; width: 450px; height: 100%;
             background: #0d0d0d; color: #d1d1d1;
-            transition: right 0.5s cubic-bezier(0.8, 0, 0.2, 1);
-            z-index: 2000; border-left: 1px solid #222;
-            display: flex; flex-direction: column;
+            transition: right 0.6s cubic-bezier(0.8, 0, 0.2, 1);
+            z-index: 2000; display: flex; flex-direction: column;
         }
         #admin-editor.open { right: 0; }
-        
-        .editor-content { flex: 1; overflow-y: auto; padding: 2rem; }
-        .editor-content::-webkit-scrollbar { width: 4px; }
-        .editor-content::-webkit-scrollbar-thumb { background: #333; }
-
+        .editor-body { flex: 1; overflow-y: auto; padding: 2rem; }
+        .editor-body::-webkit-scrollbar { width: 3px; }
+        .editor-body::-webkit-scrollbar-thumb { background: var(--cinnabar); }
         .input-field { background: #141414; border: 1px solid #222; color: #fff; width: 100%; padding: 0.8rem; margin-top: 5px; outline: none; }
     </style>
 </head>
 <body>
+    <div class="bg-artwork"></div>
+    <div class="cinnabar-glow"></div>
+    <div id="ink-container" class="fixed inset-0 pointer-events-none z-10"></div>
 
-    <div id="header-placeholder" class="relative z-[1001]"></div>
+    <div id="header-placeholder" class="relative z-[100]"></div>
 
-    <div id="main-content" class="py-16 px-10">
+    <div id="main-content" class="py-20 px-10 relative z-20">
         <header class="max-w-7xl mx-auto mb-20">
             <div class="flex items-center gap-4 mb-2">
-                <div class="bg-black text-white px-2 py-0.5 font-bold text-[9px] tracking-widest">VER. 1970</div>
-                <div class="h-[1px] w-12 bg-zinc-300"></div>
+                <div class="bg-black text-white px-3 py-0.5 font-bold text-[10px] tracking-widest uppercase">Archive 2026</div>
+                <div class="h-[1px] w-16 bg-zinc-300"></div>
             </div>
-            <h1 class="text-[clamp(3rem,8vw,6rem)] brush-font leading-none text-zinc-900">
-                Community <span class="text-[#bc2f32]">Jobs</span>
+            <h1 class="text-[clamp(3.5rem,8vw,6.5rem)] font-['Ma_Shan_Zheng'] leading-none text-zinc-900">
+                Imperial <span class="text-[#bc2f32]">Directives</span>
             </h1>
         </header>
 
-        <div id="job-grid" class="flex flex-wrap justify-center gap-10 max-w-7xl mx-auto"></div>
+        <div id="job-grid" class="flex flex-wrap justify-center gap-12 max-w-7xl mx-auto"></div>
 
-        <button id="admin-trigger" onclick="openEditor()" class="hidden fixed bottom-8 right-8 w-16 h-16 bg-black text-[#bc2f32] rounded-full shadow-2xl flex items-center justify-center text-3xl font-['Zhi_Mang_Xing'] border-2 border-[#bc2f32] z-[1500] hover:scale-110 transition-all">改</button>
+        <button id="admin-trigger" onclick="openEditor()" class="hidden fixed bottom-8 right-8 w-16 h-16 bg-black text-[#bc2f32] rounded-full shadow-2xl flex items-center justify-center text-3xl font-['Zhi_Mang_Xing'] border-2 border-[#bc2f32] z-[1500] hover:rotate-90 transition-all duration-500">改</button>
     </div>
 
     <div id="admin-editor">
-        <div class="p-8 border-b border-[#222]">
-            <h2 class="text-3xl brush-font text-white">Modify Archive</h2>
-        </div>
-        <div class="editor-content space-y-6">
+        <div class="p-8 border-b border-zinc-800"><h2 class="text-3xl font-['Ma_Shan_Zheng'] text-white">Modify Archive</h2></div>
+        <div class="editor-body space-y-6">
             <input type="hidden" id="edit-index" value="-1">
-            <div>
-                <label class="text-[9px] uppercase tracking-widest text-zinc-500">Job Title</label>
-                <input type="text" id="edit-title" class="input-field">
+            <div><label class="text-[9px] uppercase tracking-widest text-zinc-500">Job Title</label><input type="text" id="edit-title" class="input-field"></div>
+            <div><label class="text-[9px] uppercase tracking-widest text-zinc-500">Description</label><textarea id="edit-desc" class="input-field h-24"></textarea></div>
+            <div><label class="text-[9px] uppercase tracking-widest text-zinc-500">Icon Decal</label><select id="edit-icon" class="input-field"><option value="seal">Imperial Seal</option><option value="dragon">Dragon</option><option value="lotus">Lotus</option></select></div>
+            <div><label class="text-[9px] uppercase tracking-widest text-zinc-500">Accent Color</label><input type="color" id="edit-color" class="w-full h-10 mt-2 bg-transparent border-none cursor-pointer" value="#bc2f32"></div>
+            
+            <div class="pt-6 space-y-3">
+                <button onclick="saveApp()" class="w-full bg-[#bc2f32] py-4 font-bold text-white uppercase text-[10px] tracking-widest">Update Preview</button>
+                <button onclick="copyJSON()" class="w-full border border-zinc-800 py-3 text-zinc-500 uppercase text-[9px] hover:text-white transition-all">Copy JSON for File</button>
             </div>
-            <div>
-                <label class="text-[9px] uppercase tracking-widest text-zinc-500">Directives (Description)</label>
-                <textarea id="edit-desc" class="input-field h-24"></textarea>
-            </div>
-            <div>
-                <label class="text-[9px] uppercase tracking-widest text-zinc-500">Decal</label>
-                <select id="edit-icon" class="input-field">
-                    <option value="seal">Imperial Seal</option>
-                    <option value="dragon">Dragon Spirit</option>
-                    <option value="lotus">Peaceful Lotus</option>
-                    <option value="sword">Imperial Blade</option>
-                </select>
-            </div>
-            <div>
-                <label class="text-[9px] uppercase tracking-widest text-zinc-500">Accent Color</label>
-                <input type="color" id="edit-color" class="w-full h-10 mt-2 bg-transparent border-none cursor-pointer" value="#bc2f32">
-            </div>
-            <div class="pt-4 space-y-3">
-                <button onclick="saveApp()" class="w-full bg-[#bc2f32] py-3 font-bold text-white uppercase tracking-widest text-[10px]">Update Preview</button>
-                <button onclick="copyJSON()" class="w-full border border-zinc-800 py-3 text-zinc-500 uppercase tracking-widest text-[9px] hover:text-white">Copy JSON for File</button>
-            </div>
-            <button onclick="closeEditor()" class="w-full text-[9px] text-zinc-600 uppercase tracking-widest text-center py-4">Discard Changes</button>
+            <button onclick="closeEditor()" class="w-full text-[9px] text-zinc-600 uppercase text-center py-6">Discard Changes</button>
         </div>
     </div>
 
@@ -159,17 +146,25 @@
         let apps = [];
         let currentAdmin = false;
 
+        // Initialize Ink Drops
+        const inkContainer = document.getElementById('ink-container');
+        for (let i = 0; i < 15; i++) {
+            const drop = document.createElement('div');
+            drop.className = 'ink-drop';
+            drop.style.left = Math.random() * 100 + '%';
+            const size = (Math.random() * 3 + 2) + 'px';
+            drop.style.width = size; drop.style.height = size;
+            drop.style.animationDelay = Math.random() * 15 + 's';
+            inkContainer.appendChild(drop);
+        }
+
         async function loadArchive() {
             const stored = localStorage.getItem("dprt_jobs");
-            if (stored) {
-                try { apps = JSON.parse(stored); } catch { apps = []; }
-            } else {
+            if (stored) { try { apps = JSON.parse(stored); } catch { apps = []; } }
+            else {
                 try {
                     const res = await fetch("./jobs/jobsdata.json");
-                    if (res.ok) {
-                        apps = await res.json();
-                        localStorage.setItem("dprt_jobs", JSON.stringify(apps));
-                    }
+                    if (res.ok) { apps = await res.json(); localStorage.setItem("dprt_jobs", JSON.stringify(apps)); }
                 } catch { apps = []; }
             }
             renderApps(currentAdmin);
@@ -186,45 +181,26 @@
                 const scroll = document.createElement('div');
                 scroll.className = 'job-scroll';
                 scroll.style.borderTopColor = app.color || '#1a1a1a';
-                
                 scroll.innerHTML = `
-                    <div class="vertical-label">ARC-ID: ${100 + i}</div>
-                    <div class="status-watermark">OPEN</div>
-                    <div class="flex justify-center mb-4">
-                        <img src="/dprt/decals/${app.icon || 'seal'}.png" class="w-12 h-12 opacity-80" alt="Icon">
-                    </div>
+                    <div class="flex justify-center mb-4"><img src="/dprt/decals/${app.icon || 'seal'}.png" class="w-12 h-12 opacity-80" alt="Icon"></div>
                     <div class="text-center border-b border-zinc-100 pb-4 mb-4">
-                        <h3 class="text-3xl brush-font text-zinc-800 leading-tight">${app.title}</h3>
-                        <p class="text-[8px] text-zinc-400 font-mono tracking-widest uppercase mt-1">Ministry Dept</p>
+                        <h3 class="text-3xl font-['Ma_Shan_Zheng'] text-zinc-800 leading-tight">${app.title}</h3>
+                        <p class="text-[8px] text-zinc-400 font-mono tracking-widest uppercase mt-1">Republic Dept</p>
                     </div>
-                    <div class="flex-grow flex items-center">
-                        <p class="text-zinc-600 text-xs leading-relaxed italic text-center w-full px-2">"${app.desc}"</p>
+                    <div class="flex-grow flex items-center justify-center">
+                        <p class="text-zinc-600 text-xs leading-relaxed italic text-center px-4">"${app.desc}"</p>
                     </div>
-                    <div class="mt-6 flex flex-col items-center gap-3">
+                    <div class="mt-6 flex flex-col items-center gap-4">
                         <button class="btn-initiate" style="background:${app.color || '#1a1a1a'}">Apply Now</button>
-                        ${isAdmin ? `
-                            <div class="flex gap-4">
-                                <span onclick="editApp(${i})" class="cursor-pointer text-zinc-400 hover:text-black text-[9px] uppercase tracking-widest">Edit</span>
-                                <span onclick="deleteApp(${i})" class="cursor-pointer text-zinc-400 hover:text-red-700 text-[9px] uppercase tracking-widest">Redact</span>
-                            </div>
-                        ` : ''}
+                        ${isAdmin ? `<div class="flex gap-4"><span onclick="editApp(${i})" class="cursor-pointer text-zinc-400 hover:text-black text-[9px] uppercase">Edit</span><span onclick="deleteApp(${i})" class="cursor-pointer text-zinc-400 hover:text-red-700 text-[9px] uppercase">Redact</span></div>` : ''}
                     </div>
                 `;
                 grid.appendChild(scroll);
             });
         }
 
-        // Authentication Bridge (for your auth.js)
-        window.activateAdminMode = function(status) {
-            renderApps(status);
-        };
-
-        function openEditor() { 
-            document.getElementById('edit-index').value = "-1"; 
-            document.getElementById('admin-editor').classList.add('open'); 
-        }
+        function openEditor() { document.getElementById('edit-index').value = "-1"; document.getElementById('admin-editor').classList.add('open'); }
         function closeEditor() { document.getElementById('admin-editor').classList.remove('open'); }
-
         function editApp(index) {
             const app = apps[index];
             document.getElementById('edit-index').value = index;
@@ -237,31 +213,21 @@
 
         function saveApp() {
             const idx = parseInt(document.getElementById("edit-index").value);
-            const newData = {
-                title: document.getElementById("edit-title").value || "New Post",
-                desc: document.getElementById("edit-desc").value || "...",
-                icon: document.getElementById("edit-icon").value,
-                color: document.getElementById("edit-color").value
-            };
-            if (idx === -1) apps.push(newData);
-            else apps[idx] = newData;
+            const newData = { title: document.getElementById("edit-title").value, desc: document.getElementById("edit-desc").value, icon: document.getElementById("edit-icon").value, color: document.getElementById("edit-color").value };
+            if (idx === -1) apps.push(newData); else apps[idx] = newData;
             localStorage.setItem("dprt_jobs", JSON.stringify(apps));
             renderApps(currentAdmin);
         }
 
         function copyJSON() {
-            const data = JSON.stringify(apps, null, 2);
-            navigator.clipboard.writeText(data).then(() => alert("JSON copied! Paste this into jobsdata.json"));
+            navigator.clipboard.writeText(JSON.stringify(apps, null, 2)).then(() => alert("Archive Data Copied!"));
         }
 
         function deleteApp(i) {
-            if (confirm("Redact?")) {
-                apps.splice(i, 1);
-                localStorage.setItem("dprt_jobs", JSON.stringify(apps));
-                renderApps(currentAdmin);
-            }
+            if (confirm("Redact?")) { apps.splice(i, 1); localStorage.setItem("dprt_jobs", JSON.stringify(apps)); renderApps(currentAdmin); }
         }
 
+        window.activateAdminMode = function(status) { renderApps(status); };
         window.addEventListener('DOMContentLoaded', loadArchive);
     </script>
     <script src="/dprt/styling/auth.js"></script>
