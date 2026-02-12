@@ -21,131 +21,151 @@
             margin: 0; min-height: 100vh; overflow-x: hidden;
         }
 
-        /* Large Background Calligraphy (The "Dragon") */
-        .bg-watermark {
+        /* 1. THE DRAGON BACKGROUND */
+        .bg-dragon {
             position: fixed; top: 50%; right: -5%; transform: translateY(-50%);
-            font-family: 'Ma Shan Zheng', cursive; font-size: 50rem;
-            color: rgba(0, 0, 0, 0.03); pointer-events: none; z-index: 0;
-            line-height: 0.8; user-select: none;
-            animation: drift 20s ease-in-out infinite;
+            width: 60vw; height: 90vh;
+            background-image: url('../decals/dragon-background.png'); 
+            background-size: contain; background-repeat: no-repeat;
+            background-position: center right;
+            opacity: 0.06; pointer-events: none; z-index: 0;
+            filter: grayscale(1) contrast(1.2);
+            animation: dragonPulse 20s ease-in-out infinite;
         }
-        @keyframes drift {
-            0%, 100% { transform: translateY(-50%) translateX(0); }
-            50% { transform: translateY(-52%) translateX(-20px); }
+        @keyframes dragonPulse {
+            0%, 100% { transform: translateY(-50%) scale(1); opacity: 0.05; }
+            50% { transform: translateY(-52%) scale(1.05); opacity: 0.08; }
         }
 
-        /* Red Sun / Cinnabar Glow */
         .cinnabar-glow {
             position: fixed; top: -10%; left: -10%; width: 60vw; height: 60vw;
             background: radial-gradient(circle, rgba(188, 47, 50, 0.05) 0%, transparent 70%);
-            pointer-events: none; z-index: 0;
+            z-index: 0; pointer-events: none;
         }
 
-        /* Ink Droplet Animation */
-        .ink-drop {
-            position: absolute; background: var(--ink); border-radius: 50%; opacity: 0;
-            pointer-events: none; z-index: 1; filter: blur(1px);
-            animation: fall 15s infinite linear;
-        }
-        @keyframes fall {
-            0% { transform: translate3d(0, -10vh, 0) scale(0); opacity: 0; }
-            20% { opacity: 0.1; }
-            100% { transform: translate3d(10vw, 110vh, 0) scale(2); opacity: 0; }
-        }
+        /* 2. REVEAL ANIMATIONS (Header & Hero) */
+        .reveal-node { opacity: 0; transform: translateX(-30px); transition: all 1.5s cubic-bezier(0.16, 1, 0.3, 1); }
+        .reveal-active { opacity: 1; transform: translateX(0); }
+        .delay-1 { transition-delay: 0.3s; }
+        .delay-2 { transition-delay: 0.6s; }
 
-        /* AUTHENTIC VERTICAL SCROLL (Kakemono) */
+        /* 3. PHYSICAL SCROLLS (Kakemono) */
         .scroll-container {
-            perspective: 1000px;
-            opacity: 0; transform: translateY(30px);
+            perspective: 1000px; opacity: 0; transform: translateY(40px);
             transition: all 1s cubic-bezier(0.16, 1, 0.3, 1);
         }
-        .scroll-container.reveal { opacity: 1; transform: translateY(0); }
+        .scroll-container.visible { opacity: 1; transform: translateY(0); }
 
         .kakemono {
             background: #f4f1ea;
             background-image: url('https://www.transparenttextures.com/patterns/handmade-paper.png');
             width: 300px; min-height: 420px;
             margin: 0 auto; position: relative;
-            box-shadow: 15px 30px 60px -10px rgba(0,0,0,0.2);
-            padding: 40px 30px;
-            border-left: 1px solid rgba(0,0,0,0.05);
-            border-right: 1px solid rgba(0,0,0,0.05);
-            display: flex; flex-direction: column;
+            box-shadow: 10px 20px 40px rgba(0,0,0,0.15);
+            padding: 40px 30px; display: flex; flex-direction: column;
+            transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+            transform-origin: top center;
         }
 
-        /* The Hanging Mechanism */
-        .kakemono::before { /* Top Dowel */
+        /* PHYSICAL HOVER: Swaying animation */
+        .scroll-container:hover .kakemono {
+            transform: rotateX(8deg) rotateY(4deg);
+            box-shadow: 25px 50px 70px rgba(0,0,0,0.25);
+        }
+
+        /* Scroll Hardware */
+        .kakemono::before { 
             content: ""; position: absolute; top: -8px; left: -5%; width: 110%; height: 12px;
             background: #222; border-radius: 2px;
         }
         .hanging-string {
-            position: absolute; top: -40px; left: 50%; transform: translateX(-50%);
-            width: 100px; height: 40px; border-top: 1.5px solid #666;
-            border-left: 1.5px solid #666; border-right: 1.5px solid #666;
-            border-radius: 50px 50px 0 0; opacity: 0.4;
+            position: absolute; top: -45px; left: 50%; transform: translateX(-50%);
+            width: 110px; height: 45px; border-top: 2px solid #555;
+            border-left: 2px solid #555; border-right: 2px solid #555;
+            border-radius: 55px 55px 0 0; opacity: 0.3;
         }
-
-        /* Bottom Heavy Roller */
         .roller {
-            position: absolute; bottom: -12px; left: -8%; width: 116%; height: 24px;
-            background: linear-gradient(to bottom, #111, #000, #222);
-            border-radius: 12px; box-shadow: 0 8px 15px rgba(0,0,0,0.3);
+            position: absolute; bottom: -12px; left: -8%; width: 116%; height: 26px;
+            background: linear-gradient(to bottom, #1a1a1a, #000, #222);
+            border-radius: 13px; box-shadow: 0 8px 15px rgba(0,0,0,0.4);
         }
 
-        /* Typography */
-        .scroll-title { font-family: 'Ma Shan Zheng', cursive; font-size: 2.2rem; color: var(--ink); margin-bottom: 1rem; line-height: 1.1; }
-        .scroll-meta { font-family: 'Noto Serif SC'; font-weight: 900; color: var(--cinnabar); font-size: 0.7rem; letter-spacing: 0.3em; margin-bottom: 1.5rem; border-bottom: 1px solid rgba(0,0,0,0.1); padding-bottom: 5px;}
-        .scroll-desc { font-size: 0.95rem; color: #444; line-height: 1.7; flex-grow: 1; font-style: italic; }
-
-        /* Cinnabar Seal Button */
-        .btn-seal {
-            margin-top: 2rem; border: 1px solid var(--ink); padding: 8px;
-            font-family: 'Zhi Mang Xing', cursive; font-size: 1.4rem;
-            color: var(--ink); transition: all 0.3s; background: transparent;
-        }
-        .btn-seal:hover { background: var(--ink); color: white; border-color: var(--ink); }
-
-        /* Match Header Style */
+        /* Styles for dynamic text */
         .hero-title { font-family: 'Ma Shan Zheng', cursive; font-size: clamp(3rem, 8vw, 6rem); line-height: 0.85; }
         .accent-stamp { writing-mode: vertical-rl; font-family: 'Zhi Mang Xing', cursive; font-size: 1.5rem; color: var(--cinnabar); border-right: 1px solid var(--cinnabar); padding-right: 1rem; margin-right: 2rem; opacity: 0.8; }
+        .scroll-title { font-family: 'Ma Shan Zheng', cursive; font-size: 2.2rem; color: var(--ink); margin-bottom: 0.5rem; }
+        .scroll-meta { font-family: 'Noto Serif SC'; font-weight: 900; color: var(--cinnabar); font-size: 0.7rem; letter-spacing: 0.3em; margin-bottom: 1.5rem; border-bottom: 1px solid rgba(0,0,0,0.1); padding-bottom: 5px; }
+
+        .btn-seal {
+            margin-top: auto; border: 1.5px solid var(--ink); padding: 8px;
+            font-family: 'Zhi Mang Xing', cursive; font-size: 1.5rem;
+            color: var(--ink); transition: all 0.3s; background: transparent;
+            cursor: pointer;
+        }
+        .btn-seal:hover { background: var(--ink); color: white; }
+
+        /* Ink Drop Animation */
+        #ink-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; }
+        .ink-drop {
+            position: absolute; background: var(--ink); border-radius: 50%; opacity: 0;
+            filter: blur(1px); animation: fall 15s infinite linear;
+        }
+        @keyframes fall {
+            0% { transform: translate3d(0, -10vh, 0) scale(0); opacity: 0; }
+            20% { opacity: 0.1; }
+            100% { transform: translate3d(10vw, 110vh, 0) scale(2); opacity: 0; }
+        }
     </style>
 </head>
-<body>
-    <div class="bg-watermark">龍</div>
+<body id="blur-container">
+    <div class="bg-dragon"></div>
     <div class="cinnabar-glow"></div>
     <div id="ink-container"></div>
 
-    <header class="max-w-7xl mx-auto px-12 py-16 w-full relative z-10">
-        <div class="flex items-start">
-            <div class="accent-stamp">君子不憂不懼 — Eternal Peace</div>
-            <div>
-                <div class="mb-4">
-                    <span class="bg-black text-white px-4 py-1 text-[10px] tracking-[0.5em] font-bold uppercase">Archive: Job Directives</span>
+    <div id="header-placeholder" class="relative z-[90]"></div>
+
+    <main class="relative z-10">
+        <div class="max-w-7xl mx-auto px-12 py-16 w-full">
+            <div class="flex items-start">
+                <div class="reveal-node delay-1 accent-stamp">君子不憂不懼 — Eternal Peace</div>
+                <div>
+                    <div class="reveal-node delay-1 mb-4">
+                        <span class="bg-black text-white px-4 py-1 text-[10px] tracking-[0.5em] font-bold uppercase">Archive: Job Directives</span>
+                    </div>
+                    <div class="reveal-node delay-2">
+                        <h1 class="hero-title text-zinc-900">
+                            REPUBLIC <br>
+                            <span class="text-[#bc2f32]">POSITIONS</span>
+                        </h1>
+                    </div>
                 </div>
-                <h1 class="hero-title text-zinc-900">
-                    REPUBLIC <br>
-                    <span class="text-[#bc2f32]">POSITIONS</span>
-                </h1>
             </div>
         </div>
-    </header>
 
-    <main class="relative z-20 pb-40">
-        <div id="job-grid" class="flex flex-wrap justify-center gap-24 px-12">
+        <div id="job-grid" class="flex flex-wrap justify-center gap-24 px-12 pb-40">
             </div>
     </main>
 
-    <script>
-        // Data structure
-        const jobs = [
-            { id: "001", title: "Senior Scribe", desc: "The brush is your weapon; the scroll is your battlefield. Transcribe the edicts of the Republic with absolute precision and unyielding loyalty." },
-            { id: "002", title: "Imperial Guard", desc: "Vigilance is the price of peace. Protect the borders of the Republic of Teapots from those who wish to disrupt our internal tranquility." },
-            { id: "003", title: "Tea Master", desc: "Harmony in every drop. Maintain the cultural heritage of our state through the mastery of the leaf and the flame." }
-        ];
+    <button id="admin-add-trigger" class="hidden fixed bottom-8 right-8 w-14 h-14 bg-black text-[#bc2f32] rounded-full border-2 border-[#bc2f32] z-[1500] text-2xl hover:scale-110 transition-transform">改</button>
 
-        function renderJobs() {
+    <script src="../styling/auth.js"></script>
+
+    <script>
+        // Global variables for auth.js to interact with
+        let apps = [];
+
+        async function renderApps(isAdmin = false) {
             const grid = document.getElementById('job-grid');
-            jobs.forEach((job, i) => {
+            grid.innerHTML = '';
+            
+            // Sample data or fetch from localStorage
+            const stored = localStorage.getItem("dprt_jobs");
+            apps = stored ? JSON.parse(stored) : [
+                { title: "Senior Scribe", desc: "Transcribe the edicts of the Republic with absolute precision." },
+                { title: "Imperial Guard", desc: "Protect the borders of the Republic from dissent." }
+            ];
+
+            apps.forEach((app, i) => {
                 const container = document.createElement('div');
                 container.className = 'scroll-container';
                 container.style.transitionDelay = (i * 0.2) + 's';
@@ -153,38 +173,38 @@
                 container.innerHTML = `
                     <div class="hanging-string"></div>
                     <div class="kakemono">
-                        <div class="scroll-meta">DIRECTIVE #${job.id}</div>
-                        <h2 class="scroll-title">${job.title}</h2>
-                        <p class="scroll-desc">"${job.desc}"</p>
-                        <button class="btn-seal">Apply Brush</button>
+                        <div class="scroll-meta">DIRECTIVE #0${i+1}</div>
+                        <h2 class="scroll-title">${app.title}</h2>
+                        <p class="text-zinc-600 text-[13px] leading-relaxed font-serif italic mb-6">"${app.desc}"</p>
+                        <button class="btn-seal">APPLY BRUSH</button>
+                        ${isAdmin ? `<div class="mt-4 text-[10px] text-center opacity-50">ADMIN EDITABLE</div>` : ''}
                         <div class="roller"></div>
                     </div>
                 `;
                 grid.appendChild(container);
-                
-                // Trigger reveal
-                setTimeout(() => container.classList.add('reveal'), 100);
+                setTimeout(() => container.classList.add('visible'), 100);
             });
+
+            // Trigger header animations
+            const nodes = document.querySelectorAll('.reveal-node');
+            setTimeout(() => {
+                nodes.forEach(node => node.classList.add('reveal-active'));
+            }, 200);
         }
 
-        // Ink Drop Effect (Mirrored from your header)
-        function createInk() {
-            const container = document.getElementById('ink-container');
-            for (let i = 0; i < 15; i++) {
-                const drop = document.createElement('div');
-                drop.className = 'ink-drop';
-                drop.style.left = Math.random() * 100 + '%';
-                const size = (Math.random() * 4 + 2) + 'px';
-                drop.style.width = size; drop.style.height = size;
-                drop.style.animationDelay = Math.random() * 15 + 's';
-                container.appendChild(drop);
-            }
+        // Initialize Ink Drops
+        const inkContainer = document.getElementById('ink-container');
+        for (let i = 0; i < 15; i++) {
+            const drop = document.createElement('div');
+            drop.className = 'ink-drop';
+            drop.style.left = Math.random() * 100 + '%';
+            const size = (Math.random() * 4 + 2) + 'px';
+            drop.style.width = size; drop.style.height = size;
+            drop.style.animationDelay = Math.random() * 15 + 's';
+            inkContainer.appendChild(drop);
         }
 
-        window.addEventListener('load', () => {
-            createInk();
-            renderJobs();
-        });
+        // renderApps is called automatically by auth.js once user info is fetched
     </script>
 </body>
 </html>
