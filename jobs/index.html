@@ -3,78 +3,113 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DPRT | State Jobs</title>
+    <title>DPRT | Imperial Directives</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@200;900&family=Zhi+Mang+Xing&family=Ma+Shan+Zheng&display=swap" rel="stylesheet">
     <style>
-        :root { --ink: #1a1a1a; --cinnabar: #bc2f32; --paper: #e6e4e0; }
+        :root { --ink: #0a0a0a; --cinnabar: #9d2218; --paper: #dcd7c9; }
 
         body { 
-            background-color: var(--paper);
-            background-image: url('https://www.transparenttextures.com/patterns/natural-paper.png');
+            background-color: #1a1a1a; /* Darker void to make paper pop */
+            background-image: url('https://www.transparenttextures.com/patterns/black-paper.png');
             font-family: 'Noto Serif SC', serif; 
             margin: 0; min-height: 100vh; overflow-x: hidden;
         }
 
-        /* DRAGON - Corrected Filename & Path */
+        /* THE DRAGON - Fixed path & ethereal animation */
         .bg-artwork {
-            position: fixed; top: 50%; right: -2%; transform: translateY(-50%);
-            width: 55vw; height: 90vh;
+            position: fixed; top: 50%; right: 0; transform: translateY(-50%);
+            width: 60vw; height: 90vh;
             background-image: url('../decals/dragon-background.png'); 
             background-size: contain; background-repeat: no-repeat;
             background-position: center right;
-            opacity: 0.05; pointer-events: none; z-index: 0;
-            filter: grayscale(1) contrast(1.2);
-            animation: dragonBreath 18s ease-in-out infinite;
+            opacity: 0.1; pointer-events: none; z-index: 0;
+            filter: grayscale(1) invert(0.2);
+            animation: inkDrift 25s ease-in-out infinite;
         }
 
-        @keyframes dragonBreath {
-            0%, 100% { transform: translateY(-50%) translate(0, 0) rotate(0deg); }
-            50% { transform: translateY(-52%) translate(-15px, 10px) rotate(-1deg); }
+        @keyframes inkDrift {
+            0%, 100% { transform: translateY(-50%) scale(1); opacity: 0.08; }
+            50% { transform: translateY(-53%) scale(1.05) rotate(-1deg); opacity: 0.12; }
         }
 
-        /* THE SCROLL - 3D Physical Design */
+        /* HEADER - Deep Ink Style */
+        .sumi-header {
+            position: relative; text-align: center; padding: 60px 0; z-index: 20;
+        }
+        .sumi-title {
+            font-family: 'Ma Shan Zheng', cursive; font-size: 5rem;
+            color: var(--ink); position: relative; display: inline-block;
+            text-shadow: 2px 2px 0px rgba(0,0,0,0.1);
+        }
+        /* The Red Seal Stamp */
+        .sumi-title::after {
+            content: "局"; position: absolute; right: -60px; top: 10px;
+            width: 50px; height: 50px; border: 3px solid var(--cinnabar);
+            color: var(--cinnabar); font-size: 1.5rem; line-height: 45px;
+            font-family: 'Zhi Mang Xing', cursive; transform: rotate(5deg);
+        }
+
+        /* THE TRUE WALL SCROLL (Kakemono) */
+        .scroll-wrapper {
+            perspective: 1000px; margin-bottom: 40px;
+        }
+
         .job-scroll { 
-            background: #fdfcf8;
-            /* Gradient adds a "cylindrical" light effect to the paper */
-            background-image: 
-                linear-gradient(90deg, rgba(0,0,0,0.03) 0%, rgba(255,255,255,0) 10%, rgba(255,255,255,0) 90%, rgba(0,0,0,0.03) 100%),
-                url('https://www.transparenttextures.com/patterns/handmade-paper.png');
-            padding: 1rem 1.8rem;
-            position: relative; 
-            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-            width: 320px; 
-            height: 230px; 
-            display: flex; flex-direction: column;
-            z-index: 20;
-            box-shadow: 0 10px 30px -15px rgba(0,0,0,0.3);
+            background: #f4f1ea;
+            background-image: url('https://www.transparenttextures.com/patterns/natural-paper.png');
+            width: 280px; min-height: 400px;
+            position: relative; margin: 0 auto;
+            border-left: 2px solid rgba(0,0,0,0.05);
+            border-right: 2px solid rgba(0,0,0,0.05);
+            box-shadow: 15px 25px 50px -10px rgba(0,0,0,0.5);
+            display: flex; flex-direction: column; padding: 40px 25px;
+            transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
         }
 
-        /* Lacquer Dowels (The wood rollers) */
-        .job-scroll::before, .job-scroll::after {
-            content: ""; position: absolute; left: -5%; width: 110%; height: 16px;
-            background: linear-gradient(to bottom, #333 0%, #000 50%, #222 100%);
-            border-radius: 8px;
-            z-index: 21;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.4);
+        /* Top Hanging Bar & Cord */
+        .scroll-top-bar {
+            position: absolute; top: -10px; left: -5%; width: 110%; height: 12px;
+            background: #222; border-radius: 2px;
         }
-        .job-scroll::before { top: -8px; }
-        .job-scroll::after { bottom: -8px; }
-
-        .job-scroll:hover { 
-            transform: translateY(-8px) rotate(0.5deg);
-            box-shadow: 0 35px 60px -20px rgba(188, 47, 50, 0.15);
+        .hanging-cord {
+            position: absolute; top: -50px; left: 50%; transform: translateX(-50%);
+            width: 120px; height: 50px; border-top: 2px solid #444;
+            border-left: 2px solid #444; border-right: 2px solid #444;
+            border-radius: 60px 60px 0 0; opacity: 0.6;
         }
 
-        /* Inky Button */
-        .btn-initiate {
-            background: var(--ink); color: white; padding: 0.4rem;
-            font-family: 'Zhi Mang Xing', cursive; font-size: 1.2rem;
-            transition: all 0.2s ease; border: none; cursor: pointer;
-            width: 100%; border-radius: 1px;
-            position: relative;
+        /* Bottom Heavy Roller */
+        .scroll-bottom-roller {
+            position: absolute; bottom: -15px; left: -8%; width: 116%; height: 24px;
+            background: linear-gradient(to bottom, #1a1a1a, #000, #222);
+            border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.4);
         }
-        .btn-initiate:hover { background: var(--cinnabar); }
+
+        /* Ink Texture Overlay */
+        .ink-bleed {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle at 50% 20%, rgba(0,0,0,0.03) 0%, transparent 80%);
+            pointer-events: none;
+        }
+
+        .job-scroll:hover {
+            transform: rotateX(5deg) translateY(-10px);
+            box-shadow: 20px 40px 60px -10px rgba(0,0,0,0.7);
+        }
+
+        /* Typography & Details */
+        .scroll-id { font-family: 'Noto Serif SC'; font-weight: 900; color: var(--cinnabar); font-size: 0.7rem; letter-spacing: 0.2em; border-bottom: 1px solid #d1ccc0; margin-bottom: 15px; padding-bottom: 5px; }
+        .scroll-title { font-family: 'Ma Shan Zheng', cursive; font-size: 2.2rem; color: #111; line-height: 1; margin-bottom: 20px; }
+        .scroll-body { font-size: 0.9rem; color: #444; line-height: 1.8; text-align: justify; flex-grow: 1; }
+        
+        /* Cinnabar Button (The Signature) */
+        .btn-apply {
+            margin-top: 25px; border: 1.5px solid var(--ink); padding: 10px;
+            font-family: 'Zhi Mang Xing', cursive; font-size: 1.4rem; color: var(--ink);
+            transition: all 0.3s; cursor: pointer; background: transparent;
+        }
+        .btn-apply:hover { background: var(--ink); color: #fff; }
 
         .ma-shan { font-family: 'Ma_Shan_Zheng', cursive; }
     </style>
@@ -82,101 +117,45 @@
 <body>
     <div class="bg-artwork"></div>
 
-    <div id="main-content" class="py-16 px-10 relative z-20">
-        <header class="max-w-7xl mx-auto mb-12">
-            <h1 class="text-6xl ma-shan text-zinc-900 drop-shadow-md">
-                State <span class="text-[#bc2f32]">Directives</span>
-            </h1>
-        </header>
+    <header class="sumi-header">
+        <h1 class="sumi-title">State Directives</h1>
+        <p class="text-zinc-500 font-serif tracking-[0.5em] mt-4 uppercase text-[10px]">Imperial Department of Public Relations & Trust</p>
+    </header>
 
-        <div id="job-grid" class="flex flex-wrap justify-center gap-16 max-w-7xl mx-auto"></div>
-        
-        <button id="admin-trigger" onclick="openEditor()" class="hidden fixed bottom-8 right-8 w-14 h-14 bg-black text-[#bc2f32] rounded-full border-2 border-[#bc2f32] z-[1500] ma-shan text-2xl hover:scale-110 transition-transform">改</button>
-    </div>
-
-    <div id="admin-editor" class="fixed top-5 right-[-400px] w-[320px] bg-[#0d0d0d] text-zinc-400 z-[2000] transition-all duration-500 rounded-lg border border-zinc-800 shadow-2xl overflow-hidden">
-        <div class="p-4 border-b border-zinc-800 bg-black flex justify-between items-center text-white ma-shan">
-            <span>Scroll Editor</span>
-            <button onclick="closeEditor()" class="text-xs">✕</button>
-        </div>
-        <div class="p-5 space-y-4 text-xs font-mono">
-            <input type="hidden" id="edit-index" value="-1">
-            <input type="text" id="edit-title" placeholder="Designation" class="w-full bg-zinc-900 border-zinc-800 p-2 rounded text-white outline-none">
-            <textarea id="edit-desc" placeholder="Directives" class="w-full bg-zinc-900 border-zinc-800 p-2 h-16 rounded text-white outline-none"></textarea>
-            <div class="grid grid-cols-2 gap-2">
-                <select id="edit-icon" class="bg-zinc-900 border-zinc-800 p-2 rounded text-white">
-                    <option value="seal">Seal</option><option value="dragon">Dragon</option><option value="lotus">Lotus</option>
-                </select>
-                <input type="color" id="edit-color" class="w-full h-8 bg-transparent cursor-pointer">
-            </div>
-            <button onclick="saveApp()" class="w-full bg-[#bc2f32] text-white p-2 ma-shan text-lg hover:brightness-110">Apply to Archive</button>
-        </div>
-    </div>
+    <main id="job-grid" class="flex flex-wrap justify-center gap-24 p-20 relative z-20"></main>
 
     <script>
         let apps = [];
-        let currentAdmin = false;
-
         async function loadArchive() {
             const stored = localStorage.getItem("dprt_jobs");
-            if (stored) { 
-                apps = JSON.parse(stored); 
-            } else {
-                apps = [
-                    {title: "Imperial Scribe", desc: "Transcription of state-level data flows into the eternal archive.", icon: "seal", color: "#1a1a1a"},
-                    {title: "Shadow Guard", desc: "Protecting the integrity of the digital borders.", icon: "dragon", color: "#bc2f32"}
-                ];
-            }
-            renderApps(currentAdmin);
+            apps = stored ? JSON.parse(stored) : [
+                {title: "Senior Scribe", desc: "You are tasked with the transcription of vital edicts. Each brush stroke must be precise, for the ink of the state never fades. Accuracy is your primary virtue in the archives of the eternal city.", color: "#000"},
+                {title: "Gate Watch", desc: "The digital borders are vast and silent. Your duty is to remain vigilant against the whispers of dissent. Report all anomalies to the Ministry of Truth immediately.", color: "#9d2218"}
+            ];
+            renderApps();
         }
 
-        function renderApps(isAdmin = false) {
-            currentAdmin = isAdmin;
+        function renderApps() {
             const grid = document.getElementById('job-grid');
             grid.innerHTML = '';
-
             apps.forEach((app, i) => {
-                const scroll = document.createElement('div');
-                scroll.className = 'job-scroll';
-                scroll.innerHTML = `
-                    <div class="text-center mb-1">
-                        <span class="text-[7px] text-zinc-400 font-mono tracking-[0.3em] uppercase">Entry 0${i+1}</span>
+                const wrapper = document.createElement('div');
+                wrapper.className = 'scroll-wrapper';
+                wrapper.innerHTML = `
+                    <div class="hanging-cord"></div>
+                    <div class="job-scroll">
+                        <div class="scroll-top-bar"></div>
+                        <div class="ink-bleed"></div>
+                        <div class="scroll-id">CLASSIFIED // NO. 0${i+1}</div>
+                        <h2 class="scroll-title">${app.title}</h2>
+                        <div class="scroll-body">${app.desc}</div>
+                        <button class="btn-apply">INITIATE BRUSH</button>
+                        <div class="scroll-bottom-roller"></div>
                     </div>
-                    <div class="text-center border-b border-zinc-200 pb-2 mb-2">
-                        <h3 class="text-xl ma-shan text-zinc-800">${app.title}</h3>
-                    </div>
-                    <div class="flex-grow flex items-center justify-center mb-2 px-2">
-                        <p class="text-zinc-600 text-[10px] leading-snug italic text-center">"${app.desc}"</p>
-                    </div>
-                    <button class="btn-initiate" style="border-bottom: 3px solid ${app.color}">APPLY</button>
-                    ${isAdmin ? `<div class="flex justify-center gap-4 mt-2 text-[8px] font-bold"><span onclick="editApp(${i})" class="cursor-pointer text-zinc-400 hover:text-black">EDIT</span><span onclick="deleteApp(${i})" class="cursor-pointer text-red-800">REDACT</span></div>` : ''}
                 `;
-                grid.appendChild(scroll);
+                grid.appendChild(wrapper);
             });
         }
-
-        function openEditor() { document.getElementById('admin-editor').style.right = '20px'; }
-        function closeEditor() { document.getElementById('admin-editor').style.right = '-400px'; }
-        
-        function saveApp() {
-            const idx = parseInt(document.getElementById("edit-index").value);
-            const newData = { 
-                title: document.getElementById("edit-title").value, 
-                desc: document.getElementById("edit-desc").value, 
-                icon: document.getElementById("edit-icon").value, 
-                color: document.getElementById("edit-color").value 
-            };
-            if (idx === -1) apps.push(newData); else apps[idx] = newData;
-            localStorage.setItem("dprt_jobs", JSON.stringify(apps));
-            renderApps(currentAdmin);
-            closeEditor();
-        }
-
-        window.activateAdminMode = (status) => { 
-            if(status) document.getElementById('admin-trigger').classList.remove('hidden');
-            renderApps(status); 
-        };
-        
         window.addEventListener('DOMContentLoaded', loadArchive);
     </script>
 </body>
