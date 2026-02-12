@@ -5,136 +5,168 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DPRT | Republic of Teapots</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@500;900&family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@500;900&family=Zhi+Mang+Xing&family=Ma+Shan+Zheng&display=swap" rel="stylesheet">
     <style>
-        :root { --dprt-bronze: #b8860b; --dprt-ink: #050506; }
-        
+        :root { 
+            --ink: #1a1a1a; 
+            --cinnabar: #bc2f32; 
+            --paper: #e6e4e0;
+        }
+
         body {
-            background: var(--dprt-ink);
-            color: #e0e0e0; font-family: 'Inter', sans-serif; 
-            margin: 0; min-height: 100vh; overflow-x: hidden; position: relative;
+            background-color: var(--paper);
+            /* Seamless High-Quality Paper Texture */
+            background-image: url('https://www.transparenttextures.com/patterns/natural-paper.png');
+            color: var(--ink); 
+            font-family: 'Noto Serif SC', serif; 
+            margin: 0; min-height: 100vh; overflow-x: hidden;
             display: flex; flex-direction: column;
         }
 
-        /* Subtle Background Glow */
-        .bg-overlay {
-            position: fixed; inset: 0;
-            background: radial-gradient(circle at 50% 50%, #16161a 0%, #050506 100%);
-            z-index: -1;
+        /* Large Background Calligraphy (The "Dragon") */
+        .bg-watermark {
+            position: fixed;
+            top: 50%;
+            right: -10%;
+            transform: translateY(-50%);
+            font-family: 'Ma Shan Zheng', cursive;
+            font-size: 60rem;
+            color: rgba(0, 0, 0, 0.03);
+            pointer-events: none;
+            z-index: 0;
+            line-height: 0.8;
+            user-select: none;
         }
 
-        /* Initial Hidden State for Animation */
+        /* Red Sun / Cinnabar Glow */
+        .cinnabar-glow {
+            position: fixed;
+            top: -10%;
+            left: -10%;
+            width: 60vw;
+            height: 60vw;
+            background: radial-gradient(circle, rgba(188, 47, 50, 0.05) 0%, transparent 70%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* Reveal Animations */
         .reveal-node { 
             opacity: 0; 
-            transform: translateY(30px); 
-            filter: blur(15px); 
-            transition: all 1.2s cubic-bezier(0.16, 1, 0.3, 1); 
+            transform: translateX(-30px); 
+            transition: all 1.5s cubic-bezier(0.16, 1, 0.3, 1); 
         }
         
         .reveal-active { 
             opacity: 1; 
-            transform: translateY(0); 
-            filter: blur(0); 
+            transform: translateX(0); 
         }
 
-        /* Staggered Timing */
-        .delay-1 { transition-delay: 0.2s; }
-        .delay-2 { transition-delay: 0.4s; }
-        .delay-3 { transition-delay: 0.6s; }
+        .delay-1 { transition-delay: 0.3s; }
+        .delay-2 { transition-delay: 0.6s; }
+        .delay-3 { transition-delay: 0.9s; }
 
-        /* Embers Animation */
-        .ember {
-            position: absolute; background: var(--dprt-bronze); border-radius: 50%; opacity: 0;
-            pointer-events: none; z-index: 1; will-change: transform;
-            animation: rise 12s infinite ease-in;
+        /* Floating Ink Droplets (Replaces Embers) */
+        .ink-drop {
+            position: absolute; background: var(--ink); border-radius: 50%; opacity: 0;
+            pointer-events: none; z-index: 1; filter: blur(1px);
+            animation: fall 15s infinite linear;
         }
-        @keyframes rise {
-            0% { transform: translate3d(0, 105vh, 0) scale(0); opacity: 0; }
-            50% { opacity: 0.3; }
-            100% { transform: translate3d(0, -10vh, 0) scale(1); opacity: 0; }
-        }
-
-        /* CRT Scanline Overlay */
-        body::before {
-            content: " "; display: block; position: fixed; inset: 0;
-            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%);
-            z-index: 100; background-size: 100% 4px; pointer-events: none;
+        @keyframes fall {
+            0% { transform: translate3d(0, -10vh, 0) scale(0); opacity: 0; }
+            20% { opacity: 0.1; }
+            100% { transform: translate3d(20vw, 110vh, 0) scale(2); opacity: 0; }
         }
 
-        .hero-title { font-size: clamp(3rem, 10vw, 7.5rem); line-height: 0.9; color: #fff; font-family: 'Noto Serif SC', serif; font-weight: 900; }
-        .chinese-font { font-family: 'Noto Serif SC', serif; }
-        
-        /* Floating border accent */
-        .accent-line {
-            position: absolute; left: -2px; top: 0; width: 2px;
-            background: var(--dprt-bronze);
-            box-shadow: 0 0 20px var(--dprt-bronze);
-            height: 0;
-            transition: height 1.5s cubic-bezier(0.16, 1, 0.3, 1);
-            transition-delay: 0.1s;
+        /* Hero Typography */
+        .hero-title { 
+            font-size: clamp(3rem, 10vw, 8rem); 
+            line-height: 0.85; 
+            font-family: 'Ma Shan Zheng', cursive; 
+            letter-spacing: -0.02em;
         }
-        .reveal-active .accent-line { height: 100px; }
+
+        .accent-stamp {
+            writing-mode: vertical-rl;
+            font-family: 'Zhi Mang Xing', cursive;
+            font-size: 1.5rem;
+            color: var(--cinnabar);
+            border-right: 1px solid var(--cinnabar);
+            padding-right: 1rem;
+            margin-right: 2rem;
+            opacity: 0.8;
+        }
     </style>
 </head>
 <body>
-    <div class="bg-overlay"></div>
-    <div id="embers-container"></div>
+    <div class="bg-watermark">龍</div>
+    <div class="cinnabar-glow"></div>
+    <div id="ink-container"></div>
     
-    <div id="global-overlay" class="fixed inset-0 bg-black/60 z-[80] opacity-0 pointer-events-none transition-opacity duration-300 backdrop-blur-[2px]" onclick="toggleMenu(false)"></div>
-
     <div id="header-placeholder" class="relative z-[90]"></div>
 
-    <div id="blur-container" class="flex-grow flex flex-col justify-center relative z-10">
+    <div class="flex-grow flex flex-col justify-center relative z-10">
         <main class="max-w-7xl mx-auto px-12 py-20 w-full">
-            <div class="max-w-4xl border-l-2 border-[#b8860b]/20 pl-16 relative content-wrapper">
-                <div class="accent-line"></div>
-                
-                <div class="reveal-node delay-1">
-                    <h3 class="text-[#b8860b] font-black text-xs mb-8 tracking-[0.8em] uppercase opacity-80 chinese-font">
-                        大同茶國 — 永恆秩序
-                    </h3>
+            <div class="flex items-start">
+                <div class="reveal-node delay-1 accent-stamp">
+                    君子不憂不懼 — Eternal Peace
                 </div>
 
-                <div class="reveal-node delay-2">
-                    <h1 class="hero-title mb-10 italic uppercase">
-                        Tranquility<br>
-                        <span class="text-white">Through</span> 
-                        <span class="text-[#ff8c00]">Order</span>
-                    </h1>
-                </div>
+                <div class="content-wrapper">
+                    <div class="reveal-node delay-1 mb-6">
+                        <span class="bg-black text-white px-4 py-1 text-[10px] tracking-[0.5em] font-bold uppercase">
+                            Imperial Edict 2026
+                        </span>
+                    </div>
 
-                <div class="reveal-node delay-3">
-                    <p class="text-zinc-500 text-xl font-light leading-relaxed max-w-2xl">
-                        The Estate is built upon the <span class="text-zinc-200 font-bold italic">Eternal Brew</span>. 
-                        Structure is the vessel; loyalty is the tea.
-                    </p>
+                    <div class="reveal-node delay-2">
+                        <h1 class="hero-title text-zinc-900 mb-8">
+                            ORDER IN <br>
+                            <span class="text-[#bc2f32]">EVERY DROP</span>
+                        </h1>
+                    </div>
+
+                    <div class="reveal-node delay-3">
+                        <p class="text-zinc-600 text-2xl font-serif max-w-xl leading-relaxed italic border-l-4 border-black pl-8">
+                            The Republic is a scroll yet to be written. 
+                            Loyalty is the ink; tranquility is the result.
+                        </p>
+                        
+                        <div class="mt-16 flex gap-8">
+                            <button onclick="window.location.href='/dprt/jobs/'" class="bg-black text-white px-10 py-4 font-['Zhi_Mang_Xing'] text-2xl hover:bg-[#bc2f32] transition-colors shadow-xl">
+                                Enter Archive
+                            </button>
+                            <button class="border-2 border-black text-black px-10 py-4 font-['Zhi_Mang_Xing'] text-2xl hover:bg-black hover:text-white transition-all">
+                                Protocol
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </main>
     </div>
 
     <script>
-        // Smooth reveal on load
+        // Trigger reveal on load
         window.addEventListener('load', () => {
+            const nodes = document.querySelectorAll('.reveal-node');
             setTimeout(() => {
-                const nodes = document.querySelectorAll('.reveal-node');
-                const wrapper = document.querySelector('.content-wrapper');
-                
-                wrapper.classList.add('reveal-active');
                 nodes.forEach(node => node.classList.add('reveal-active'));
             }, 200);
         });
 
-        // Ambient Embers
-        const embersContainer = document.getElementById('embers-container');
-        for (let i = 0; i < 20; i++) {
-            const e = document.createElement('div');
-            e.className = 'ember';
-            e.style.left = Math.random() * 100 + '%';
-            e.style.width = e.style.height = (Math.random() * 2 + 1) + 'px';
-            e.style.animationDelay = Math.random() * 12 + 's';
-            e.style.animationDuration = (Math.random() * 5 + 10) + 's';
-            embersContainer.appendChild(e);
+        // Sumi-e Ink Drop Effect
+        const inkContainer = document.getElementById('ink-container');
+        for (let i = 0; i < 15; i++) {
+            const drop = document.createElement('div');
+            drop.className = 'ink-drop';
+            drop.style.left = Math.random() * 100 + '%';
+            const size = (Math.random() * 4 + 2) + 'px';
+            drop.style.width = size;
+            drop.style.height = size;
+            drop.style.animationDelay = Math.random() * 15 + 's';
+            drop.style.animationDuration = (Math.random() * 10 + 15) + 's';
+            inkContainer.appendChild(drop);
         }
     </script>
     
