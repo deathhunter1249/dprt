@@ -7,20 +7,42 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@500;900&family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
-        :root { --dprt-bronze: #b8860b; --dprt-ink: #0a0a0c; }
+        :root { --dprt-bronze: #b8860b; --dprt-ink: #050506; }
+        
         body {
-            background: #0a0a0c;
+            background: var(--dprt-ink);
             color: #e0e0e0; font-family: 'Inter', sans-serif; 
             margin: 0; height: 100vh; overflow: hidden; position: relative;
         }
 
+        /* Subtle Background Glow */
         .bg-overlay {
             position: fixed; inset: 0;
-            background: radial-gradient(circle at 50% 50%, #1a1a1c 0%, #0a0a0c 100%);
+            background: radial-gradient(circle at 50% 40%, #16161a 0%, #050506 100%);
             z-index: -1;
         }
 
-        /* Ember Animation */
+        /* Initial Hidden State for Animation */
+        .reveal-node { 
+            opacity: 0; 
+            transform: translateY(40px); 
+            filter: blur(20px); 
+            transition: all 1.4s cubic-bezier(0.16, 1, 0.3, 1); 
+        }
+        
+        /* The state triggered by JS */
+        .reveal-active { 
+            opacity: 1; 
+            transform: translateY(0); 
+            filter: blur(0); 
+        }
+
+        /* Staggered Timing */
+        .delay-1 { transition-delay: 0.3s; }
+        .delay-2 { transition-delay: 0.6s; }
+        .delay-3 { transition-delay: 0.9s; }
+
+        /* Embers Animation */
         .ember {
             position: absolute; background: var(--dprt-bronze); border-radius: 50%; opacity: 0;
             pointer-events: none; z-index: 1; will-change: transform;
@@ -28,25 +50,30 @@
         }
         @keyframes rise {
             0% { transform: translate3d(0, 105vh, 0) scale(0); opacity: 0; }
-            50% { opacity: 0.4; }
-            100% { transform: translate3d(0, -10vh, 0) scale(1.2); opacity: 0; }
+            50% { opacity: 0.3; }
+            100% { transform: translate3d(0, -10vh, 0) scale(1); opacity: 0; }
         }
 
-        /* Scanline CRT Effect */
+        /* CRT Scanline Overlay */
         body::before {
             content: " "; display: block; position: absolute; inset: 0;
-            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.15) 50%), 
-                        linear-gradient(90deg, rgba(255, 0, 0, 0.01), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.01));
-            z-index: 100; background-size: 100% 4px, 3px 100%; pointer-events: none;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%);
+            z-index: 100; background-size: 100% 4px; pointer-events: none;
         }
 
-        #blur-container { 
-            transition: filter 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.6s cubic-bezier(0.16, 1, 0.3, 1); 
-            will-change: filter, transform;
-        }
-        
-        .hero-title { font-size: clamp(3.5rem, 12vw, 8rem); line-height: 0.8; color: #fff; font-family: 'Noto Serif SC', serif; font-weight: 900; }
+        .hero-title { font-size: clamp(3.5rem, 12vw, 8rem); line-height: 0.85; color: #fff; font-family: 'Noto Serif SC', serif; font-weight: 900; }
         .chinese-font { font-family: 'Noto Serif SC', serif; }
+        
+        /* Floating border accent animation */
+        .accent-line {
+            position: absolute; -left: [2px]; top: 0; width: 2px;
+            background: var(--dprt-bronze);
+            box-shadow: 0 0 20px var(--dprt-bronze);
+            height: 0;
+            transition: height 1.5s cubic-bezier(0.16, 1, 0.3, 1);
+            transition-delay: 0.1s;
+        }
+        .reveal-active .accent-line { height: 120px; }
     </style>
 </head>
 <body>
@@ -54,38 +81,58 @@
     <div id="embers-container"></div>
     
     <div id="global-overlay" class="fixed inset-0 bg-black/60 z-[80] opacity-0 pointer-events-none transition-opacity duration-300 backdrop-blur-[2px]" onclick="toggleMenu(false)"></div>
-    <div id="header-placeholder"></div>
 
     <div id="blur-container" class="relative z-10">
-        <main class="max-w-7xl mx-auto px-12 h-[calc(100vh-100px)] flex flex-col justify-center">
-            <div class="max-w-4xl border-l-2 border-[#b8860b]/40 pl-16 relative">
-                <div class="absolute -left-[2px] top-0 h-24 w-[2px] bg-[#b8860b] shadow-[0_0_15px_#b8860b]"></div>
+        <main class="max-w-7xl mx-auto px-12 h-screen flex flex-col justify-center">
+            <div class="max-w-4xl border-l-2 border-[#b8860b]/20 pl-16 relative">
+                <div class="accent-line"></div>
                 
-                <h3 class="text-[#b8860b] font-black text-xs mb-8 tracking-[0.8em] uppercase opacity-80 chinese-font">
-                    大同茶國 — 永恆秩序
-                </h3>
-                <h1 class="hero-title mb-10 italic uppercase">
-                    Tranquility<br>
-                    <span class="text-white">Through</span> 
-                    <span class="text-[#ff8c00]">Order</span>
-                </h1>
-                <p class="text-zinc-500 text-xl font-light leading-relaxed max-w-2xl">
-                    The Estate is built upon the <span class="text-zinc-200 font-bold italic">Eternal Brew</span>. 
-                    Structure is the vessel; loyalty is the tea.
-                </p>
+                <div class="reveal-node delay-1">
+                    <h3 class="text-[#b8860b] font-black text-xs mb-8 tracking-[0.8em] uppercase opacity-80 chinese-font">
+                        大同茶國 — 永恆秩序
+                    </h3>
+                </div>
+
+                <div class="reveal-node delay-2">
+                    <h1 class="hero-title mb-10 italic uppercase">
+                        Tranquility<br>
+                        <span class="text-white">Through</span> 
+                        <span class="text-[#ff8c00]">Order</span>
+                    </h1>
+                </div>
+
+                <div class="reveal-node delay-3">
+                    <p class="text-zinc-500 text-xl font-light leading-relaxed max-w-2xl">
+                        The Estate is built upon the <span class="text-zinc-200 font-bold italic">Eternal Brew</span>. 
+                        Structure is the vessel; loyalty is the tea.
+                    </p>
+                </div>
             </div>
         </main>
     </div>
 
     <script>
-        // Embers animation
+        // Smooth reveal on load
+        window.addEventListener('load', () => {
+            // Short delay to ensure browser is ready
+            setTimeout(() => {
+                const nodes = document.querySelectorAll('.reveal-node');
+                const mainWrapper = document.querySelector('.max-w-4xl');
+                
+                mainWrapper.classList.add('reveal-active');
+                nodes.forEach(node => node.classList.add('reveal-active'));
+            }, 100);
+        });
+
+        // Ambient Embers
         const embersContainer = document.getElementById('embers-container');
-        for (let i = 0; i < 15; i++) {
+        for (let i = 0; i < 20; i++) {
             const e = document.createElement('div');
             e.className = 'ember';
             e.style.left = Math.random() * 100 + '%';
-            e.style.width = e.style.height = (Math.random() * 3 + 1) + 'px';
-            e.style.animationDelay = Math.random() * 10 + 's';
+            e.style.width = e.style.height = (Math.random() * 2 + 1) + 'px';
+            e.style.animationDelay = Math.random() * 12 + 's';
+            e.style.animationDuration = (Math.random() * 5 + 10) + 's';
             embersContainer.appendChild(e);
         }
     </script>
