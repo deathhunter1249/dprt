@@ -311,6 +311,10 @@ async function initAuth() {
     }
 }
 
-    // Run auth on load
+// Run auth immediately
+if (document.readyState === 'loading') {
     window.addEventListener('DOMContentLoaded', initAuth);
+} else {
+    initAuth(); // DOM already loaded
+}
 </script>
