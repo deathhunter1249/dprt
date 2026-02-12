@@ -7,135 +7,130 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@200;900&family=Zhi+Mang+Xing&family=Ma+Shan+Zheng&display=swap" rel="stylesheet">
     <style>
-        :root { --ink: #1a1a1a; --cinnabar: #bc2f32; --paper: #e6e4e0; }
+        :root { 
+            --ink: #1a1a1a; 
+            --cinnabar: #bc2f32; 
+            --paper: #e6e4e0;
+        }
 
         body { 
             background-color: var(--paper);
             background-image: url('https://googleusercontent.com/image_collection/image_retrieval/6199966141472970469_0');
             background-blend-mode: multiply;
-            color: var(--ink); 
             font-family: 'Noto Serif SC', serif !important; 
-            margin: 0; min-height: 100vh; overflow-x: hidden; 
+            margin: 0; min-height: 100vh;
         }
 
         .brush-font { font-family: 'Ma Shan Zheng', cursive !important; }
         
-        .job-card { 
-            background: rgba(255, 255, 255, 0.4);
-            border-left: 4px solid var(--ink);
-            padding: 3rem; position: relative; 
-            transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-            backdrop-filter: blur(8px);
+        /* THE SCROLL (Application Card) */
+        .job-scroll { 
+            background: #fdfcf8;
+            border: 1px solid rgba(0,0,0,0.1);
+            padding: 2.5rem; 
+            position: relative; 
+            transition: all 0.4s ease;
+            box-shadow: 5px 5px 0px rgba(0,0,0,0.05);
+            max-width: 550px;
+            margin: 0 auto;
         }
 
-        .job-card:hover { 
-            background: #fff;
-            transform: translateX(10px);
-            box-shadow: 20px 20px 60px rgba(0,0,0,0.05);
+        /* Decorative "Paper Fasteners" */
+        .job-scroll::before, .job-scroll::after {
+            content: ""; position: absolute; top: 15px; width: 10px; height: 10px;
+            background: var(--ink); border-radius: 50%; opacity: 0.1;
+        }
+        .job-scroll::before { left: 15px; }
+        .job-scroll::after { right: 15px; }
+
+        .job-scroll:hover { 
+            transform: translateY(-5px);
+            box-shadow: 15px 15px 0px rgba(188, 47, 50, 0.1);
         }
 
+        /* Side Vertical Label */
+        .vertical-label {
+            position: absolute; left: -25px; top: 20px;
+            writing-mode: vertical-rl; text-transform: uppercase;
+            font-size: 9px; letter-spacing: 2px; color: #aaa;
+        }
+
+        /* Application Watermark */
+        .status-watermark {
+            position: absolute; top: 20px; right: 20px;
+            font-family: 'Zhi Mang Xing'; font-size: 1.2rem;
+            color: var(--cinnabar); opacity: 0.2;
+            border: 2px solid var(--cinnabar); padding: 2px 8px;
+            transform: rotate(15deg);
+        }
+
+        .btn-initiate {
+            background: var(--ink);
+            color: white; padding: 0.5rem 2rem;
+            font-family: 'Zhi Mang Xing', cursive; font-size: 1.2rem;
+            transition: 0.3s; border: none; cursor: pointer;
+        }
+        .btn-initiate:hover { background: var(--cinnabar); letter-spacing: 1px; }
+
+        /* Sidebar Editor */
         #admin-editor {
-            position: fixed; top: 0; right: -500px; width: 500px; height: 100%;
+            position: fixed; top: 0; right: -450px; width: 450px; height: 100%;
             background: #0d0d0d; color: #d1d1d1;
-            transition: right 0.6s cubic-bezier(0.8, 0, 0.2, 1);
-            z-index: 2000; box-shadow: -20px 0 50px rgba(0,0,0,0.5);
-            display: flex; flex-direction: column;
-            border-left: 1px solid #222;
+            transition: right 0.5s cubic-bezier(0.8, 0, 0.2, 1);
+            z-index: 2000; display: flex; flex-direction: column;
         }
         #admin-editor.open { right: 0; }
-
-        .input-field {
-            background: #141414; border: 1px solid #222; color: #fff;
-            width: 100%; padding: 0.8rem; margin-top: 0.4rem; outline: none;
-        }
-        .input-field:focus { border-color: var(--cinnabar); }
-
-        .icon-opt { 
-            cursor: pointer; padding: 10px; border: 1px solid #333; 
-            transition: 0.2s; opacity: 0.5; 
-        }
-        .icon-opt.selected { border-color: var(--cinnabar); opacity: 1; background: #1a1a1a; }
-        
-        .btn-brush {
-            background: var(--cinnabar); color: #fff; padding: 1rem 2rem;
-            font-family: 'Zhi_Mang_Xing', cursive !important; font-size: 1.4rem; 
-            cursor: pointer; border: none; transition: 0.3s;
-        }
+        .input-field { background: #141414; border: 1px solid #222; color: #fff; width: 100%; padding: 0.8rem; margin-top: 5px; outline: none; }
     </style>
 </head>
 <body>
 
-    <div id="header-placeholder" class="relative z-[1001]"></div>
+    <div id="main-content" class="py-20 px-10">
+        <header class="max-w-7xl mx-auto mb-20 text-center">
+            <h1 class="text-8xl brush-font text-zinc-900">Imperial <span class="text-[#bc2f32]">Archive</span></h1>
+            <p class="text-zinc-500 font-mono text-[10px] tracking-[0.5em] mt-4 uppercase">Directives & Applications</p>
+        </header>
 
-    <div id="main-content">
-        <main class="max-w-7xl mx-auto px-12 py-24">
-            <header class="mb-40">
-                <h1 class="text-9xl brush-font leading-none text-zinc-900">
-                    Archive <span class="text-[#bc2f32]">Directives</span>
-                </h1>
-            </header>
+        <div id="job-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 max-w-7xl mx-auto"></div>
 
-            <div id="job-grid" class="grid grid-cols-1 md:grid-cols-2 gap-16"></div>
-
-            <button id="admin-trigger" onclick="openEditor()" class="hidden fixed bottom-12 right-12 w-20 h-20 bg-black text-[#bc2f32] rounded-full shadow-2xl flex items-center justify-center text-4xl font-['Zhi_Mang_Xing'] border-2 border-[#bc2f32] hover:bg-[#bc2f32] hover:text-white transition-all z-[1500]">
-                改
-            </button>
-        </main>
+        <button id="admin-trigger" onclick="openEditor()" class="hidden fixed bottom-10 right-10 w-16 h-16 bg-black text-[#bc2f32] rounded-full shadow-2xl flex items-center justify-center text-2xl font-['Zhi_Mang_Xing'] border-2 border-[#bc2f32] z-[1500]">改</button>
     </div>
 
     <div id="admin-editor">
-        <div class="p-8 border-bottom border-[#222]">
-            <span id="editor-mode" class="text-[#bc2f32] font-mono text-[10px] tracking-widest uppercase opacity-60">New Entry</span>
-            <h2 class="text-4xl brush-font text-white">Modify Archive</h2>
+        <div class="p-8 border-b border-[#222]">
+            <h2 class="text-3xl brush-font text-white">Modify Archive</h2>
         </div>
-        
-        <div class="p-8 overflow-y-auto flex-grow space-y-6">
+        <div class="p-8 space-y-6 overflow-y-auto">
             <input type="hidden" id="edit-index" value="-1">
-            
             <div>
-                <label class="text-[9px] uppercase tracking-widest text-zinc-500">Designation</label>
-                <input type="text" id="edit-title" class="input-field" placeholder="Job Title">
+                <label class="text-[9px] uppercase tracking-widest text-zinc-500">Post Title</label>
+                <input type="text" id="edit-title" class="input-field">
             </div>
-
             <div>
-                <label class="text-[9px] uppercase tracking-widest text-zinc-500">Directives</label>
-                <textarea id="edit-desc" class="input-field h-32" placeholder="Details..."></textarea>
+                <label class="text-[9px] uppercase tracking-widest text-zinc-500">Requirements</label>
+                <textarea id="edit-desc" class="input-field h-24"></textarea>
             </div>
-
             <div>
-                <label class="text-[9px] uppercase tracking-widest text-zinc-500 block mb-2">Select Imperial Icon</label>
-                <div class="grid grid-cols-4 gap-2" id="icon-selector">
-                    <div class="icon-opt selected" onclick="selectIcon(this, 'seal')">Seal</div>
-                    <div class="icon-opt" onclick="selectIcon(this, 'dragon')">Dragon</div>
-                    <div class="icon-opt" onclick="selectIcon(this, 'lotus')">Lotus</div>
-                    <div class="icon-opt" onclick="selectIcon(this, 'sword')">Sword</div>
-                </div>
+                <label class="text-[9px] uppercase tracking-widest text-zinc-500">Decal (./decals/name.png)</label>
+                <select id="edit-icon" class="input-field">
+                    <option value="seal">Imperial Seal</option>
+                    <option value="dragon">Dragon Emblem</option>
+                    <option value="lotus">Lotus Flower</option>
+                    <option value="sword">Officer Blade</option>
+                </select>
             </div>
-
             <div>
-                <label class="text-[9px] uppercase tracking-widest text-zinc-500">Accent Color (HEX)</label>
-                <div class="flex gap-2">
-                    <input type="color" id="edit-color" class="h-10 w-20 bg-transparent border-none cursor-pointer" value="#bc2f32">
-                    <input type="text" id="edit-color-hex" class="input-field !mt-0" value="#bc2f32">
-                </div>
+                <label class="text-[9px] uppercase tracking-widest text-zinc-500">Accent Hue</label>
+                <input type="color" id="edit-color" class="w-full h-10 mt-2 bg-transparent border-none cursor-pointer" value="#bc2f32">
             </div>
-
-            <button onclick="saveApp()" class="w-full btn-brush">Seal Entry</button>
-            <button onclick="closeEditor()" class="w-full text-[10px] text-zinc-600 uppercase tracking-widest">Cancel</button>
+            <button onclick="saveApp()" class="w-full bg-[#bc2f32] py-4 font-bold text-white uppercase tracking-widest text-xs">Commit to Archive</button>
+            <button onclick="closeEditor()" class="w-full text-[10px] text-zinc-600 uppercase">Cancel</button>
         </div>
     </div>
 
     <script>
         let apps = [];
         let currentAdmin = false;
-        let selectedIcon = 'seal';
-
-        const ICON_URLS = {
-            seal: 'https://googleusercontent.com/image_collection/image_retrieval/18071948604054727570_0',
-            dragon: 'https://cdn-icons-png.flaticon.com/512/3233/3233497.png', // Example placeholders
-            lotus: 'https://cdn-icons-png.flaticon.com/512/1045/1045233.png',
-            sword: 'https://cdn-icons-png.flaticon.com/512/9167/9167816.png'
-        };
 
         async function loadArchive() {
             try {
@@ -143,7 +138,6 @@
                 apps = await res.json();
             } catch (e) { apps = []; }
             renderApps(currentAdmin);
-            document.getElementById('main-content').classList.add('visible');
         }
 
         function renderApps(isAdmin = false) {
@@ -153,37 +147,42 @@
             grid.innerHTML = '';
 
             apps.forEach((app, i) => {
-                const card = document.createElement('div');
-                card.className = 'job-card';
-                card.style.borderLeftColor = app.color || '#1a1a1a';
+                const scroll = document.createElement('div');
+                scroll.className = 'job-scroll';
                 
-                card.innerHTML = `
-                    <div class="w-12 h-12 mb-6 grayscale opacity-80" style="background: url('${ICON_URLS[app.icon || 'seal']}') no-repeat center/contain"></div>
-                    <h3 class="text-6xl brush-font mb-4">${app.title}</h3>
-                    <p class="text-zinc-600 italic border-l border-zinc-200 pl-6 mb-8">${app.desc}</p>
-                    <div class="flex justify-between items-center">
-                        <button class="btn-brush !text-lg !py-2" style="background:${app.color || '#bc2f32'}">Initiate</button>
+                scroll.innerHTML = `
+                    <div class="vertical-label">Ref. #${2024 + i} // DP-RT</div>
+                    <div class="status-watermark">VACANT</div>
+                    
+                    <div class="flex justify-center mb-6">
+                        <img src="./decals/${app.icon || 'seal'}.png" class="w-12 h-12 opacity-80" alt="Icon">
+                    </div>
+
+                    <div class="text-center border-b border-zinc-100 pb-4 mb-4">
+                        <h3 class="text-3xl brush-font text-zinc-800">${app.title}</h3>
+                        <p class="text-[10px] text-zinc-400 font-mono tracking-widest uppercase mt-1">Personnel Directive</p>
+                    </div>
+
+                    <div class="mb-8">
+                        <p class="text-zinc-600 text-sm leading-relaxed italic text-center">"${app.desc}"</p>
+                    </div>
+
+                    <div class="flex flex-col items-center gap-4">
+                        <button class="btn-initiate" style="background:${app.color || '#1a1a1a'}">Apply Now</button>
                         ${isAdmin ? `
                             <div class="flex gap-4">
-                                <button onclick="editApp(${i})" class="text-zinc-400 hover:text-black uppercase text-[9px] tracking-widest">Edit</button>
-                                <button onclick="deleteApp(${i})" class="text-zinc-400 hover:text-red-700 uppercase text-[9px] tracking-widest">Redact</button>
+                                <span onclick="editApp(${i})" class="cursor-pointer text-zinc-400 hover:text-black text-[9px] uppercase tracking-tighter">Edit</span>
+                                <span onclick="deleteApp(${i})" class="cursor-pointer text-zinc-400 hover:text-red-700 text-[9px] uppercase tracking-tighter">Redact</span>
                             </div>
                         ` : ''}
                     </div>
                 `;
-                grid.appendChild(card);
+                grid.appendChild(scroll);
             });
-        }
-
-        function selectIcon(el, icon) {
-            document.querySelectorAll('.icon-opt').forEach(opt => opt.classList.remove('selected'));
-            el.classList.add('selected');
-            selectedIcon = icon;
         }
 
         function openEditor() {
             document.getElementById('edit-index').value = "-1";
-            document.getElementById('editor-mode').innerText = "New Entry";
             document.getElementById('admin-editor').classList.add('open');
         }
 
@@ -194,8 +193,8 @@
             document.getElementById('edit-index').value = index;
             document.getElementById('edit-title').value = app.title;
             document.getElementById('edit-desc').value = app.desc;
+            document.getElementById('edit-icon').value = app.icon || 'seal';
             document.getElementById('edit-color').value = app.color || "#bc2f32";
-            document.getElementById('editor-mode').innerText = "Edit Entry #" + (index + 1);
             document.getElementById('admin-editor').classList.add('open');
         }
 
@@ -204,7 +203,7 @@
             const newData = {
                 title: document.getElementById('edit-title').value,
                 desc: document.getElementById('edit-desc').value,
-                icon: selectedIcon,
+                icon: document.getElementById('edit-icon').value,
                 color: document.getElementById('edit-color').value
             };
 
@@ -212,7 +211,7 @@
             else apps[idx] = newData;
 
             navigator.clipboard.writeText(JSON.stringify(apps, null, 2)).then(() => {
-                alert("Archive Copied! Update your jobsdata.json on GitHub.");
+                alert("Archive Copied! Paste into jobsdata.json");
             });
             renderApps(currentAdmin);
             closeEditor();
