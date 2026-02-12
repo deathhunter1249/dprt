@@ -81,7 +81,7 @@ async function initAuth() {
 
 // GLOBAL FUNCTIONS
 function login() {
-    const redirect = encodeURIComponent('https://deathhunter1249.github.io/dprt/index.html');
+    const redirect = encodeURIComponent('https://deathhunter1249.github.io/dprt/');
     window.location.href = `https://discord.com/oauth2/authorize?client_id=${CLIENT_ID}&response_type=token&redirect_uri=${redirect}&scope=identify`;
 }
 
