@@ -137,13 +137,29 @@
         let apps = [];
         let currentAdmin = false;
 
-        async function loadArchive() {
-            try {
-                const res = await fetch('./jobsdata.json');
-                apps = await res.json();
-            } catch (e) { apps = []; }
-            renderApps(currentAdmin);
+async function loadArchive() {
+
+    const stored = localStorage.getItem("dprt_jobs");
+
+    if (stored) {
+        try {
+            apps = JSON.parse(stored);
+        } catch {
+            apps = [];
         }
+    } else {
+        try {
+            const res = await fetch("/dprt/jobsdata.json");
+            if (!res.ok) throw new Error("Failed to fetch jobsdata.json");
+            apps = await res.json();
+        } catch {
+            apps = [];
+        }
+    }
+
+    renderApps(currentAdmin);
+}
+
 
         function renderApps(isAdmin = false) {
             currentAdmin = isAdmin;
@@ -162,7 +178,7 @@
                     <div class="status-watermark">OPEN</div>
                     
                     <div class="flex justify-center mb-6">
-                        <img src="./decals/${app.icon || 'seal'}.png" class="w-14 h-14 opacity-90" alt="Decal">
+                        <img src="/dprt/decals/${app.icon || 'seal'}.png" class="w-14 h-14 opacity-90" alt="Decal">
                     </div>
 
                     <div class="text-center border-b border-zinc-100 pb-6 mb-6">
@@ -205,32 +221,45 @@
             document.getElementById('admin-editor').classList.add('open');
         }
 
-        function saveApp() {
-            const idx = parseInt(document.getElementById('edit-index').value);
-            const newData = {
-                title: document.getElementById('edit-title').value,
-                desc: document.getElementById('edit-desc').value,
-                icon: document.getElementById('edit-icon').value,
-                color: document.getElementById('edit-color').value
-            };
+function saveApp() {
 
-            if(idx === -1) apps.push(newData);
-            else apps[idx] = newData;
+    const idx = parseInt(document.getElementById("edit-index").value);
+    const title = document.getElementById("edit-title").value.trim();
+    const desc = document.getElementById("edit-desc").value.trim();
 
-            navigator.clipboard.writeText(JSON.stringify(apps, null, 2)).then(() => {
-                alert("Data copied! Update jobsdata.json on GitHub.");
-            });
-            renderApps(currentAdmin);
-            closeEditor();
-        }
+    if (!title || !desc) {
+        alert("Title and description required.");
+        return;
+    }
 
-        function deleteApp(i) {
-            if(confirm("Confirm Redaction?")) {
-                apps.splice(i, 1);
-                navigator.clipboard.writeText(JSON.stringify(apps, null, 2));
-                renderApps(currentAdmin);
-            }
-        }
+    const newData = {
+        title,
+        desc,
+        icon: document.getElementById("edit-icon").value,
+        color: document.getElementById("edit-color").value
+    };
+
+    if (idx === -1) apps.push(newData);
+    else apps[idx] = newData;
+
+    localStorage.setItem("dprt_jobs", JSON.stringify(apps));
+
+    renderApps(currentAdmin);
+    closeEditor();
+}
+
+
+function deleteApp(i) {
+
+    if (!confirm("Confirm Redaction?")) return;
+
+    apps.splice(i, 1);
+
+    localStorage.setItem("dprt_jobs", JSON.stringify(apps));
+
+    renderApps(currentAdmin);
+}
+
 
         // Wait for page to be ready for auth.js
         window.addEventListener('DOMContentLoaded', loadArchive);
