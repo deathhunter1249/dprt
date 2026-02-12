@@ -86,16 +86,22 @@ function logout() {
 function toggleMenu(show) {
     const menu = document.getElementById('profile-menu');
     const overlay = document.getElementById('global-overlay');
-    const blur = document.getElementById('blur-container');
+    const blurContainer = document.getElementById('blur-container');
     
     if (show) {
-        menu?.classList.remove('opacity-0', 'pointer-events-none', '-translate-y-4');
+        menu?.classList.remove('opacity-0', 'pointer-events-none', '-translate-y-2');
         overlay?.classList.remove('opacity-0', 'pointer-events-none');
-        if(blur) blur.style.filter = "blur(12px) brightness(0.4)";
+        // Optimized: Only dim the background, don't use heavy blur
+        if(blurContainer) {
+            blurContainer.style.transition = "filter 0.3s ease, opacity 0.3s ease";
+            blurContainer.style.filter = "brightness(0.5)"; 
+        }
     } else {
-        menu?.classList.add('opacity-0', 'pointer-events-none', '-translate-y-4');
+        menu?.classList.add('opacity-0', 'pointer-events-none', '-translate-y-2');
         overlay?.classList.add('opacity-0', 'pointer-events-none');
-        if(blur) blur.style.filter = "none";
+        if(blurContainer) {
+            blurContainer.style.filter = "none";
+        }
     }
 }
 
