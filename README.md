@@ -1,4 +1,4 @@
-# 🇯🇵 japan-gousei-data
+# 🇯🇵 japan-gyousei-data
 
 日本の行政オープンデータにアクセスする [OpenClaw](https://github.com/openclaw/openclaw) スキル。
 
@@ -41,7 +41,7 @@ bash scripts/mcp-call.sh estat e-stat-get-stats-list '{"searchWord":"人口"}'
 ## 📁 構成
 
 ```
-japan-gousei-data/
+japan-gyousei-data/
 ├── SKILL.md              # スキル定義（OpenClawが読む）
 ├── scripts/
 │   └── mcp-call.sh       # MCPサーバー呼び出しスクリプト
