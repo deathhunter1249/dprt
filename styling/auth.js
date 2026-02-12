@@ -3,78 +3,71 @@ const CLIENT_ID = '1323365609777528962';
 // DISCORD AUTH
 async function initAuth() {
     console.log("=== AUTH START ===");
-    console.log("URL:", window.location.href);
-    console.log("Hash:", window.location.hash);
     
     const fragment = new URLSearchParams(window.location.hash.slice(1));
     let token = fragment.get('access_token');
     
-    console.log("Token from URL:", token ? "FOUND" : "NOT FOUND");
-    
     if (token) {
-        console.log("💾 Saving token");
         localStorage.setItem('discord_access_token', token);
         window.history.replaceState({}, document.title, window.location.pathname);
     } else {
         token = localStorage.getItem('discord_access_token');
-        console.log("Token from storage:", token ? "FOUND" : "NOT FOUND");
     }
 
-    if (!token) {
-        console.log("❌ No token");
-        return;
-    }
-
-    console.log("🔑 Fetching user data...");
+    if (!token) return;
 
     try {
         const response = await fetch('https://discord.com/api/users/@me', {
             headers: { 'Authorization': `Bearer ${token}` }
         });
         
-        console.log("Response:", response.status);
-        
         if (!response.ok) throw new Error("Invalid Token");
-        
         const user = await response.json();
-        console.log("✅ User:", user);
 
-        // Update UI
-        const navName = document.getElementById('nav-username');
-        const menuName = document.getElementById('menu-user-name');
-        const navRank = document.getElementById('nav-rank');
-        const menuRank = document.getElementById('menu-user-rank');
-        const navPfp = document.getElementById('nav-pfp');
+        // Ensure header elements exist before updating
+        const updateUI = () => {
+            const navName = document.getElementById('nav-username');
+            const navRank = document.getElementById('nav-rank');
+            const menuRank = document.getElementById('menu-user-rank');
+            const navPfp = document.getElementById('nav-pfp');
 
-        if(navName) navName.innerText = user.username;
-        if(menuName) menuName.innerText = user.username;
-        if(navPfp) navPfp.src = `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png`;
+            if (!navName || !navRank) {
+                // If elements aren't ready yet, wait 50ms and try again
+                setTimeout(updateUI, 50);
+                return;
+            }
 
-        const isAdmin = (user.id === '735531512124145674');
-        console.log("Admin:", isAdmin);
+            // Update Basic Info
+            navName.innerText = user.username;
+            document.getElementById('menu-user-name').innerText = user.username;
+            if(navPfp) navPfp.src = `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png`;
 
-        if(isAdmin) {
-            if(navRank) navRank.innerText = "Supreme Brewer";
-            if(menuRank) menuRank.innerText = "Overseer / Admin";
-            const adminTrigger = document.getElementById('admin-add-trigger');
-            if (adminTrigger) adminTrigger.classList.remove('hidden');
-        } else {
-            if(navRank) navRank.innerText = "Teapotian Citizen";
-            if(menuRank) menuRank.innerText = "Verified Citizen";
-        }
+            // Admin Logic
+            const isAdmin = (user.id === '735531512124145674');
+            
+            if(isAdmin) {
+                navRank.innerText = "Supreme Brewer";
+                menuRank.innerText = "Overseer / Admin";
+                document.getElementById('admin-add-trigger')?.classList.remove('hidden');
+            } else {
+                navRank.innerText = "Teapotian Citizen";
+                menuRank.innerText = "Verified Citizen";
+            }
 
-        document.getElementById('login-btn')?.classList.add('hidden');
-        document.getElementById('user-display')?.classList.remove('hidden');
+            document.getElementById('login-btn')?.classList.add('hidden');
+            document.getElementById('user-display')?.classList.remove('hidden');
 
-        console.log("✅ UI Updated");
+            // Trigger jobs page if applicable
+            if (typeof renderApps === "function") {
+                renderApps(isAdmin);
+            }
+            console.log("✅ UI Updated Successfully");
+        };
 
-        // For jobs page
-        if (typeof renderApps === "function") {
-            renderApps(isAdmin);
-        }
+        updateUI();
 
     } catch (err) {
-        console.error("❌ Error:", err);
+        console.error("❌ Auth Error:", err);
         localStorage.removeItem('discord_access_token');
     }
 }
@@ -106,7 +99,7 @@ function toggleMenu(show) {
     }
 }
 
-// LOAD HEADER & RUN AUTH
+// LOAD HEADER
 async function loadGlobalHeader() {
     try {
         const resp = await fetch('/dprt/styling/header.html');
@@ -114,22 +107,11 @@ async function loadGlobalHeader() {
         const html = await resp.text();
         document.getElementById('header-placeholder').innerHTML = html;
         
-        // Highlight active page
-        const path = window.location.pathname;
-        if(path.includes('index.html') || path.endsWith('/dprt/')) {
-            document.getElementById('nav-home')?.classList.add('text-[#b8860b]');
-        } else if(path.includes('info')) {
-            document.getElementById('nav-info')?.classList.add('text-[#b8860b]');
-        } else if(path.includes('jobs')) {
-            document.getElementById('nav-jobs')?.classList.add('text-[#b8860b]');
-        }
-        
-        // Run auth after header loads
+        // Auth is triggered here
         initAuth();
     } catch (e) {
         console.error("Header load error:", e);
     }
 }
 
-// Auto-run on page load
 window.addEventListener('DOMContentLoaded', loadGlobalHeader);
