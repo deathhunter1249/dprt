@@ -15,6 +15,7 @@
             font-family: 'Inter', sans-serif;
             margin: 0;
             min-height: 100vh;
+            /* Scanline effect */
             background-image: linear-gradient(rgba(184, 134, 11, 0.02) 50%, transparent 50%);
             background-size: 100% 4px;
         }
@@ -65,12 +66,10 @@
             box-shadow: none;
         }
 
-        /* Admin UI */
+        /* Admin UI controls visible only on hover */
         .admin-controls {
             position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
+            top: 0; left: 0; right: 0;
             padding: 8px 15px;
             background: rgba(184, 134, 11, 0.1);
             display: flex;
@@ -90,15 +89,13 @@
             color: var(--dprt-bronze);
             cursor: pointer;
         }
-
         .btn-action:hover { color: white; }
 
-        .chinese-font { font-family: 'Noto Serif SC', serif; }
-        
         #blur-container { transition: all 0.5s ease; }
     </style>
 </head>
 <body>
+    <div id="global-overlay" class="fixed inset-0 bg-black/60 z-[80] opacity-0 pointer-events-none transition-opacity duration-300 backdrop-blur-[2px]" onclick="toggleMenu(false)"></div>
     <div id="header-placeholder"></div>
 
     <div id="blur-container">
@@ -112,8 +109,7 @@
                 <p class="text-zinc-500 mt-4 max-w-lg text-sm leading-relaxed font-medium">Select a department to begin your enlistment process. Restricted roles require Tier-2 verification or direct Overseer appointment.</p>
             </div>
 
-            <div id="job-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                </div>
+            <div id="job-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
 
             <button id="admin-add-trigger" onclick="openEditor()" class="hidden w-full mt-12 border border-dashed border-zinc-800 py-12 text-zinc-600 hover:border-[#b8860b] hover:text-[#b8860b] transition-all font-black uppercase text-[10px] tracking-[0.4em]">
                 + Initialize New Personnel Directive
@@ -146,6 +142,7 @@
     </div>
 
     <script>
+        // The Data and Rendering Logic
         let currentEditingIndex = null;
         let apps = JSON.parse(localStorage.getItem('dprt_apps')) || [
             { title: "Moderator", desc: "Help moderate the discord server with a great team!", locked: false },
@@ -156,53 +153,7 @@
             { title: "Social Media", desc: "Grow our community by outreaching to other platforms!", locked: false }
         ];
 
-        // 1. Load Header
-        async function loadHeader() {
-            try {
-                const resp = await fetch('/dprt/header.html');
-                if (resp.ok) {
-                    document.getElementById('header-placeholder').innerHTML = await resp.text();
-                    // Small delay to ensure header elements are in DOM
-                    setTimeout(initAuth, 100);
-                }
-            } catch (e) { console.error("Header Error", e); }
-        }
-
-        // 2. Authenticate & Check Admin
-        async function initAuth() {
-            const token = localStorage.getItem('discord_access_token');
-            let isAdmin = false;
-
-            if (token) {
-                try {
-                    const response = await fetch('https://discord.com/api/users/@me', {
-                        headers: { 'Authorization': `Bearer ${token}` }
-                    });
-                    
-                    if (!response.ok) throw new Error();
-                    const user = await response.json();
-
-                    // ADMIN CHECK: Correct User ID applied here
-                    if (user.id === '735531512124145674' || user.username === 'deathhunter1249') {
-                        isAdmin = true;
-                        document.getElementById('admin-add-trigger')?.classList.remove('hidden');
-                    }
-
-                    // Update Header Ranks immediately
-                    const navRank = document.getElementById('nav-rank');
-                    const menuRank = document.getElementById('menu-user-rank');
-                    if(navRank) navRank.innerText = isAdmin ? "Supreme Brewer" : "Teapotian Citizen";
-                    if(menuRank) menuRank.innerText = isAdmin ? "Overseer / Admin" : "Verified Citizen";
-
-                } catch (err) { 
-                    console.error("Auth error", err);
-                    localStorage.removeItem('discord_access_token');
-                }
-            }
-            renderApps(isAdmin);
-        }
-
-        // 3. Render Job Cards
+        // This function is automatically called by your auth.js once auth is complete
         function renderApps(isAdmin) {
             const grid = document.getElementById('job-grid');
             if(!grid) return;
@@ -238,7 +189,7 @@
             });
         }
 
-        // 4. Editor Functions
+        // --- Admin Interaction Logic ---
         function openEditor(index = null) {
             currentEditingIndex = index;
             const editor = document.getElementById('admin-editor');
@@ -273,18 +224,20 @@
 
             localStorage.setItem('dprt_apps', JSON.stringify(apps));
             closeEditor();
-            initAuth(); // Refresh UI
+            
+            // Re-check auth to refresh the grid with admin controls
+            if (typeof initAuth === "function") initAuth(); 
         }
 
         function deleteApp(index) {
             if(confirm("Permanently archive this role?")) {
                 apps.splice(index, 1);
                 localStorage.setItem('dprt_apps', JSON.stringify(apps));
-                initAuth();
+                if (typeof initAuth === "function") initAuth();
             }
         }
-
-        window.onload = loadHeader;
     </script>
+    
+    <script src="/dprt/styling/auth.js"></script>
 </body>
 </html>
