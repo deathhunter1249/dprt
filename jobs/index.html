@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DPRT | State Jobs</title>
-    <script src="https://cdn.tailwindcss.com?plugins=forms,typography,aspect-ratio"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@200;900&family=Zhi+Mang+Xing&family=Ma+Shan+Zheng&display=swap" rel="stylesheet">
     <style>
         :root { --ink: #1a1a1a; --cinnabar: #bc2f32; --paper: #e6e4e0; }
@@ -16,12 +16,12 @@
             margin: 0; min-height: 100vh; overflow-x: hidden;
         }
 
-        /* DRAGON - Fixed path to ./decals/ and smoothed animation */
+        /* DRAGON - Fixed path for GitHub Pages structure */
         .bg-artwork {
             position: fixed; top: 50%; right: -2%; transform: translateY(-50%);
             width: 55vw; height: 90vh;
-            /* Updated Path */
-            background-image: url('./decals/background-dragon.png'); 
+            /* Navigates up one folder then into decals */
+            background-image: url('../decals/background-dragon.png'); 
             background-size: contain; background-repeat: no-repeat;
             background-position: center right;
             opacity: 0.04; pointer-events: none; z-index: 0;
@@ -35,66 +35,56 @@
             66% { transform: translateY(-47%) translate(10px, -5px) rotate(0.5deg); }
         }
 
-        /* THE SUMI-E SCROLL */
+        /* THE SUMI-E SCROLL - Shorter and curved */
         .job-scroll { 
             background: #fdfcf8;
             background-image: url('https://www.transparenttextures.com/patterns/handmade-paper.png');
-            padding: 1.5rem 2rem;
+            padding: 1.2rem 1.8rem;
             position: relative; 
             transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-            width: 350px; 
-            height: 260px; /* Shortest yet */
+            width: 340px; 
+            height: 250px; /* Shortest version */
             display: flex; flex-direction: column;
             z-index: 20;
-            /* Creates a slight "curl" shadow on the sides */
             box-shadow: 
-                inset 10px 0 15px -10px rgba(0,0,0,0.05),
-                inset -10px 0 15px -10px rgba(0,0,0,0.05),
-                0 10px 20px -10px rgba(0,0,0,0.1);
+                inset 8px 0 12px -8px rgba(0,0,0,0.1),
+                inset -8px 0 12px -8px rgba(0,0,0,0.1),
+                0 10px 15px -10px rgba(0,0,0,0.1);
         }
 
-        /* Scroll Roller Ends (Round) */
+        /* Roller Ends (Dowel Rods) */
         .job-scroll::before, .job-scroll::after {
-            content: ""; position: absolute; left: -2%; width: 104%; height: 16px;
-            background: var(--ink);
-            border-radius: 8px; /* Makes them look like cylinders */
-            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+            content: ""; position: absolute; left: -3%; width: 106%; height: 14px;
+            background: #111;
+            border-radius: 7px;
+            box-shadow: 0 3px 5px rgba(0,0,0,0.3);
         }
-        .job-scroll::before { top: -8px; }
-        .job-scroll::after { bottom: -8px; }
-
-        /* The Hanging String */
-        .scroll-string {
-            position: absolute; top: -35px; left: 50%; transform: translateX(-50%);
-            width: 60px; height: 30px; border-top: 1.5px solid var(--ink);
-            border-radius: 50% 50% 0 0; opacity: 0.2;
-        }
+        .job-scroll::before { top: -7px; }
+        .job-scroll::after { bottom: -7px; }
 
         .job-scroll:hover { 
             transform: translateY(-8px);
-            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.15);
+            box-shadow: 0 20px 40px -10px rgba(0,0,0,0.15);
         }
 
-        /* Cinnabar Seal (The Button) */
+        /* Cinnabar Button */
         .btn-initiate {
-            background: var(--ink); color: white; padding: 0.5rem;
+            background: var(--ink); color: white; padding: 0.4rem;
             font-family: 'Zhi Mang Xing', cursive; font-size: 1.1rem;
             transition: all 0.2s ease; border: none; cursor: pointer;
-            width: 80%; margin: 0 auto;
-            border-radius: 2px;
+            width: 90%; margin: 0 auto;
         }
-        .btn-initiate:hover { background: var(--cinnabar); transform: scale(1.05); }
+        .btn-initiate:hover { background: var(--cinnabar); }
 
         .ma-shan { font-family: 'Ma_Shan_Zheng', cursive; }
     </style>
 </head>
 <body>
     <div class="bg-artwork"></div>
-    <div id="ink-container" class="fixed inset-0 pointer-events-none z-10"></div>
 
-    <div id="main-content" class="py-20 px-10 relative z-20">
-        <header class="max-w-7xl mx-auto mb-16">
-            <h1 class="text-6xl ma-shan text-zinc-900 drop-shadow-sm">
+    <div id="main-content" class="py-16 px-10 relative z-20">
+        <header class="max-w-7xl mx-auto mb-12">
+            <h1 class="text-6xl ma-shan text-zinc-900">
                 State <span class="text-[#bc2f32]">Directives</span>
             </h1>
         </header>
@@ -104,22 +94,22 @@
         <button id="admin-trigger" onclick="openEditor()" class="hidden fixed bottom-8 right-8 w-14 h-14 bg-black text-[#bc2f32] rounded-full border-2 border-[#bc2f32] z-[1500] ma-shan text-2xl">改</button>
     </div>
 
-    <div id="admin-editor" class="fixed top-5 right-[-380px] w-[350px] bg-[#0d0d0d] text-zinc-400 z-[2000] transition-all duration-500 rounded-lg shadow-2xl border border-zinc-800">
-        <div class="p-4 border-b border-zinc-800 flex justify-between items-center">
-            <span class="ma-shan text-white">Directive Editor</span>
-            <button onclick="closeEditor()" class="text-[10px]">✕</button>
+    <div id="admin-editor" class="fixed top-5 right-[-380px] w-[340px] bg-[#0d0d0d] text-zinc-400 z-[2000] transition-all duration-500 rounded-lg border border-zinc-800 flex flex-col overflow-hidden">
+        <div class="p-4 border-b border-zinc-800 flex justify-between items-center bg-black">
+            <span class="ma-shan text-white">Editor</span>
+            <button onclick="closeEditor()" class="text-xs">✕</button>
         </div>
-        <div class="p-5 space-y-4">
+        <div class="p-5 space-y-3">
             <input type="hidden" id="edit-index" value="-1">
-            <input type="text" id="edit-title" placeholder="Designation" class="w-full bg-zinc-900 border-zinc-700 p-2 text-xs rounded">
-            <textarea id="edit-desc" placeholder="Mission Details" class="w-full bg-zinc-900 border-zinc-700 p-2 text-xs h-16 rounded"></textarea>
+            <input type="text" id="edit-title" placeholder="Designation" class="w-full bg-zinc-900 border-zinc-700 p-2 text-xs rounded outline-none text-white">
+            <textarea id="edit-desc" placeholder="Details" class="w-full bg-zinc-900 border-zinc-700 p-2 text-xs h-16 rounded outline-none text-white"></textarea>
             <div class="grid grid-cols-2 gap-2">
-                <select id="edit-icon" class="bg-zinc-900 border-zinc-700 p-2 text-xs rounded">
+                <select id="edit-icon" class="bg-zinc-900 border-zinc-700 p-2 text-xs rounded outline-none text-white">
                     <option value="seal">Seal</option><option value="dragon">Dragon</option><option value="lotus">Lotus</option>
                 </select>
-                <input type="color" id="edit-color" class="w-full h-8 bg-zinc-900 border-none">
+                <input type="color" id="edit-color" class="w-full h-8 bg-transparent border-none">
             </div>
-            <button onclick="saveApp()" class="w-full bg-[#bc2f32] text-white p-2 ma-shan">Record Entry</button>
+            <button onclick="saveApp()" class="w-full bg-[#bc2f32] text-white p-2 ma-shan text-lg hover:brightness-125">Save</button>
         </div>
     </div>
 
@@ -129,9 +119,13 @@
 
         async function loadArchive() {
             const stored = localStorage.getItem("dprt_jobs");
-            if (stored) { apps = JSON.parse(stored); } 
-            else {
-                apps = [{title: "Archival Scribe", desc: "Transcription of state-level data flows.", icon: "seal", color: "#1a1a1a"}];
+            if (stored) { 
+                apps = JSON.parse(stored); 
+            } else {
+                apps = [
+                    {title: "Imperial Scribe", desc: "Transcription of state-level data flows into the eternal archive.", icon: "seal", color: "#1a1a1a"},
+                    {title: "Border Guard", desc: "Ensuring the integrity of the digital frontier against incursions.", icon: "dragon", color: "#bc2f32"}
+                ];
             }
             renderApps(currentAdmin);
         }
@@ -145,18 +139,17 @@
                 const scroll = document.createElement('div');
                 scroll.className = 'job-scroll';
                 scroll.innerHTML = `
-                    <div class="scroll-string"></div>
                     <div class="text-center mb-1">
-                        <span class="text-[8px] text-zinc-400 font-mono tracking-widest">NO. 00${i+1}</span>
+                        <span class="text-[8px] text-zinc-400 font-mono tracking-widest uppercase">Directive #${i+1}</span>
                     </div>
-                    <div class="text-center border-b border-zinc-200 pb-2 mb-3">
+                    <div class="text-center border-b border-zinc-200 pb-2 mb-2">
                         <h3 class="text-2xl ma-shan text-zinc-800">${app.title}</h3>
                     </div>
-                    <div class="flex-grow flex items-center justify-center mb-4">
-                        <p class="text-zinc-600 text-[11px] leading-relaxed italic text-center px-2">"${app.desc}"</p>
+                    <div class="flex-grow flex items-center justify-center mb-3">
+                        <p class="text-zinc-600 text-[10px] leading-snug italic text-center px-4">"${app.desc}"</p>
                     </div>
                     <button class="btn-initiate" style="border-bottom: 3px solid ${app.color}">APPLY</button>
-                    ${isAdmin ? `<div class="flex justify-center gap-4 mt-3 text-[8px] uppercase tracking-tighter"><span onclick="editApp(${i})" class="cursor-pointer text-zinc-400 hover:text-black">Edit</span><span onclick="deleteApp(${i})" class="cursor-pointer text-red-800">Redact</span></div>` : ''}
+                    ${isAdmin ? `<div class="flex justify-center gap-4 mt-2 text-[8px] font-bold uppercase"><span onclick="editApp(${i})" class="cursor-pointer text-zinc-400 hover:text-black">Edit</span><span onclick="deleteApp(${i})" class="cursor-pointer text-red-800">Delete</span></div>` : ''}
                 `;
                 grid.appendChild(scroll);
             });
@@ -177,6 +170,14 @@
             localStorage.setItem("dprt_jobs", JSON.stringify(apps));
             renderApps(currentAdmin);
             closeEditor();
+        }
+
+        function deleteApp(i) {
+            if(confirm("Redact this directive?")) {
+                apps.splice(i, 1);
+                localStorage.setItem("dprt_jobs", JSON.stringify(apps));
+                renderApps(currentAdmin);
+            }
         }
 
         window.activateAdminMode = (status) => { 
