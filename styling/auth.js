@@ -101,23 +101,36 @@ function toggleMenu(show) {
 
 async function loadGlobalHeader() {
     try {
-        // Detect if we are on GitHub Pages subfolder or local
-        const isGitHub = window.location.hostname.includes('github.io');
-        const basePath = isGitHub ? '/dprt' : '';
-        const headerUrl = `${basePath}/styling/header.html`;
+        // This is the most reliable way for GitHub Pages:
+        // If we're on deathhunter1249.github.io/dprt/, 
+        // this ensures the path always points to the root 'dprt' folder.
+        const headerUrl = window.location.origin + '/dprt/styling/header.html';
 
         console.log("📡 Attempting to fetch header from:", headerUrl);
 
         const resp = await fetch(headerUrl);
         
         if (!resp.ok) {
-            throw new Error(`Status: ${resp.status} at ${headerUrl}`);
+            // Fallback for local testing (where /dprt/ might not exist)
+            const localResp = await fetch('/styling/header.html');
+            if (!localResp.ok) throw new Error(`Status: ${resp.status}`);
+            const localHtml = await localResp.text();
+            document.getElementById('header-placeholder').innerHTML = localHtml;
+        } else {
+            const html = await resp.text();
+            document.getElementById('header-placeholder').innerHTML = html;
         }
         
-        const html = await resp.text();
-        document.getElementById('header-placeholder').innerHTML = html;
-        
-        // Highlight logic...
+        // --- Highlighting logic for the Jobs page ---
+        const path = window.location.pathname;
+        if (path.includes('jobs')) {
+            // Wait a tiny bit for the HTML to inject, then highlight
+            setTimeout(() => {
+                const jobsLink = document.getElementById('nav-jobs');
+                if (jobsLink) jobsLink.style.color = '#b8860b';
+            }, 100);
+        }
+
         initAuth();
     } catch (e) {
         console.error("⛔ Header Load Failed:", e.message);
