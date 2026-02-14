@@ -7,110 +7,144 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@900&family=Zhi+Mang+Xing&family=ZCOOL+XiaoWei&display=swap" rel="stylesheet">
     <style>
-        :root { --ink: #1a1a1a; --cinnabar: #bc2f32; --paper: #e9e7e2; }
+        :root { 
+            --ink: #1a1a1a; 
+            --cinnabar: #bc2f32; 
+            --paper: #e9e7e2; 
+            --gold: #b8860b;
+        }
         
         body {
             background-color: var(--paper);
-            background-image: 
-                linear-gradient(to bottom, rgba(233, 231, 226, 0.8), rgba(233, 231, 226, 0.5)),
-                url('https://www.transparenttextures.com/patterns/natural-paper.png');
+            background-image: url('https://www.transparenttextures.com/patterns/natural-paper.png');
             color: var(--ink);
             font-family: 'Noto Serif SC', serif;
             height: 100vh; overflow: hidden;
+            cursor: url('https://raw.githubusercontent.com/google/material-design-icons/master/png/editor/format_paint/materialicons/24dp/1x/baseline_format_paint_black_24dp.png'), auto;
         }
 
-        .mist {
-            position: fixed; bottom: 0; width: 100%; height: 45vh;
-            background: linear-gradient(to top, rgba(0,0,0,0.06), transparent);
-            filter: blur(60px); pointer-events: none;
+        /* Ambient Background Effect */
+        .ink-bg {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle at 50% 50%, rgba(188, 47, 50, 0.03), transparent);
+            pointer-events: none; z-index: -1;
+            animation: pulse 8s infinite alternate;
         }
 
-        /* Large Side Progress Tracker */
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 0.5; }
+            100% { transform: scale(1.2); opacity: 0.8; }
+        }
+
+        /* Vertical Tracker Enhancement */
         .vertical-tracker {
             position: fixed; left: 4vw; top: 50%; transform: translateY(-50%);
             display: flex; flex-direction: column; align-items: center; gap: 20px;
             z-index: 50;
         }
         .step-node {
-            width: 14px; height: 14px; border-radius: 50%;
-            border: 2px solid var(--ink); transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            width: 10px; height: 10px; border-radius: 2px; transform: rotate(45deg);
+            border: 1px solid var(--ink); transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
         }
-        .step-node.active { background: var(--cinnabar); border-color: var(--cinnabar); box-shadow: 0 0 15px var(--cinnabar); }
-        .step-line { width: 1px; height: 45px; background: rgba(0,0,0,0.1); }
-
-        /* Floating "Cloud" Question Areas */
-        .page-layer { display: none; animation: slideUp 0.7s ease-out forwards; }
-        .page-layer.active { display: flex; flex-direction: column; gap: 1.8rem; }
-
-        @keyframes slideUp {
-            from { opacity: 0; transform: translateY(30px); }
-            to { opacity: 1; transform: translateY(0); }
+        .step-node.active { 
+            background: var(--cinnabar); 
+            border-color: var(--cinnabar); 
+            box-shadow: 0 0 20px rgba(188, 47, 50, 0.4);
+            transform: rotate(225deg) scale(1.5);
         }
+
+        /* Page Layer Staggering */
+        .page-layer { display: none; width: 100%; }
+        .page-layer.active { display: flex; flex-direction: column; gap: 2rem; }
 
         .question-box {
-            background: rgba(255, 255, 255, 0.3);
-            backdrop-filter: blur(12px);
-            padding: 1.5rem 3rem;
-            border-radius: 50px 15px 50px 15px;
-            border: 1px solid rgba(255, 255, 255, 0.4);
-            box-shadow: 10px 10px 40px rgba(0,0,0,0.03);
-            width: 100%;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(8px);
+            padding: 2rem;
+            border-left: 0px solid var(--cinnabar);
+            transition: all 0.4s ease;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .active .question-box {
+            animation: inkAppear 0.6s forwards;
+        }
+
+        /* Delayed animation for each box */
+        .active .question-box:nth-child(1) { animation-delay: 0.1s; }
+        .active .question-box:nth-child(2) { animation-delay: 0.3s; }
+
+        @keyframes inkAppear {
+            to { opacity: 1; transform: translateY(0); border-left-width: 4px; background: rgba(255, 255, 255, 0.4); }
         }
 
         input, select, textarea {
             background: transparent !important; width: 100%; border: none;
             border-bottom: 1px solid rgba(0,0,0,0.1);
-            outline: none; padding: 0.6rem 0; font-size: 1.15rem;
-            color: var(--ink); transition: border-color 0.3s;
+            outline: none; padding: 0.8rem 0; font-size: 1.2rem;
+            color: var(--ink); transition: 0.3s;
+            font-family: 'ZCOOL XiaoWei', serif;
         }
-        input:focus { border-bottom-color: var(--cinnabar); }
 
-        /* Navigation */
-        .nav-container { position: fixed; bottom: 6vh; width: 100%; padding: 0 6vw; display: flex; justify-content: space-between; align-items: center; z-index: 100; }
-        .nav-btn { font-family: 'ZCOOL XiaoWei'; letter-spacing: 0.25em; cursor: pointer; transition: 0.3s; opacity: 0.7; font-weight: bold; }
-        .nav-btn:hover { color: var(--cinnabar); opacity: 1; transform: scale(1.05); }
-        .submit-btn { background: var(--cinnabar); color: white; padding: 0.7rem 2.8rem; border-radius: 3px; opacity: 1; }
-        .submit-btn:hover { background: #9b2426; color: white; }
+        input:focus { border-bottom-color: var(--cinnabar); padding-left: 10px; }
+        
+        /* Custom Select Styling */
+        select { cursor: pointer; }
+
+        /* Navigation Buttons */
+        .nav-container { position: fixed; bottom: 6vh; width: 100%; padding: 0 8vw; display: flex; justify-content: space-between; align-items: center; z-index: 100; }
+        .nav-btn { font-family: 'ZCOOL XiaoWei'; letter-spacing: 0.4em; cursor: pointer; transition: 0.3s; font-size: 0.9rem; }
+        .nav-btn:hover { color: var(--cinnabar); text-shadow: 0 0 10px rgba(188, 47, 50, 0.2); }
+        
+        .submit-btn { 
+            background: var(--ink); color: var(--paper); 
+            padding: 0.8rem 3rem; border: 1px solid var(--ink);
+        }
+        .submit-btn:hover { background: var(--cinnabar); border-color: var(--cinnabar); transform: translateY(-3px); }
+
     </style>
 </head>
 <body>
 
-    <div class="mist"></div>
+    <div class="ink-bg"></div>
     <div class="vertical-tracker" id="tracker"></div>
 
     <main class="h-full flex flex-col items-center justify-center px-6">
-        <h1 id="app-title" class="text-3xl font-['ZCOOL_XiaoWei'] mb-12 tracking-widest opacity-90 uppercase"></h1>
+        <div class="mb-12 text-center">
+            <h1 id="app-title" class="text-4xl font-['ZCOOL_XiaoWei'] tracking-[0.3em] opacity-90 uppercase"></h1>
+            <div class="h-[1px] w-24 bg-cinnabar mx-auto mt-4 opacity-50"></div>
+        </div>
         
-        <form id="app-form" class="w-full max-w-2xl">
+        <form id="app-form" class="w-full max-w-xl">
             <div id="pages-root"></div>
         </form>
     </main>
 
     <div class="nav-container">
-        <div id="prev-btn" class="nav-btn" onclick="move(-1)">← PREVIOUS</div>
-        <div id="next-btn" class="nav-btn" onclick="move(1)">NEXT →</div>
+        <div id="prev-btn" class="nav-btn" onclick="move(-1)">〔 PREVIOUS 〕</div>
+        <div id="next-btn" class="nav-btn" onclick="move(1)">〔 NEXT → 〕</div>
     </div>
 
     <script>
-        // --- DATA SECTION: Edit your questions here directly ---
         const formConfig = {
             title: "Ministry of Tea Registry",
             sections: [
                 {
                     questions: [
-                        { id: "id", label: "Citizen Identity", type: "text", placeholder: "Enter name..." },
+                        { id: "id", label: "Citizen Identity", type: "text", placeholder: "What is your name in the archives?" },
                         { id: "origin", label: "Province of Origin", type: "text", placeholder: "Where were you forged?" }
                     ]
                 },
                 {
                     questions: [
-                        { id: "sector", label: "Desired Sector", type: "select", options: ["Diplomacy", "Defense", "Internal Archives"] },
-                        { id: "specialty", label: "Primary Specialty", type: "text", placeholder: "e.g. Scholar, Guard..." }
+                        { id: "sector", label: "Desired Sector", type: "select", options: ["Diplomacy", "Defense", "Internal Archives", "Imperial Guard"] },
+                        { id: "specialty", label: "Primary Specialty", type: "text", placeholder: "e.g. Scholar, Tactician, Blade..." }
                     ]
                 },
                 {
                     questions: [
-                        { id: "vow", label: "The Eternal Vow", type: "textarea", placeholder: "Why do you seek the Republic? State your intent clearly..." }
+                        { id: "vow", label: "The Eternal Vow", type: "textarea", placeholder: "State your intent to the Republic clearly..." }
                     ]
                 }
             ]
@@ -125,7 +159,6 @@
             document.getElementById('app-title').innerText = formConfig.title;
             
             formConfig.sections.forEach((section, sIdx) => {
-                // Render Page
                 const page = document.createElement('div');
                 page.className = `page-layer ${sIdx === 0 ? 'active' : ''}`;
                 page.id = `step-${sIdx}`;
@@ -134,26 +167,25 @@
                     const box = document.createElement('div');
                     box.className = "question-box";
                     
-                    let field = `<input type="text" name="${q.id}" placeholder="${q.placeholder}">`;
+                    let field = `<input type="text" name="${q.id}" placeholder="${q.placeholder}" autocomplete="off">`;
                     if(q.type === 'select') {
-                        field = `<select name="${q.id}">${q.options.map(o => `<option value="${o}">${o}</option>`).join('')}</select>`;
+                        field = `<select name="${q.id}"><option value="" disabled selected>${q.placeholder || 'Select path...'}</option>${q.options.map(o => `<option value="${o}">${o}</option>`).join('')}</select>`;
                     } else if(q.type === 'textarea') {
-                        field = `<textarea name="${q.id}" rows="2" placeholder="${q.placeholder}"></textarea>`;
+                        field = `<textarea name="${q.id}" rows="3" placeholder="${q.placeholder}"></textarea>`;
                     }
 
-                    box.innerHTML = `<label class="text-[10px] uppercase tracking-[0.4em] opacity-50 mb-3 block font-bold">${q.label}</label>${field}`;
+                    box.innerHTML = `<label class="text-[9px] uppercase tracking-[0.5em] text-[#bc2f32] mb-4 block font-black opacity-70">${q.label}</label>${field}`;
                     page.appendChild(box);
                 });
                 root.appendChild(page);
 
-                // Render Progress Dots
                 const dot = document.createElement('div');
                 dot.className = `step-node ${sIdx === 0 ? 'active' : ''}`;
                 dot.id = `dot-${sIdx}`;
                 tracker.appendChild(dot);
                 if(sIdx < totalSections - 1) {
                     const line = document.createElement('div');
-                    line.className = "step-line";
+                    line.className = "step-line w-[1px] h-[30px] bg-black/10";
                     tracker.appendChild(line);
                 }
             });
@@ -163,24 +195,15 @@
         function move(dir) {
             const nextStep = currentStep + dir;
             if(nextStep < 0) return;
-            
-            if(nextStep === totalSections) {
-                submitForm();
-                return;
-            }
+            if(nextStep === totalSections) { submitForm(); return; }
 
-            // Page handling
-            const currentP = document.getElementById(`step-${currentStep}`);
-            const currentD = document.getElementById(`dot-${currentStep}`);
-            if(currentP) currentP.classList.remove('active');
-            if(currentD) currentD.classList.remove('active');
+            document.getElementById(`step-${currentStep}`)?.classList.remove('active');
+            document.getElementById(`dot-${currentStep}`)?.classList.remove('active');
 
             currentStep = nextStep;
 
-            const nextP = document.getElementById(`step-${currentStep}`);
-            const nextD = document.getElementById(`dot-${currentStep}`);
-            if(nextP) nextP.classList.add('active');
-            if(nextD) nextD.classList.add('active');
+            document.getElementById(`step-${currentStep}`)?.classList.add('active');
+            document.getElementById(`dot-${currentStep}`)?.classList.add('active');
 
             updateNav();
         }
@@ -188,22 +211,27 @@
         function updateNav() {
             const next = document.getElementById('next-btn');
             const prev = document.getElementById('prev-btn');
-            
             prev.style.visibility = (currentStep === 0) ? "hidden" : "visible";
             
             if(currentStep === totalSections - 1) {
-                next.innerText = "SUBMIT RECORD";
+                next.innerText = "COMMIT TO ARCHIVES";
                 next.classList.add('submit-btn');
             } else {
-                next.innerText = "NEXT →";
+                next.innerText = "〔 NEXT → 〕";
                 next.classList.remove('submit-btn');
             }
         }
 
         function submitForm() {
-            const data = Object.fromEntries(new FormData(document.getElementById('app-form')));
-            console.log("Archives Data:", data);
-            alert("Application Sent to the Republic Archives.");
+            // Add a cool "Ink Splash" or Fade out before alert
+            document.body.style.transition = "opacity 1s";
+            document.body.style.opacity = "0";
+            setTimeout(() => {
+                const data = Object.fromEntries(new FormData(document.getElementById('app-form')));
+                console.log("Archives Data:", data);
+                alert("The ink has dried. Your record is permanent.");
+                window.location.reload();
+            }, 1000);
         }
 
         window.onload = init;
