@@ -171,55 +171,56 @@
 
     <script src="/dprt/styling/auth.js"></script>
     <script>
-        const jobData = [
-            { id: "01", title: "Community Moderator", icon: "dragon.png", desc: "Apply for the Community Moderator position and help enforce rules, manage discussions, and maintain a safe, structured community environment." },
-            { id: "02", title: "Chat Moderator", icon: "seal.png", desc: "Become a Chat Moderator and help enforce chat rules, answer questions, and keep discussions organized and respectful." },
-            { id: "03", title: "Teapot Communist Party", icon: "teacup.png", desc: "Join the lower echelon of the TCPC. Participate in party activities, support leadership initiatives, and contribute to internal discussions and decision making within the organization." },
-            { id: "04", title: "", icon: "teacup.png", desc: "Join the lower echelon of the TCPC. Participate in party activities, support leadership initiatives, and contribute to internal discussions and decision making within the organization." },
-            
-        ];
+const jobData = [
+    { id: "01", title: "Community Moderator", icon: "dragon.png", desc: "Apply for the Community Moderator position and help enforce rules, manage discussions, and maintain a safe, structured community environment." },
+    { id: "02", title: "Chat Moderator", icon: "seal.png", desc: "Become a Chat Moderator and help enforce chat rules, answer questions, and keep discussions organized and respectful." },
+    { id: "03", title: "Teapot Communist Party", icon: "teacup.png", desc: "Join the lower echelon of the TCPC. Participate in party activities, support leadership initiatives, and contribute to internal discussions and decision making within the organization." },
+    { id: "04", title: "Stuff here", icon: "teacup.png", desc: "" },
+    { id: "05", title: "Stuff here", icon: "teacup.png", desc: "" },
+];
 
-        function renderApps() {
-            const grid = document.getElementById('job-grid');
-            grid.innerHTML = jobData.map(job => `
-                <div class="scroll-container">
-                    <div class="kakemono">
-                        <div class="scroll-inner">
-                            <img src="./decals/${job.icon}" class="job-icon" onerror="this.style.display='none'">
-                            <div class="scroll-meta">DIRECTIVE #${job.id}</div>
-                            <h2 class="scroll-title">${job.title}</h2>
-                            <p class="text-zinc-600 text-[11px] leading-relaxed font-serif italic mb-8 text-center px-2">
-                                "${job.desc}"
-                            </p>
-                            <button onclick="window.location.href='https://deathhunter1249.github.io/dprt/apply/'" class="btn-apply">
-                                Apply
-                            </button>
-                        </div>
-                        <div class="roller"></div>
-                    </div>
+function renderApps() {
+    const grid = document.getElementById('job-grid');
+    grid.innerHTML = jobData.map(job => `
+        <div class="scroll-container">
+            <div class="kakemono">
+                <div class="scroll-inner">
+                    <img src="../decals/${job.icon}" class="job-icon" alt="${job.title}" 
+                         onerror="console.error('Failed to load:', this.src); this.style.display='none'">
+                    <div class="scroll-meta">DIRECTIVE #${job.id}</div>
+                    <h2 class="scroll-title">${job.title}</h2>
+                    <p class="text-zinc-600 text-[11px] leading-relaxed font-serif italic mb-8 text-center px-2">
+                        "${job.desc}"
+                    </p>
+                    <button onclick="window.location.href='https://deathhunter1249.github.io/dprt/apply/'" class="btn-apply">
+                        Apply
+                    </button>
                 </div>
-            `).join('');
-            
-            setTimeout(() => {
-                document.querySelectorAll('.scroll-container').forEach((el, idx) => {
-                    setTimeout(() => el.classList.add('visible'), idx * 250);
-                });
-                document.querySelectorAll('.reveal-node').forEach(n => n.classList.add('reveal-active'));
-            }, 100);
-        }
+                <div class="roller"></div>
+            </div>
+        </div>
+    `).join('');
+    
+    setTimeout(() => {
+        document.querySelectorAll('.scroll-container').forEach((el, idx) => {
+            setTimeout(() => el.classList.add('visible'), idx * 250);
+        });
+        document.querySelectorAll('.reveal-node').forEach(n => n.classList.add('reveal-active'));
+    }, 100);
+}
 
-        const inkContainer = document.getElementById('ink-container');
-        for (let i = 0; i < 15; i++) {
-            const drop = document.createElement('div');
-            drop.className = 'ink-drop';
-            drop.style.left = Math.random() * 98 + 'vw';
-            const size = (Math.random() * 3 + 2) + 'px';
-            drop.style.width = size; drop.style.height = size;
-            drop.style.animationDelay = Math.random() * 10 + 's';
-            inkContainer.appendChild(drop);
-        }
+const inkContainer = document.getElementById('ink-container');
+for (let i = 0; i < 15; i++) {
+    const drop = document.createElement('div');
+    drop.className = 'ink-drop';
+    drop.style.left = Math.random() * 98 + 'vw';
+    const size = (Math.random() * 3 + 2) + 'px';
+    drop.style.width = size; drop.style.height = size;
+    drop.style.animationDelay = Math.random() * 10 + 's';
+    inkContainer.appendChild(drop);
+}
 
-        window.onload = renderApps;
+window.onload = renderApps;
     </script>
 </body>
 </html>
