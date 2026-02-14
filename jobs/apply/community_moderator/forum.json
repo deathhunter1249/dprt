@@ -1,0 +1,17 @@
+{
+  "title": "Ministry of Tea Registry",
+  "sections": [
+    {
+      "questions": [
+        { "id": "username", "label": "Citizen ID", "type": "text", "placeholder": "Name..." },
+        { "id": "email", "label": "Frequency (Email)", "type": "text", "placeholder": "Email address..." }
+      ]
+    },
+    {
+      "questions": [
+        { "id": "dept", "label": "Desired Sector", "type": "select", "options": ["Archives", "Frontier", "Internal"] },
+        { "id": "experience", "label": "Prior Service", "type": "textarea", "placeholder": "List previous roles..." }
+      ]
+    }
+  ]
+}

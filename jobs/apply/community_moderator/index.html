@@ -3,188 +3,187 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DPRT | Application</title>
+    <title>DPRT | Official Registry</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@900&family=Zhi+Mang+Xing&family=ZCOOL+XiaoWei&display=swap" rel="stylesheet">
     <style>
-        :root { --ink: #1a1a1a; --cinnabar: #bc2f32; --paper: #e6e4e0; }
+        :root { --ink: #1a1a1a; --cinnabar: #bc2f32; --paper: #e9e7e2; }
         
         body {
             background-color: var(--paper);
-            background-image: url('https://www.transparenttextures.com/patterns/natural-paper.png');
+            background-image: 
+                linear-gradient(to bottom, rgba(233, 231, 226, 0.8), rgba(233, 231, 226, 0.5)),
+                url('https://www.transparenttextures.com/patterns/natural-paper.png');
             color: var(--ink);
             font-family: 'Noto Serif SC', serif;
-            height: 100vh;
-            overflow: hidden; /* Clean, no-scroll feel */
+            height: 100vh; overflow: hidden;
         }
 
-        /* Large Page Indicator */
-        .page-counter {
-            position: fixed;
-            left: 5vw;
-            top: 50%;
-            transform: translateY(-50%);
-            z-index: 50;
-            text-align: center;
-        }
-        .current-num {
-            font-family: 'Zhi Mang Xing', cursive;
-            font-size: 8rem;
-            line-height: 1;
-            color: var(--cinnabar);
-            display: block;
-        }
-        .total-num {
-            font-size: 1.2rem;
-            letter-spacing: 0.5em;
-            opacity: 0.3;
-            border-top: 1px solid var(--ink);
-            padding-top: 10px;
+        .mist {
+            position: fixed; bottom: 0; width: 100%; height: 40vh;
+            background: linear-gradient(to top, rgba(0,0,0,0.05), transparent);
+            filter: blur(50px); pointer-events: none;
         }
 
-        /* Question Layout */
-        .page-container {
-            display: none; /* Hidden by default */
-            animation: fadeIn 0.8s ease forwards;
+        /* Large Side Progress */
+        .vertical-tracker {
+            position: fixed; left: 4vw; top: 50%; transform: translateY(-50%);
+            display: flex; flex-direction: column; align-items: center; gap: 20px;
         }
-        .page-container.active { display: block; }
+        .step-node {
+            width: 14px; height: 14px; border-radius: 50%;
+            border: 2px solid var(--ink); transition: all 0.4s;
+        }
+        .step-node.active { background: var(--cinnabar); border-color: var(--cinnabar); box-shadow: 0 0 15px var(--cinnabar); }
+        .step-line { width: 1px; height: 40px; background: rgba(0,0,0,0.1); }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
+        /* Floating Question Areas */
+        .page-layer { display: none; animation: slideUp 0.6s ease-out forwards; }
+        .page-layer.active { display: flex; flex-direction: column; gap: 1.5rem; }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
-        input, textarea, select {
-            background: transparent !important;
-            width: 100%;
-            padding: 1rem 0;
-            font-size: 1.5rem;
-            outline: none;
-            border: none;
+        .question-box {
+            background: rgba(255, 255, 255, 0.35);
+            backdrop-filter: blur(12px);
+            padding: 1.2rem 2.5rem;
+            border-radius: 40px 10px 40px 10px;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            box-shadow: 10px 10px 30px rgba(0,0,0,0.02);
+        }
+
+        input, select, textarea {
+            background: transparent; width: 100%; border: none;
             border-bottom: 1px solid rgba(0,0,0,0.1);
-            transition: all 0.4s ease;
+            outline: none; padding: 0.5rem 0; font-size: 1.1rem;
+            color: var(--ink);
         }
-        input:focus { border-bottom-color: var(--cinnabar); }
 
-        /* Nav Buttons */
-        .nav-link {
-            position: fixed;
-            bottom: 5vh;
-            font-family: 'Noto Serif SC', serif;
-            font-weight: 900;
-            letter-spacing: 0.3em;
-            text-transform: uppercase;
-            font-size: 0.9rem;
-            cursor: pointer;
-            transition: color 0.3s;
-            z-index: 100;
-        }
-        .nav-link:hover { color: var(--cinnabar); }
-        .nav-left { left: 5vw; }
-        .nav-right { right: 5vw; }
-
-        .btn-submit {
-            color: var(--cinnabar);
-            border: 1px solid var(--cinnabar);
-            padding: 5px 15px;
-        }
+        .nav-container { position: fixed; bottom: 5vh; width: 100%; padding: 0 5vw; display: flex; justify-content: space-between; align-items: center; }
+        .nav-btn { font-family: 'ZCOOL XiaoWei'; letter-spacing: 0.2em; cursor: pointer; transition: 0.3s; opacity: 0.8; }
+        .nav-btn:hover { color: var(--cinnabar); opacity: 1; }
+        .submit-btn { background: var(--cinnabar); color: white; padding: 0.6rem 2.5rem; border-radius: 2px; }
     </style>
 </head>
 <body>
 
-    <div class="page-counter">
-        <span class="current-num" id="active-idx">一</span>
-        <span class="total-num" id="total-idx">/ 四</span>
-    </div>
+    <div class="mist"></div>
+    <div class="vertical-tracker" id="tracker"></div>
 
-    <main class="h-full flex items-center justify-center px-12">
+    <main class="h-full flex flex-col items-center justify-center px-6">
+        <h1 id="app-title" class="text-3xl font-['ZCOOL_XiaoWei'] mb-12 tracking-widest opacity-80 uppercase">Loading Registry...</h1>
+        
         <form id="app-form" class="w-full max-w-2xl">
-            <div id="dynamic-pages">
-                </div>
+            <div id="pages-root"></div>
         </form>
     </main>
 
-    <div id="nav-prev" class="nav-link nav-left" onclick="changePage(-1)">Previous</div>
-    <div id="nav-next" class="nav-link nav-right" onclick="changePage(1)">Next</div>
+    <div class="nav-container">
+        <div id="prev-btn" class="nav-btn" onclick="move(-1)">← PREVIOUS</div>
+        <div id="next-btn" class="nav-btn" onclick="move(1)">NEXT →</div>
+    </div>
 
     <script>
-        // --- ADD PAGES EASILY HERE ---
-        const pages = [
-            { label: "Identity", type: "text", id: "user", placeholder: "What is your name?" },
-            { label: "Origin", type: "text", id: "home", placeholder: "Where do you hail from?" },
-            { label: "Role", type: "select", id: "role", options: ["Frontier Guard", "Archive Keeper", "Tea Master"] },
-            { label: "The Vow", type: "textarea", id: "vow", placeholder: "State your purpose..." }
-        ];
+        let currentStep = 0;
+        let totalSections = 0;
 
-        const chineseNums = ["一", "二", "三", "四", "五", "六", "七", "八", "九", "十"];
-        let currentPage = 0;
-
-        function initForm() {
-            const container = document.getElementById('dynamic-pages');
-            document.getElementById('total-idx').innerText = "/ " + chineseNums[pages.length - 1];
-
-            pages.forEach((p, i) => {
-                const div = document.createElement('div');
-                div.className = `page-container ${i === 0 ? 'active' : ''}`;
-                div.id = `page-${i}`;
-                
-                let inputHtml = '';
-                if(p.type === 'select') {
-                    inputHtml = `<select name="${p.id}">${p.options.map(o => `<option>${o}</option>`).join('')}</select>`;
-                } else if(p.type === 'textarea') {
-                    inputHtml = `<textarea name="${p.id}" rows="2" placeholder="${p.placeholder}"></textarea>`;
-                } else {
-                    inputHtml = `<input type="text" name="${p.id}" placeholder="${p.placeholder}">`;
-                }
-
-                div.innerHTML = `
-                    <label class="text-[10px] tracking-[0.5em] uppercase opacity-40 mb-4 block">${p.label}</label>
-                    ${inputHtml}
-                `;
-                container.appendChild(div);
-            });
-            updateNav();
-        }
-
-        function changePage(step) {
-            const nextStep = currentPage + step;
-            if (nextStep >= 0 && nextStep < pages.length) {
-                document.getElementById(`page-${currentPage}`).classList.remove('active');
-                currentPage = nextStep;
-                document.getElementById(`page-${currentPage}`).classList.add('active');
-                updateNav();
-            } else if (nextStep === pages.length) {
-                submitForm();
+        // FETCHING THE EXTERNAL JSON FILE
+        async function loadFormData() {
+            try {
+                // This looks for 'form.json' in the same folder as index.html
+                const response = await fetch('./form.json');
+                const data = await response.json();
+                renderForm(data);
+            } catch (error) {
+                console.error("Error loading JSON:", error);
+                document.getElementById('app-title').innerText = "FAILED TO LOAD REGISTRY";
             }
         }
 
-        function updateNav() {
-            const nextBtn = document.getElementById('nav-next');
-            const prevBtn = document.getElementById('nav-prev');
+        function renderForm(formData) {
+            const root = document.getElementById('pages-root');
+            const tracker = document.getElementById('tracker');
+            document.getElementById('app-title').innerText = formData.title;
+            totalSections = formData.sections.length;
             
-            // Update Large Numbers
-            document.getElementById('active-idx').innerText = chineseNums[currentPage];
+            formData.sections.forEach((section, sIdx) => {
+                // Create Page Layer
+                const page = document.createElement('div');
+                page.className = `page-layer ${sIdx === 0 ? 'active' : ''}`;
+                page.id = `step-${sIdx}`;
+
+                section.questions.forEach(q => {
+                    const box = document.createElement('div');
+                    box.className = "question-box";
+                    
+                    let inputField = '';
+                    if(q.type === 'select') {
+                        inputField = `<select name="${q.id}">${q.options.map(o => `<option value="${o}">${o}</option>`).join('')}</select>`;
+                    } else if(q.type === 'textarea') {
+                        inputField = `<textarea name="${q.id}" rows="2" placeholder="${q.placeholder}"></textarea>`;
+                    } else {
+                        inputField = `<input type="text" name="${q.id}" placeholder="${q.placeholder}">`;
+                    }
+
+                    box.innerHTML = `<label class="text-[10px] uppercase tracking-[0.3em] opacity-40 mb-2 block font-bold">${q.label}</label>${inputField}`;
+                    page.appendChild(box);
+                });
+                root.appendChild(page);
+
+                // Create Progress Dot
+                const dot = document.createElement('div');
+                dot.className = `step-node ${sIdx === 0 ? 'active' : ''}`;
+                dot.id = `dot-${sIdx}`;
+                tracker.appendChild(dot);
+                if(sIdx < totalSections - 1) {
+                    const line = document.createElement('div');
+                    line.className = "step-line";
+                    tracker.appendChild(line);
+                }
+            });
+            updateButtons();
+        }
+
+        function move(dir) {
+            const nextStep = currentStep + dir;
+            if(nextStep < 0) return;
             
-            // Toggle Previous Visibility
-            prevBtn.style.visibility = currentPage === 0 ? 'hidden' : 'visible';
+            if(nextStep === totalSections) {
+                submitForm();
+                return;
+            }
+
+            document.getElementById(`step-${currentStep}`).classList.remove('active');
+            document.getElementById(`dot-${currentStep}`).classList.remove('active');
+            currentStep = nextStep;
+            document.getElementById(`step-${currentStep}`).classList.add('active');
+            document.getElementById(`dot-${currentStep}`).classList.add('active');
+            updateButtons();
+        }
+
+        function updateButtons() {
+            const next = document.getElementById('next-btn');
+            document.getElementById('prev-btn').style.visibility = currentStep === 0 ? "hidden" : "visible";
             
-            // Toggle Next vs Submit
-            if (currentPage === pages.length - 1) {
-                nextBtn.innerText = "Submit Application";
-                nextBtn.classList.add('btn-submit');
+            if(currentStep === totalSections - 1) {
+                next.innerText = "SUBMIT RECORD";
+                next.classList.add('submit-btn');
             } else {
-                nextBtn.innerText = "Next";
-                nextBtn.classList.remove('btn-submit');
+                next.innerText = "NEXT →";
+                next.classList.remove('submit-btn');
             }
         }
 
         function submitForm() {
             const data = Object.fromEntries(new FormData(document.getElementById('app-form')));
-            console.log("Final Submission:", data);
-            alert("Application Sent to the Republic.");
+            console.log("Submitting:", data);
+            alert("Entry recorded in the Archives.");
         }
 
-        initForm();
+        loadFormData();
     </script>
 </body>
 </html>
