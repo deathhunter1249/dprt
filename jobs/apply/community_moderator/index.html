@@ -15,113 +15,117 @@
         
         body {
             background-color: var(--paper);
-            background-image: 
-                url('https://www.transparenttextures.com/patterns/natural-paper.png');
+            background-image: url('https://www.transparenttextures.com/patterns/natural-paper.png');
             color: var(--ink);
             font-family: 'Noto Serif SC', serif;
-            height: 100vh; overflow: hidden;
-            /* Custom Scrollbar for the form */
+            height: 100vh; 
+            overflow: hidden;
+            margin: 0;
         }
 
         /* Large Background Watermark */
         body::before {
             content: "茶";
             position: fixed;
-            top: 50%;
-            left: 50%;
+            top: 50%; left: 50%;
             transform: translate(-50%, -50%);
             font-size: 60vh;
             color: rgba(0, 0, 0, 0.03);
             font-family: 'Zhi Mang Xing', cursive;
-            pointer-events: none;
+            pointer-events: none; 
             z-index: -1;
         }
 
         /* Return Home Button */
         .back-home {
             position: fixed;
-            top: 30px;
-            left: 30px;
-            display: flex;
-            items-center;
-            gap: 10px;
+            top: 40px; left: 40px;
+            display: flex; align-items: center; gap: 12px;
             font-family: 'ZCOOL XiaoWei';
-            font-weight: bold;
-            letter-spacing: 0.1em;
-            cursor: pointer;
-            transition: 0.3s;
-            z-index: 100;
-            opacity: 0.6;
+            font-weight: bold; letter-spacing: 0.15em;
+            cursor: pointer; transition: all 0.3s ease;
+            z-index: 100; opacity: 0.5;
+            text-decoration: none;
+            color: var(--ink);
         }
         .back-home:hover { opacity: 1; color: var(--cinnabar); transform: translateX(-5px); }
 
-        /* Question Box Enhancements */
+        /* Navigation Buttons */
+        .nav-container { 
+            position: fixed; bottom: 6vh; width: 100%; 
+            padding: 0 8vw; display: flex; 
+            justify-content: space-between; align-items: center; z-index: 100; 
+        }
+        .nav-btn { 
+            font-family: 'ZCOOL XiaoWei'; letter-spacing: 0.4em; 
+            cursor: pointer; transition: 0.3s; font-size: 0.9rem; font-weight: bold; 
+        }
+        .nav-btn:hover { color: var(--cinnabar); }
+        
+        /* Layout Structure */
+        .page-layer { display: none; opacity: 0; }
+        .page-layer.active { 
+            display: flex; flex-direction: column; gap: 1.5rem; 
+            opacity: 1; animation: inkFade 0.8s ease forwards;
+        }
+
+        @keyframes inkFade {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
         .question-box {
-            background: rgba(255, 255, 255, 0.4);
+            background: rgba(255, 255, 255, 0.3);
+            backdrop-filter: blur(5px);
+            padding: 2.2rem;
             border: 1px solid rgba(0,0,0,0.05);
-            padding: 2rem;
-            margin-bottom: 1.5rem;
-            position: relative;
             transition: all 0.4s ease;
         }
         .question-box:focus-within {
-            background: white;
-            box-shadow: 15px 15px 0px rgba(188, 47, 50, 0.05);
+            background: rgba(255, 255, 255, 0.7);
             border-color: var(--cinnabar);
+            box-shadow: 15px 15px 0px rgba(188, 47, 50, 0.03);
         }
 
-        /* Better Dropdowns & Inputs */
-        select, input[type="text"], textarea {
-            appearance: none;
-            background: transparent;
-            border: none;
+        /* Form Inputs */
+        input, select, textarea {
+            background: transparent !important; width: 100%; border: none;
             border-bottom: 2px solid rgba(0,0,0,0.1);
-            width: 100%;
-            padding: 10px 0;
-            font-family: 'ZCOOL XiaoWei';
-            font-size: 1.2rem;
-            outline: none;
-            transition: 0.3s;
+            outline: none; padding: 0.8rem 0; font-size: 1.2rem;
+            color: var(--ink); transition: 0.3s;
+            font-family: 'ZCOOL XiaoWei', serif;
         }
-        select:focus, input:focus { border-bottom-color: var(--cinnabar); }
+        input:focus, select:focus, textarea:focus { border-bottom-color: var(--cinnabar); }
 
-        /* Custom Radio Buttons (Ink Blot Style) */
-        .radio-group { display: flex; flex-direction: column; gap: 10px; margin-top: 15px; }
-        .radio-item { display: flex; align-items: center; gap: 12px; cursor: pointer; }
-        .radio-item input { display: none; }
-        .custom-radio {
-            width: 18px; height: 18px; border: 2px solid var(--ink);
-            border-radius: 50%; position: relative; transition: 0.3s;
-        }
-        .radio-item input:checked + .custom-radio { background: var(--cinnabar); border-color: var(--cinnabar); }
-        .radio-item input:checked + .custom-radio::after {
-            content: ''; position: absolute; width: 6px; height: 6px;
-            background: white; border-radius: 50%; top: 4px; left: 4px;
-        }
-
-        /* Error Shake Animation */
-        .error-shake { animation: shake 0.4s ease-in-out; border-bottom: 2px solid var(--cinnabar) !important; }
+        /* Error States */
+        .error-shake { animation: shake 0.4s ease-in-out; border-bottom-color: var(--cinnabar) !important; }
         @keyframes shake {
             0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-5px); }
-            75% { transform: translateX(5px); }
+            25% { transform: translateX(-6px); }
+            75% { transform: translateX(6px); }
         }
 
-        .required-mark { color: var(--cinnabar); margin-left: 4px; }
+        .required-mark { color: var(--cinnabar); margin-left: 5px; font-size: 14px; }
+        
+        /* Hide scrollbars but allow scrolling for long forms */
+        #app-form::-webkit-scrollbar { display: none; }
+        #app-form { -ms-overflow-style: none; scrollbar-width: none; }
     </style>
 </head>
 <body>
 
-    <a href="/dprt/" class="back-home">
-        <span>←</span> RETURN TO HOME
+    <a href="/" class="back-home">
+        <span class="text-xl">←</span>
+        <span>RETURN TO ARCHIVES</span>
     </a>
 
-    <div class="vertical-tracker" id="tracker"></div>
-
-    <main class="h-full flex flex-col items-center justify-center px-6 mt-10">
-        <h1 id="app-title" class="text-4xl font-['ZCOOL_XiaoWei'] mb-12 tracking-[0.4em] uppercase text-center"></h1>
+    <main class="h-full flex flex-col items-center justify-center px-6">
+        <div class="mb-10 text-center">
+            <h1 id="app-title" class="text-4xl font-['ZCOOL_XiaoWei'] tracking-[0.4em] uppercase opacity-90">Consulting Records...</h1>
+            <div class="h-[2px] w-16 bg-cinnabar mx-auto mt-4 opacity-40"></div>
+        </div>
         
-        <form id="app-form" class="w-full max-w-xl overflow-y-auto max-h-[70vh] pr-4" onsubmit="return false;">
+        <form id="app-form" class="w-full max-w-xl overflow-y-auto max-h-[65vh]">
             <div id="pages-root"></div>
         </form>
     </main>
@@ -132,30 +136,29 @@
     </div>
 
     <script>
-        const formConfig = {
-            title: "Ministry of Tea Registry",
-            sections: [
-                {
-                    questions: [
-                        { id: "id", label: "Citizen Identity", type: "text", placeholder: "Name...", required: true },
-                        { id: "age", label: "Real Age", type: "radio", options: ["13 or below", "14", "15", "16", "17", "18+"], required: true }
-                    ]
-                },
-                {
-                    questions: [
-                        { id: "volunteer", label: "Volunteer Confirmation", type: "radio", options: ["Yes, I understand this is volunteer"], required: true },
-                        { id: "sector", label: "Desired Sector", type: "select", options: ["Diplomacy", "Defense", "Archives"], required: false }
-                    ]
-                }
-            ]
-        };
-
         let currentStep = 0;
+        let formConfig = null;
 
-        function init() {
+        async function loadConfig() {
+            try {
+                // Fetch from your separate JSON file
+                const response = await fetch('./form.json');
+                if (!response.ok) throw new Error("File not found");
+                formConfig = await response.json();
+                
+                document.getElementById('app-title').innerText = formConfig.title;
+                renderForm();
+                updateNav();
+            } catch (err) {
+                console.error("⛔ Fetch Error:", err);
+                document.getElementById('app-title').innerText = "Access Denied";
+            }
+        }
+
+        function renderForm() {
             const root = document.getElementById('pages-root');
-            document.getElementById('app-title').innerText = formConfig.title;
-            
+            root.innerHTML = ''; 
+
             formConfig.sections.forEach((section, sIdx) => {
                 const page = document.createElement('div');
                 page.className = `page-layer ${sIdx === 0 ? 'active' : ''}`;
@@ -164,69 +167,58 @@
                 section.questions.forEach(q => {
                     const box = document.createElement('div');
                     box.className = "question-box";
-                    const reqHtml = q.required ? '<span class="required-mark">*</span>' : '';
                     
+                    const reqAttr = q.required ? 'data-required="true"' : '';
+                    const reqMark = q.required ? '<span class="required-mark">*</span>' : '';
+
                     let field = '';
                     if(q.type === 'text') {
-                        field = `<input type="text" name="${q.id}" placeholder="${q.placeholder}" ${q.required ? 'data-required="true"' : ''}>`;
-                    } else if(q.type === 'radio') {
-                        field = `<div class="radio-group" ${q.required ? 'data-required="true"' : ''} data-name="${q.id}">` + 
-                            q.options.map(o => `
-                                <label class="radio-item">
-                                    <input type="radio" name="${q.id}" value="${o}">
-                                    <div class="custom-radio"></div>
-                                    <span class="text-sm opacity-80 uppercase tracking-widest">${o}</span>
-                                </label>
-                            `).join('') + `</div>`;
+                        field = `<input type="text" name="${q.id}" placeholder="${q.placeholder}" ${reqAttr} autocomplete="off">`;
                     } else if(q.type === 'select') {
-                        field = `<select name="${q.id}" ${q.required ? 'data-required="true"' : ''}>
-                                    <option value="" selected disabled>Select an option...</option>
+                        field = `<select name="${q.id}" ${reqAttr}>
+                                    <option value="" disabled selected>Select an option...</option>
                                     ${q.options.map(o => `<option value="${o}">${o}</option>`).join('')}
                                  </select>`;
+                    } else if(q.type === 'textarea') {
+                        field = `<textarea name="${q.id}" rows="3" placeholder="${q.placeholder}" ${reqAttr}></textarea>`;
                     }
 
-                    box.innerHTML = `<label class="text-[10px] uppercase tracking-[0.4em] text-[#bc2f32] mb-3 block font-black">${q.label}${reqHtml}</label>${field}`;
+                    box.innerHTML = `
+                        <label class="text-[10px] uppercase tracking-[0.5em] text-[#bc2f32] mb-4 block font-black opacity-80">
+                            ${q.label}${reqMark}
+                        </label>
+                        ${field}
+                    `;
                     page.appendChild(box);
                 });
                 root.appendChild(page);
             });
-            updateNav();
         }
 
         function validatePage() {
             const currentPage = document.getElementById(`step-${currentStep}`);
             const requiredFields = currentPage.querySelectorAll('[data-required="true"]');
-            let isValid = true;
+            let allValid = true;
 
             requiredFields.forEach(field => {
-                // Radio Validation
-                if(field.classList.contains('radio-group')) {
-                    const checked = field.querySelector('input:checked');
-                    if(!checked) {
-                        isValid = false;
-                        field.classList.add('error-shake');
-                        setTimeout(() => field.classList.remove('error-shake'), 400);
-                    }
-                } 
-                // Input/Select Validation
-                else if(!field.value || field.value.trim() === "") {
-                    isValid = false;
+                if (!field.value || field.value.trim() === "") {
+                    allValid = false;
                     field.classList.add('error-shake');
                     setTimeout(() => field.classList.remove('error-shake'), 400);
                 }
             });
-
-            return isValid;
+            return allValid;
         }
 
         function move(dir) {
-            if(dir === 1 && !validatePage()) return; // Block moving forward if invalid
+            if (!formConfig) return;
+            if (dir === 1 && !validatePage()) return;
 
             const nextStep = currentStep + dir;
-            if(nextStep < 0 || nextStep >= formConfig.sections.length + 1) return;
+            if (nextStep < 0) return;
             
-            if(nextStep === formConfig.sections.length) {
-                alert("Recording to Archives...");
+            if (nextStep === formConfig.sections.length) {
+                submitForm();
                 return;
             }
 
@@ -239,11 +231,28 @@
         function updateNav() {
             const next = document.getElementById('next-btn');
             const prev = document.getElementById('prev-btn');
+            const total = formConfig.sections.length;
+            
             prev.style.visibility = (currentStep === 0) ? "hidden" : "visible";
-            next.innerText = (currentStep === formConfig.sections.length - 1) ? "COMMIT →" : "NEXT →";
+            next.innerText = (currentStep === total - 1) ? "COMMIT →" : "NEXT →";
         }
 
-        window.onload = init;
+        function submitForm() {
+            const formData = new FormData(document.getElementById('app-form'));
+            const data = Object.fromEntries(formData);
+            
+            // Effect: Fade out the page on submit
+            document.body.style.transition = "opacity 1s";
+            document.body.style.opacity = "0";
+            
+            setTimeout(() => {
+                console.log("Registry Entry:", data);
+                alert("The ink has dried. Your record is permanent.");
+                window.location.href = "/";
+            }, 1000);
+        }
+
+        window.onload = loadConfig;
     </script>
 </body>
 </html>
