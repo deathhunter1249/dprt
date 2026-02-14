@@ -20,52 +20,57 @@
         }
 
         .mist {
-            position: fixed; bottom: 0; width: 100%; height: 40vh;
-            background: linear-gradient(to top, rgba(0,0,0,0.05), transparent);
-            filter: blur(50px); pointer-events: none;
+            position: fixed; bottom: 0; width: 100%; height: 45vh;
+            background: linear-gradient(to top, rgba(0,0,0,0.06), transparent);
+            filter: blur(60px); pointer-events: none;
         }
 
-        /* Large Side Progress */
+        /* Large Side Progress Tracker */
         .vertical-tracker {
             position: fixed; left: 4vw; top: 50%; transform: translateY(-50%);
             display: flex; flex-direction: column; align-items: center; gap: 20px;
+            z-index: 50;
         }
         .step-node {
             width: 14px; height: 14px; border-radius: 50%;
-            border: 2px solid var(--ink); transition: all 0.4s;
+            border: 2px solid var(--ink); transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
         .step-node.active { background: var(--cinnabar); border-color: var(--cinnabar); box-shadow: 0 0 15px var(--cinnabar); }
-        .step-line { width: 1px; height: 40px; background: rgba(0,0,0,0.1); }
+        .step-line { width: 1px; height: 45px; background: rgba(0,0,0,0.1); }
 
-        /* Floating Question Areas */
-        .page-layer { display: none; animation: slideUp 0.6s ease-out forwards; }
-        .page-layer.active { display: flex; flex-direction: column; gap: 1.5rem; }
+        /* Floating "Cloud" Question Areas */
+        .page-layer { display: none; animation: slideUp 0.7s ease-out forwards; }
+        .page-layer.active { display: flex; flex-direction: column; gap: 1.8rem; }
 
         @keyframes slideUp {
-            from { opacity: 0; transform: translateY(20px); }
+            from { opacity: 0; transform: translateY(30px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
         .question-box {
-            background: rgba(255, 255, 255, 0.35);
+            background: rgba(255, 255, 255, 0.3);
             backdrop-filter: blur(12px);
-            padding: 1.2rem 2.5rem;
-            border-radius: 40px 10px 40px 10px;
-            border: 1px solid rgba(255, 255, 255, 0.5);
-            box-shadow: 10px 10px 30px rgba(0,0,0,0.02);
+            padding: 1.5rem 3rem;
+            border-radius: 50px 15px 50px 15px;
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            box-shadow: 10px 10px 40px rgba(0,0,0,0.03);
+            width: 100%;
         }
 
         input, select, textarea {
-            background: transparent; width: 100%; border: none;
+            background: transparent !important; width: 100%; border: none;
             border-bottom: 1px solid rgba(0,0,0,0.1);
-            outline: none; padding: 0.5rem 0; font-size: 1.1rem;
-            color: var(--ink);
+            outline: none; padding: 0.6rem 0; font-size: 1.15rem;
+            color: var(--ink); transition: border-color 0.3s;
         }
+        input:focus { border-bottom-color: var(--cinnabar); }
 
-        .nav-container { position: fixed; bottom: 5vh; width: 100%; padding: 0 5vw; display: flex; justify-content: space-between; align-items: center; }
-        .nav-btn { font-family: 'ZCOOL XiaoWei'; letter-spacing: 0.2em; cursor: pointer; transition: 0.3s; opacity: 0.8; }
-        .nav-btn:hover { color: var(--cinnabar); opacity: 1; }
-        .submit-btn { background: var(--cinnabar); color: white; padding: 0.6rem 2.5rem; border-radius: 2px; }
+        /* Navigation */
+        .nav-container { position: fixed; bottom: 6vh; width: 100%; padding: 0 6vw; display: flex; justify-content: space-between; align-items: center; z-index: 100; }
+        .nav-btn { font-family: 'ZCOOL XiaoWei'; letter-spacing: 0.25em; cursor: pointer; transition: 0.3s; opacity: 0.7; font-weight: bold; }
+        .nav-btn:hover { color: var(--cinnabar); opacity: 1; transform: scale(1.05); }
+        .submit-btn { background: var(--cinnabar); color: white; padding: 0.7rem 2.8rem; border-radius: 3px; opacity: 1; }
+        .submit-btn:hover { background: #9b2426; color: white; }
     </style>
 </head>
 <body>
@@ -74,7 +79,7 @@
     <div class="vertical-tracker" id="tracker"></div>
 
     <main class="h-full flex flex-col items-center justify-center px-6">
-        <h1 id="app-title" class="text-3xl font-['ZCOOL_XiaoWei'] mb-12 tracking-widest opacity-80 uppercase">Loading Registry...</h1>
+        <h1 id="app-title" class="text-3xl font-['ZCOOL_XiaoWei'] mb-12 tracking-widest opacity-90 uppercase"></h1>
         
         <form id="app-form" class="w-full max-w-2xl">
             <div id="pages-root"></div>
@@ -87,30 +92,40 @@
     </div>
 
     <script>
+        // --- DATA SECTION: Edit your questions here directly ---
+        const formConfig = {
+            title: "Ministry of Tea Registry",
+            sections: [
+                {
+                    questions: [
+                        { id: "id", label: "Citizen Identity", type: "text", placeholder: "Enter name..." },
+                        { id: "origin", label: "Province of Origin", type: "text", placeholder: "Where were you forged?" }
+                    ]
+                },
+                {
+                    questions: [
+                        { id: "sector", label: "Desired Sector", type: "select", options: ["Diplomacy", "Defense", "Internal Archives"] },
+                        { id: "specialty", label: "Primary Specialty", type: "text", placeholder: "e.g. Scholar, Guard..." }
+                    ]
+                },
+                {
+                    questions: [
+                        { id: "vow", label: "The Eternal Vow", type: "textarea", placeholder: "Why do you seek the Republic? State your intent clearly..." }
+                    ]
+                }
+            ]
+        };
+
         let currentStep = 0;
-        let totalSections = 0;
+        let totalSections = formConfig.sections.length;
 
-        // FETCHING THE EXTERNAL JSON FILE
-        async function loadFormData() {
-            try {
-                // This looks for 'form.json' in the same folder as index.html
-                const response = await fetch('./form.json');
-                const data = await response.json();
-                renderForm(data);
-            } catch (error) {
-                console.error("Error loading JSON:", error);
-                document.getElementById('app-title').innerText = "FAILED TO LOAD REGISTRY";
-            }
-        }
-
-        function renderForm(formData) {
+        function init() {
             const root = document.getElementById('pages-root');
             const tracker = document.getElementById('tracker');
-            document.getElementById('app-title').innerText = formData.title;
-            totalSections = formData.sections.length;
+            document.getElementById('app-title').innerText = formConfig.title;
             
-            formData.sections.forEach((section, sIdx) => {
-                // Create Page Layer
+            formConfig.sections.forEach((section, sIdx) => {
+                // Render Page
                 const page = document.createElement('div');
                 page.className = `page-layer ${sIdx === 0 ? 'active' : ''}`;
                 page.id = `step-${sIdx}`;
@@ -119,21 +134,19 @@
                     const box = document.createElement('div');
                     box.className = "question-box";
                     
-                    let inputField = '';
+                    let field = `<input type="text" name="${q.id}" placeholder="${q.placeholder}">`;
                     if(q.type === 'select') {
-                        inputField = `<select name="${q.id}">${q.options.map(o => `<option value="${o}">${o}</option>`).join('')}</select>`;
+                        field = `<select name="${q.id}">${q.options.map(o => `<option value="${o}">${o}</option>`).join('')}</select>`;
                     } else if(q.type === 'textarea') {
-                        inputField = `<textarea name="${q.id}" rows="2" placeholder="${q.placeholder}"></textarea>`;
-                    } else {
-                        inputField = `<input type="text" name="${q.id}" placeholder="${q.placeholder}">`;
+                        field = `<textarea name="${q.id}" rows="2" placeholder="${q.placeholder}"></textarea>`;
                     }
 
-                    box.innerHTML = `<label class="text-[10px] uppercase tracking-[0.3em] opacity-40 mb-2 block font-bold">${q.label}</label>${inputField}`;
+                    box.innerHTML = `<label class="text-[10px] uppercase tracking-[0.4em] opacity-50 mb-3 block font-bold">${q.label}</label>${field}`;
                     page.appendChild(box);
                 });
                 root.appendChild(page);
 
-                // Create Progress Dot
+                // Render Progress Dots
                 const dot = document.createElement('div');
                 dot.className = `step-node ${sIdx === 0 ? 'active' : ''}`;
                 dot.id = `dot-${sIdx}`;
@@ -144,7 +157,7 @@
                     tracker.appendChild(line);
                 }
             });
-            updateButtons();
+            updateNav();
         }
 
         function move(dir) {
@@ -156,17 +169,27 @@
                 return;
             }
 
-            document.getElementById(`step-${currentStep}`).classList.remove('active');
-            document.getElementById(`dot-${currentStep}`).classList.remove('active');
+            // Page handling
+            const currentP = document.getElementById(`step-${currentStep}`);
+            const currentD = document.getElementById(`dot-${currentStep}`);
+            if(currentP) currentP.classList.remove('active');
+            if(currentD) currentD.classList.remove('active');
+
             currentStep = nextStep;
-            document.getElementById(`step-${currentStep}`).classList.add('active');
-            document.getElementById(`dot-${currentStep}`).classList.add('active');
-            updateButtons();
+
+            const nextP = document.getElementById(`step-${currentStep}`);
+            const nextD = document.getElementById(`dot-${currentStep}`);
+            if(nextP) nextP.classList.add('active');
+            if(nextD) nextD.classList.add('active');
+
+            updateNav();
         }
 
-        function updateButtons() {
+        function updateNav() {
             const next = document.getElementById('next-btn');
-            document.getElementById('prev-btn').style.visibility = currentStep === 0 ? "hidden" : "visible";
+            const prev = document.getElementById('prev-btn');
+            
+            prev.style.visibility = (currentStep === 0) ? "hidden" : "visible";
             
             if(currentStep === totalSections - 1) {
                 next.innerText = "SUBMIT RECORD";
@@ -179,11 +202,11 @@
 
         function submitForm() {
             const data = Object.fromEntries(new FormData(document.getElementById('app-form')));
-            console.log("Submitting:", data);
-            alert("Entry recorded in the Archives.");
+            console.log("Archives Data:", data);
+            alert("Application Sent to the Republic Archives.");
         }
 
-        loadFormData();
+        window.onload = init;
     </script>
 </body>
 </html>
