@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DPRT | Official Application</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@900&family=Zhi+Mang+Xing&family=ZCOOL+XiaoWei&display=swap" rel="stylesheet">
+    <style>
+        :root { --ink: #1a1a1a; --cinnabar: #bc2f32; --paper: #e6e4e0; }
+        
+        body {
+            background-color: var(--paper);
+            background-image: url('https://www.transparenttextures.com/patterns/natural-paper.png');
+            color: var(--ink);
+            font-family: 'Noto Serif SC', serif;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Sumi-e Watermark */
+        .bg-watermark {
+            position: fixed; top: 50%; right: -5%; transform: translateY(-50%);
+            font-family: 'Zhi Mang Xing', cursive;
+            font-size: 40rem; color: rgba(0, 0, 0, 0.03);
+            pointer-events: none; z-index: 0;
+        }
+
+        /* The Application Card */
+        .app-card {
+            background: rgba(255, 255, 255, 0.4);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 20px 20px 60px rgba(0,0,0,0.05);
+        }
+
+        input, textarea, select {
+            background: transparent !important;
+            border-bottom: 2px solid rgba(26, 26, 26, 0.1) !important;
+            transition: border-color 0.4s ease;
+        }
+
+        input:focus, textarea:focus {
+            border-bottom-color: var(--cinnabar) !important;
+            outline: none;
+        }
+
+        .btn-seal {
+            border: 2px solid var(--ink);
+            transition: all 0.3s ease;
+        }
+
+        .btn-seal:hover {
+            background: var(--cinnabar);
+            border-color: var(--cinnabar);
+            color: white;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="bg-watermark">書</div>
+
+    <div class="relative z-10 min-h-screen flex items-center justify-center p-6">
+        <div class="app-card w-full max-w-2xl p-12 reveal-node">
+            <header class="mb-10 border-l-4 border-[#bc2f32] pl-6">
+                <h1 class="text-4xl font-black tracking-widest uppercase">Application</h1>
+                <p class="text-sm opacity-60 font-serif italic">The brush moves at the command of the mind.</p>
+            </header>
+
+            <form id="app-form" class="space-y-8">
+                <div id="form-questions" class="space-y-6">
+                    </div>
+
+                <div class="pt-6">
+                    <button type="submit" class="btn-seal w-full py-4 font-bold tracking-[0.5em]">
+                        SUBMIT RECORD
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // --- 1. THE QUESTION EDITOR (JSON) ---
+        // You can edit this list to add as many questions as you want.
+        const formConfig = [
+            {
+                id: "username",
+                label: "Citizen Identity (Username)",
+                type: "text",
+                placeholder: "Enter your name..."
+            },
+            {
+                id: "division",
+                label: "Desired Division",
+                type: "select",
+                options: ["Internal Affairs", "Frontier Guard", "Tea Archives"]
+            },
+            {
+                id: "vow",
+                label: "Statement of Loyalty",
+                type: "textarea",
+                placeholder: "Write your intent here..."
+            }
+        ];
+
+        // --- 2. THE GENERATOR ---
+        const container = document.getElementById('form-questions');
+
+        formConfig.forEach(q => {
+            let html = `<div class="flex flex-col">
+                <label class="text-[10px] tracking-[0.2em] font-bold uppercase mb-2 opacity-50">${q.label}</label>`;
+            
+            if(q.type === "text") {
+                html += `<input type="text" name="${q.id}" placeholder="${q.placeholder}" class="py-2">`;
+            } else if(q.type === "textarea") {
+                html += `<textarea name="${q.id}" rows="3" placeholder="${q.placeholder}" class="py-2"></textarea>`;
+            } else if(q.type === "select") {
+                html += `<select name="${q.id}" class="py-2 cursor-pointer">
+                    ${q.options.map(opt => `<option value="${opt}">${opt}</option>`).join('')}
+                </select>`;
+            }
+
+            html += `</div>`;
+            container.innerHTML += html;
+        });
+
+        // --- 3. SUBMISSION HANDLING ---
+        document.getElementById('app-form').onsubmit = (e) => {
+            e.preventDefault();
+            const data = Object.fromEntries(new FormData(e.target));
+            
+            console.log("Form Data Collected:", data);
+            alert("Application data logged to console. Ready for sync!");
+        };
+    </script>
+</body>
+</html>
