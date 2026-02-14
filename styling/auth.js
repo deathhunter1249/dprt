@@ -88,10 +88,15 @@ function toggleMenu(show) {
     const overlay = document.getElementById('global-overlay');
     const blurContainer = document.getElementById('blur-container');
     
-    if (show) {
+    // Logic: 
+    // 1. If 'show' is explicitly false (from overlay click), we close.
+    // 2. If 'show' is undefined/event (from PFP click), we check current state to toggle.
+    const isCurrentlyOpen = !menu?.classList.contains('opacity-0');
+    const shouldOpen = (show === true) || (show !== false && !isCurrentlyOpen);
+
+    if (shouldOpen) {
         menu?.classList.remove('opacity-0', 'pointer-events-none', '-translate-y-2');
         overlay?.classList.remove('opacity-0', 'pointer-events-none');
-        // Optimized: Only dim the background, don't use heavy blur
         if(blurContainer) {
             blurContainer.style.transition = "filter 0.3s ease, opacity 0.3s ease";
             blurContainer.style.filter = "brightness(0.5)"; 
