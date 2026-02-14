@@ -14,153 +14,177 @@
             background-image: url('https://www.transparenttextures.com/patterns/natural-paper.png');
             color: var(--ink);
             font-family: 'Noto Serif SC', serif;
-            min-height: 100vh;
+            height: 100vh;
+            overflow: hidden; /* Clean, no-scroll feel */
         }
 
-        /* Progress Tracker on the side */
-        .progress-sidebar {
+        /* Large Page Indicator */
+        .page-counter {
             position: fixed;
             left: 5vw;
             top: 50%;
             transform: translateY(-50%);
-            display: flex;
-            flex-direction: column;
-            gap: 2rem;
-            border-left: 1px solid rgba(0,0,0,0.1);
-            padding-left: 1.5rem;
             z-index: 50;
+            text-align: center;
         }
-
-        .step-dot {
+        .current-num {
             font-family: 'Zhi Mang Xing', cursive;
-            font-size: 1.2rem;
-            color: rgba(0,0,0,0.2);
-            transition: all 0.5s ease;
-            cursor: default;
-        }
-
-        .step-dot.active {
+            font-size: 8rem;
+            line-height: 1;
             color: var(--cinnabar);
-            transform: scale(1.2);
+            display: block;
+        }
+        .total-num {
+            font-size: 1.2rem;
+            letter-spacing: 0.5em;
+            opacity: 0.3;
+            border-top: 1px solid var(--ink);
+            padding-top: 10px;
         }
 
-        /* Minimalist Input Styling */
+        /* Question Layout */
+        .page-container {
+            display: none; /* Hidden by default */
+            animation: fadeIn 0.8s ease forwards;
+        }
+        .page-container.active { display: block; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
         input, textarea, select {
             background: transparent !important;
             width: 100%;
-            padding: 0.75rem 0;
-            font-family: 'Noto Serif SC', serif;
-            font-size: 1.1rem;
+            padding: 1rem 0;
+            font-size: 1.5rem;
             outline: none;
             border: none;
+            border-bottom: 1px solid rgba(0,0,0,0.1);
+            transition: all 0.4s ease;
         }
+        input:focus { border-bottom-color: var(--cinnabar); }
 
-        /* Thin horizontal spacers */
-        .question-wrapper {
-            border-bottom: 1px solid rgba(0,0,0,0.08);
-            padding: 2.5rem 0;
-            transition: border-color 0.4s ease;
+        /* Nav Buttons */
+        .nav-link {
+            position: fixed;
+            bottom: 5vh;
+            font-family: 'Noto Serif SC', serif;
+            font-weight: 900;
+            letter-spacing: 0.3em;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: color 0.3s;
+            z-index: 100;
         }
+        .nav-link:hover { color: var(--cinnabar); }
+        .nav-left { left: 5vw; }
+        .nav-right { right: 5vw; }
 
-        .question-wrapper:focus-within {
-            border-bottom-color: var(--cinnabar);
-        }
-
-        label {
-            display: block;
-            text-[10px] tracking-[0.4em] font-bold uppercase mb-2 opacity-40;
-        }
-
-        .btn-seal {
-            border: 1px solid var(--ink);
-            padding: 1rem 3rem;
-            letter-spacing: 0.5em;
-            transition: all 0.3s ease;
-            margin-top: 4rem;
-        }
-
-        .btn-seal:hover {
-            background: var(--cinnabar);
-            border-color: var(--cinnabar);
-            color: white;
+        .btn-submit {
+            color: var(--cinnabar);
+            border: 1px solid var(--cinnabar);
+            padding: 5px 15px;
         }
     </style>
 </head>
 <body>
 
-    <div class="fixed top-1/2 right-10 -translate-y-1/2 text-[30rem] font-['Ma_Shan_Zheng'] opacity-[0.02] pointer-events-none select-none">
-        中
+    <div class="page-counter">
+        <span class="current-num" id="active-idx">一</span>
+        <span class="total-num" id="total-idx">/ 四</span>
     </div>
 
-    <div class="progress-sidebar hidden md:flex">
-        <div class="step-dot active" id="dot-0">一</div>
-        <div class="step-dot" id="dot-1">二</div>
-        <div class="step-dot" id="dot-2">三</div>
-        <div class="step-dot" id="dot-3">四</div>
-    </div>
-
-    <main class="max-w-4xl mx-auto px-12 py-32 relative z-10">
-        
-        <header class="mb-20">
-            <h1 class="text-5xl font-['ZCOOL_XiaoWei'] tracking-tighter mb-4">MEMBER REGISTRY</h1>
-            <div class="w-12 h-1 bg-[#bc2f32]"></div>
-        </header>
-
-        <form id="app-form">
-            <div id="form-questions">
+    <main class="h-full flex items-center justify-center px-12">
+        <form id="app-form" class="w-full max-w-2xl">
+            <div id="dynamic-pages">
                 </div>
-
-            <div class="flex justify-center">
-                <button type="submit" class="btn-seal font-bold">
-                    SUBMIT TO ARCHIVES
-                </button>
-            </div>
         </form>
     </main>
 
+    <div id="nav-prev" class="nav-link nav-left" onclick="changePage(-1)">Previous</div>
+    <div id="nav-next" class="nav-link nav-right" onclick="changePage(1)">Next</div>
+
     <script>
-        const formConfig = [
-            { id: "username", label: "Identity", type: "text", placeholder: "Citizen Name..." },
-            { id: "origin", label: "Province of Origin", type: "text", placeholder: "Where were you forged?" },
-            { id: "division", label: "Selection", type: "select", options: ["Internal Affairs", "Frontier Guard", "Tea Archives"] },
-            { id: "vow", label: "The Vow", type: "textarea", placeholder: "Your loyalty defines the Republic..." }
+        // --- ADD PAGES EASILY HERE ---
+        const pages = [
+            { label: "Identity", type: "text", id: "user", placeholder: "What is your name?" },
+            { label: "Origin", type: "text", id: "home", placeholder: "Where do you hail from?" },
+            { label: "Role", type: "select", id: "role", options: ["Frontier Guard", "Archive Keeper", "Tea Master"] },
+            { label: "The Vow", type: "textarea", id: "vow", placeholder: "State your purpose..." }
         ];
 
-        const container = document.getElementById('form-questions');
+        const chineseNums = ["一", "二", "三", "四", "五", "六", "七", "八", "九", "十"];
+        let currentPage = 0;
 
-        formConfig.forEach((q, index) => {
-            let html = `
-                <div class="question-wrapper reveal-node" data-index="${index}">
-                    <label>${q.label}</label>`;
-            
-            if(q.type === "text") {
-                html += `<input type="text" name="${q.id}" placeholder="${q.placeholder}" onfocus="updateProgress(${index})">`;
-            } else if(q.type === "textarea") {
-                html += `<textarea name="${q.id}" rows="2" placeholder="${q.placeholder}" onfocus="updateProgress(${index})"></textarea>`;
-            } else if(q.type === "select") {
-                html += `<select name="${q.id}" onfocus="updateProgress(${index})" class="cursor-pointer">
-                    ${q.options.map(opt => `<option value="${opt}">${opt}</option>`).join('')}
-                </select>`;
-            }
+        function initForm() {
+            const container = document.getElementById('dynamic-pages');
+            document.getElementById('total-idx').innerText = "/ " + chineseNums[pages.length - 1];
 
-            html += `</div>`;
-            container.innerHTML += html;
-        });
+            pages.forEach((p, i) => {
+                const div = document.createElement('div');
+                div.className = `page-container ${i === 0 ? 'active' : ''}`;
+                div.id = `page-${i}`;
+                
+                let inputHtml = '';
+                if(p.type === 'select') {
+                    inputHtml = `<select name="${p.id}">${p.options.map(o => `<option>${o}</option>`).join('')}</select>`;
+                } else if(p.type === 'textarea') {
+                    inputHtml = `<textarea name="${p.id}" rows="2" placeholder="${p.placeholder}"></textarea>`;
+                } else {
+                    inputHtml = `<input type="text" name="${p.id}" placeholder="${p.placeholder}">`;
+                }
 
-        function updateProgress(index) {
-            document.querySelectorAll('.step-dot').forEach((dot, i) => {
-                if(i <= index) dot.classList.add('active');
-                else dot.classList.remove('active');
+                div.innerHTML = `
+                    <label class="text-[10px] tracking-[0.5em] uppercase opacity-40 mb-4 block">${p.label}</label>
+                    ${inputHtml}
+                `;
+                container.appendChild(div);
             });
+            updateNav();
         }
 
-        // Handle Submission
-        document.getElementById('app-form').onsubmit = (e) => {
-            e.preventDefault();
-            const data = Object.fromEntries(new FormData(e.target));
-            alert("Application Submitted.");
-            console.log(data);
-        };
+        function changePage(step) {
+            const nextStep = currentPage + step;
+            if (nextStep >= 0 && nextStep < pages.length) {
+                document.getElementById(`page-${currentPage}`).classList.remove('active');
+                currentPage = nextStep;
+                document.getElementById(`page-${currentPage}`).classList.add('active');
+                updateNav();
+            } else if (nextStep === pages.length) {
+                submitForm();
+            }
+        }
+
+        function updateNav() {
+            const nextBtn = document.getElementById('nav-next');
+            const prevBtn = document.getElementById('nav-prev');
+            
+            // Update Large Numbers
+            document.getElementById('active-idx').innerText = chineseNums[currentPage];
+            
+            // Toggle Previous Visibility
+            prevBtn.style.visibility = currentPage === 0 ? 'hidden' : 'visible';
+            
+            // Toggle Next vs Submit
+            if (currentPage === pages.length - 1) {
+                nextBtn.innerText = "Submit Application";
+                nextBtn.classList.add('btn-submit');
+            } else {
+                nextBtn.innerText = "Next";
+                nextBtn.classList.remove('btn-submit');
+            }
+        }
+
+        function submitForm() {
+            const data = Object.fromEntries(new FormData(document.getElementById('app-form')));
+            console.log("Final Submission:", data);
+            alert("Application Sent to the Republic.");
+        }
+
+        initForm();
     </script>
 </body>
 </html>
