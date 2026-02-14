@@ -192,7 +192,7 @@ function renderApps() {
                     <p class="text-zinc-600 text-[11px] leading-relaxed font-serif italic mb-8 text-center px-2">
                         "${job.desc}"
                     </p>
-                    <button onclick="window.location.href='https://deathhunter1249.github.io/dprt/apply/'" class="btn-apply">
+                   <button onclick="window.location.href='/dprt/jobs/apply/${job.title.toLowerCase().replace(/\s+/g, '_')}/'" class="btn-apply">
                         Apply
                     </button>
                 </div>
