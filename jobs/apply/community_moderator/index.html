@@ -7,131 +7,110 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@900&family=Zhi+Mang+Xing&family=ZCOOL+XiaoWei&display=swap" rel="stylesheet">
     <style>
-        :root { 
-            --ink: #1a1a1a; 
-            --cinnabar: #bc2f32; 
-            --paper: #e9e7e2; 
-        }
+        :root { --ink: #1a1a1a; --cinnabar: #bc2f32; --paper: #e9e7e2; }
         
         body {
             background-color: var(--paper);
             background-image: url('https://www.transparenttextures.com/patterns/natural-paper.png');
             color: var(--ink);
             font-family: 'Noto Serif SC', serif;
-            height: 100vh; 
-            overflow: hidden;
-            margin: 0;
+            height: 100vh; overflow: hidden; margin: 0;
         }
 
         /* Large Background Watermark */
         body::before {
             content: "茶";
             position: fixed;
-            top: 50%; left: 50%;
+            top: 50%; left: 65%;
             transform: translate(-50%, -50%);
-            font-size: 60vh;
-            color: rgba(0, 0, 0, 0.03);
+            font-size: 80vh;
+            color: rgba(0, 0, 0, 0.02);
             font-family: 'Zhi Mang Xing', cursive;
-            pointer-events: none; 
-            z-index: -1;
+            pointer-events: none; z-index: -1;
         }
 
         /* Return Home Button */
         .back-home {
-            position: fixed;
-            top: 40px; left: 40px;
+            position: fixed; top: 40px; left: 40px;
             display: flex; align-items: center; gap: 12px;
-            font-family: 'ZCOOL XiaoWei';
-            font-weight: bold; letter-spacing: 0.15em;
-            cursor: pointer; transition: all 0.3s ease;
-            z-index: 100; opacity: 0.5;
-            text-decoration: none;
-            color: var(--ink);
+            font-family: 'ZCOOL XiaoWei'; font-weight: bold; letter-spacing: 0.15em;
+            cursor: pointer; transition: 0.3s; z-index: 100; opacity: 0.5;
+            text-decoration: none; color: var(--ink);
         }
         .back-home:hover { opacity: 1; color: var(--cinnabar); transform: translateX(-5px); }
 
-        /* Navigation Buttons */
-        .nav-container { 
-            position: fixed; bottom: 6vh; width: 100%; 
-            padding: 0 8vw; display: flex; 
-            justify-content: space-between; align-items: center; z-index: 100; 
-        }
-        .nav-btn { 
-            font-family: 'ZCOOL XiaoWei'; letter-spacing: 0.4em; 
-            cursor: pointer; transition: 0.3s; font-size: 0.9rem; font-weight: bold; 
-        }
-        .nav-btn:hover { color: var(--cinnabar); }
-        
-        /* Layout Structure */
-        .page-layer { display: none; opacity: 0; }
-        .page-layer.active { 
-            display: flex; flex-direction: column; gap: 1.5rem; 
-            opacity: 1; animation: inkFade 0.8s ease forwards;
+        /* Split Layout */
+        .side-panel {
+            width: 35%; height: 100vh; display: flex; flex-direction: column;
+            justify-content: center; padding-left: 8%; border-right: 1px solid rgba(0,0,0,0.05);
         }
 
+        .form-area {
+            width: 65%; height: 100vh; overflow-y: auto;
+            padding: 10vh 10% 20vh 5%; scroll-behavior: smooth;
+        }
+
+        /* Custom Inky Scrollbar */
+        .form-area::-webkit-scrollbar { width: 4px; }
+        .form-area::-webkit-scrollbar-track { background: transparent; }
+        .form-area::-webkit-scrollbar-thumb { background: var(--cinnabar); border-radius: 10px; }
+
+        .progress-container { width: 150px; height: 2px; background: rgba(0,0,0,0.1); margin-top: 20px; }
+        .progress-fill { height: 100%; background: var(--cinnabar); width: 0%; transition: width 0.6s ease; }
+
+        .page-layer { display: none; opacity: 0; flex-direction: column; gap: 2rem; }
+        .page-layer.active { display: flex; animation: inkFade 0.6s ease forwards; }
+
         @keyframes inkFade {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+            from { opacity: 0; transform: translateX(20px); }
+            to { opacity: 1; transform: translateX(0); }
         }
 
         .question-box {
-            background: rgba(255, 255, 255, 0.3);
-            backdrop-filter: blur(5px);
-            padding: 2.2rem;
-            border: 1px solid rgba(0,0,0,0.05);
-            transition: all 0.4s ease;
+            background: rgba(255, 255, 255, 0.4); padding: 2.5rem;
+            border: 1px solid rgba(0,0,0,0.03); transition: 0.4s;
         }
-        .question-box:focus-within {
-            background: rgba(255, 255, 255, 0.7);
-            border-color: var(--cinnabar);
-            box-shadow: 15px 15px 0px rgba(188, 47, 50, 0.03);
-        }
+        .question-box:focus-within { border-color: var(--cinnabar); background: white; }
 
-        /* Form Inputs */
         input, select, textarea {
             background: transparent !important; width: 100%; border: none;
-            border-bottom: 2px solid rgba(0,0,0,0.1);
-            outline: none; padding: 0.8rem 0; font-size: 1.2rem;
-            color: var(--ink); transition: 0.3s;
-            font-family: 'ZCOOL XiaoWei', serif;
+            border-bottom: 2px solid rgba(0,0,0,0.05); outline: none; padding: 0.8rem 0;
+            font-size: 1.2rem; color: var(--ink); font-family: 'ZCOOL XiaoWei', serif;
         }
-        input:focus, select:focus, textarea:focus { border-bottom-color: var(--cinnabar); }
+        input:focus { border-bottom-color: var(--cinnabar); }
 
-        /* Error States */
+        .nav-fixed { position: fixed; bottom: 6vh; right: 10%; display: flex; gap: 40px; align-items: center; }
+        .nav-btn { font-family: 'ZCOOL XiaoWei'; letter-spacing: 0.3em; cursor: pointer; transition: 0.3s; font-size: 0.85rem; font-weight: bold; }
+        .nav-btn:hover { color: var(--cinnabar); }
+
         .error-shake { animation: shake 0.4s ease-in-out; border-bottom-color: var(--cinnabar) !important; }
         @keyframes shake {
             0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-6px); }
-            75% { transform: translateX(6px); }
+            25% { transform: translateX(-4px); }
+            75% { transform: translateX(4px); }
         }
-
-        .required-mark { color: var(--cinnabar); margin-left: 5px; font-size: 14px; }
-        
-        /* Hide scrollbars but allow scrolling for long forms */
-        #app-form::-webkit-scrollbar { display: none; }
-        #app-form { -ms-overflow-style: none; scrollbar-width: none; }
     </style>
 </head>
-<body>
+<body class="flex">
 
-    <a href="/" class="back-home">
-        <span class="text-xl">←</span>
-        <span>RETURN TO ARCHIVES</span>
+    <a href="/dprt/" class="back-home">
+        <span>←</span> RETURN TO HOME
     </a>
 
-    <main class="h-full flex flex-col items-center justify-center px-6">
-        <div class="mb-10 text-center">
-            <h1 id="app-title" class="text-4xl font-['ZCOOL_XiaoWei'] tracking-[0.4em] uppercase opacity-90">Consulting Records...</h1>
-            <div class="h-[2px] w-16 bg-cinnabar mx-auto mt-4 opacity-40"></div>
-        </div>
-        
-        <form id="app-form" class="w-full max-w-xl overflow-y-auto max-h-[65vh]">
+    <aside class="side-panel">
+        <p id="step-counter" class="text-[10px] tracking-[0.5em] text-[#bc2f32] font-black uppercase mb-2">Initializing...</p>
+        <h1 id="app-title" class="text-5xl font-['ZCOOL_XiaoWei'] tracking-widest uppercase">Registry</h1>
+        <div class="progress-container"><div id="progress-bar" class="progress-fill"></div></div>
+    </aside>
+
+    <main class="form-area" id="form-scroll-container">
+        <form id="app-form">
             <div id="pages-root"></div>
         </form>
     </main>
 
-    <div class="nav-container">
-        <div id="prev-btn" class="nav-btn" onclick="move(-1)">〔 PREVIOUS 〕</div>
+    <div class="nav-fixed">
+        <div id="prev-btn" class="nav-btn" onclick="move(-1)">〔 PREV 〕</div>
         <div id="next-btn" class="nav-btn" onclick="move(1)">NEXT →</div>
     </div>
 
@@ -141,24 +120,29 @@
 
         async function loadConfig() {
             try {
-                // Fetch from your separate JSON file
-                const response = await fetch('./form.json');
-                if (!response.ok) throw new Error("File not found");
+                // Since form.json is in the SAME folder as this HTML file:
+                const jsonUrl = './form.json';
+
+                console.log("📡 Fetching from local directory:", jsonUrl);
+                const response = await fetch(jsonUrl);
+                
+                if (!response.ok) throw new Error(`HTTP Error: ${response.status}`);
                 formConfig = await response.json();
                 
                 document.getElementById('app-title').innerText = formConfig.title;
                 renderForm();
-                updateNav();
+                updateUI();
             } catch (err) {
                 console.error("⛔ Fetch Error:", err);
-                document.getElementById('app-title').innerText = "Access Denied";
+                document.getElementById('app-title').innerText = "Registry Missing";
+                document.getElementById('step-counter').innerText = "ERROR 404";
             }
         }
 
         function renderForm() {
             const root = document.getElementById('pages-root');
             root.innerHTML = ''; 
-
+            
             formConfig.sections.forEach((section, sIdx) => {
                 const page = document.createElement('div');
                 page.className = `page-layer ${sIdx === 0 ? 'active' : ''}`;
@@ -167,10 +151,8 @@
                 section.questions.forEach(q => {
                     const box = document.createElement('div');
                     box.className = "question-box";
-                    
                     const reqAttr = q.required ? 'data-required="true"' : '';
-                    const reqMark = q.required ? '<span class="required-mark">*</span>' : '';
-
+                    
                     let field = '';
                     if(q.type === 'text') {
                         field = `<input type="text" name="${q.id}" placeholder="${q.placeholder}" ${reqAttr} autocomplete="off">`;
@@ -183,12 +165,7 @@
                         field = `<textarea name="${q.id}" rows="3" placeholder="${q.placeholder}" ${reqAttr}></textarea>`;
                     }
 
-                    box.innerHTML = `
-                        <label class="text-[10px] uppercase tracking-[0.5em] text-[#bc2f32] mb-4 block font-black opacity-80">
-                            ${q.label}${reqMark}
-                        </label>
-                        ${field}
-                    `;
+                    box.innerHTML = `<label class="text-[9px] uppercase tracking-[0.4em] text-[#bc2f32] mb-4 block font-black opacity-60">${q.label} ${q.required ? '*' : ''}</label>${field}`;
                     page.appendChild(box);
                 });
                 root.appendChild(page);
@@ -197,6 +174,7 @@
 
         function validatePage() {
             const currentPage = document.getElementById(`step-${currentStep}`);
+            if (!currentPage) return true;
             const requiredFields = currentPage.querySelectorAll('[data-required="true"]');
             let allValid = true;
 
@@ -213,10 +191,9 @@
         function move(dir) {
             if (!formConfig) return;
             if (dir === 1 && !validatePage()) return;
-
             const nextStep = currentStep + dir;
-            if (nextStep < 0) return;
             
+            if (nextStep < 0) return;
             if (nextStep === formConfig.sections.length) {
                 submitForm();
                 return;
@@ -225,30 +202,27 @@
             document.getElementById(`step-${currentStep}`).classList.remove('active');
             currentStep = nextStep;
             document.getElementById(`step-${currentStep}`).classList.add('active');
-            updateNav();
+            document.getElementById('form-scroll-container').scrollTop = 0;
+            updateUI();
         }
 
-        function updateNav() {
-            const next = document.getElementById('next-btn');
-            const prev = document.getElementById('prev-btn');
+        function updateUI() {
+            if(!formConfig) return;
             const total = formConfig.sections.length;
+            const progress = ((currentStep + 1) / total) * 100;
             
-            prev.style.visibility = (currentStep === 0) ? "hidden" : "visible";
-            next.innerText = (currentStep === total - 1) ? "COMMIT →" : "NEXT →";
+            document.getElementById('step-counter').innerText = `Step ${currentStep + 1} / ${total}`;
+            document.getElementById('progress-bar').style.width = `${progress}%`;
+            document.getElementById('prev-btn').style.visibility = (currentStep === 0) ? "hidden" : "visible";
+            document.getElementById('next-btn').innerText = (currentStep === total - 1) ? "COMMIT →" : "NEXT →";
         }
 
         function submitForm() {
-            const formData = new FormData(document.getElementById('app-form'));
-            const data = Object.fromEntries(formData);
-            
-            // Effect: Fade out the page on submit
-            document.body.style.transition = "opacity 1s";
             document.body.style.opacity = "0";
-            
+            document.body.style.transition = "opacity 1s";
             setTimeout(() => {
-                console.log("Registry Entry:", data);
-                alert("The ink has dried. Your record is permanent.");
-                window.location.href = "/";
+                alert("The ink has dried. Registry sent.");
+                window.location.href = "/dprt/";
             }, 1000);
         }
 
