@@ -7,100 +7,135 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@900&family=Zhi+Mang+Xing&family=ZCOOL+XiaoWei&display=swap" rel="stylesheet">
     <style>
-        :root { --ink: #1a1a1a; --cinnabar: #bc2f32; --paper: #e9e7e2; }
+        :root { 
+            --ink: #1a1a1a; 
+            --cinnabar: #bc2f32; 
+            --paper-light: #fdfaf1; 
+            --paper-dark: #e9e7e2; 
+        }
         
         body {
-            background-color: var(--paper);
-            background-image: url('https://www.transparenttextures.com/patterns/natural-paper.png');
+            background: linear-gradient(135deg, var(--paper-light) 0%, var(--paper-dark) 100%);
             color: var(--ink);
             font-family: 'Noto Serif SC', serif;
             height: 100vh; overflow: hidden; margin: 0;
+            display: flex;
+            /* Ink Brush Cursor */
+            cursor: url('https://cur.cursors-4u.net/others/oth-8/oth721.cur'), auto;
         }
+
+        /* Moving Wave Background */
+        .wave-container {
+            position: fixed; bottom: 0; left: 0; width: 100%; height: 25vh;
+            z-index: -1; opacity: 0.6; pointer-events: none;
+        }
+        .waves { position: relative; width: 100%; height: 15vh; margin-bottom: -7px; min-height: 100px; max-height: 150px; }
+        .parallax > use { animation: move-forever 25s cubic-bezier(.55,.5,.45,.5) infinite; }
+        .parallax > use:nth-child(1) { animation-delay: -2s; animation-duration: 7s; fill: rgba(255,255,255,0.7); }
+        .parallax > use:nth-child(2) { animation-delay: -3s; animation-duration: 10s; fill: rgba(252, 243, 207, 0.5); }
+        .parallax > use:nth-child(3) { animation-delay: -4s; animation-duration: 13s; fill: rgba(188, 47, 50, 0.05); }
+        .parallax > use:nth-child(4) { animation-delay: -5s; animation-duration: 20s; fill: #ffffff; }
+        @keyframes move-forever { 0% { transform: translate3d(-90px,0,0); } 100% { transform: translate3d(85px,0,0); } }
 
         /* Large Background Watermark */
         body::before {
-            content: "茶";
-            position: fixed;
-            top: 50%; left: 65%;
-            transform: translate(-50%, -50%);
-            font-size: 80vh;
-            color: rgba(0, 0, 0, 0.02);
-            font-family: 'Zhi Mang Xing', cursive;
+            content: "茶"; position: fixed; top: 50%; left: 70%;
+            transform: translate(-50%, -50%); font-size: 70vh;
+            color: rgba(0, 0, 0, 0.015); font-family: 'Zhi Mang Xing', cursive;
             pointer-events: none; z-index: -1;
         }
 
         /* Return Home Button */
         .back-home {
-            position: fixed; top: 40px; left: 40px;
-            display: flex; align-items: center; gap: 12px;
-            font-family: 'ZCOOL XiaoWei'; font-weight: bold; letter-spacing: 0.15em;
-            cursor: pointer; transition: 0.3s; z-index: 100; opacity: 0.5;
+            position: fixed; top: 30px; left: 30px;
+            display: flex; align-items: center; gap: 8px;
+            font-family: 'ZCOOL XiaoWei'; font-size: 0.8rem; letter-spacing: 0.1em;
+            transition: 0.3s; z-index: 100; opacity: 0.4;
             text-decoration: none; color: var(--ink);
         }
-        .back-home:hover { opacity: 1; color: var(--cinnabar); transform: translateX(-5px); }
+        .back-home:hover { opacity: 1; color: var(--cinnabar); transform: translateX(-3px); }
 
-        /* Split Layout */
+        /* Slimmer Side Panel */
         .side-panel {
-            width: 35%; height: 100vh; display: flex; flex-direction: column;
-            justify-content: center; padding-left: 8%; border-right: 1px solid rgba(0,0,0,0.05);
+            width: 30%; height: 100vh; display: flex; flex-direction: column;
+            justify-content: center; padding-left: 6%; border-right: 1px solid rgba(0,0,0,0.03);
+            background: rgba(255,255,255,0.15);
         }
+        #app-title { font-size: 2.2rem; line-height: 1.2; max-width: 220px; font-weight: 900; }
+        #step-counter { font-size: 10px; color: var(--cinnabar); font-weight: bold; }
 
-        .form-area {
-            width: 65%; height: 100vh; overflow-y: auto;
-            padding: 10vh 10% 20vh 5%; scroll-behavior: smooth;
-        }
+        /* Form Content Area */
+        .form-area { width: 70%; height: 100vh; overflow-y: auto; padding: 15vh 12% 25vh 8%; scroll-behavior: smooth; }
+        .form-area::-webkit-scrollbar { width: 3px; }
+        .form-area::-webkit-scrollbar-thumb { background: rgba(188, 47, 50, 0.2); border-radius: 10px; }
 
-        /* Custom Inky Scrollbar */
-        .form-area::-webkit-scrollbar { width: 4px; }
-        .form-area::-webkit-scrollbar-track { background: transparent; }
-        .form-area::-webkit-scrollbar-thumb { background: var(--cinnabar); border-radius: 10px; }
+        .page-layer { display: none; opacity: 0; flex-direction: column; gap: 4rem; }
+        .page-layer.active { display: flex; animation: inkFade 0.8s ease forwards; }
 
-        .progress-container { width: 150px; height: 2px; background: rgba(0,0,0,0.1); margin-top: 20px; }
-        .progress-fill { height: 100%; background: var(--cinnabar); width: 0%; transition: width 0.6s ease; }
+        @keyframes inkFade { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
-        .page-layer { display: none; opacity: 0; flex-direction: column; gap: 2rem; }
-        .page-layer.active { display: flex; animation: inkFade 0.6s ease forwards; }
+        /* Question Box (Invisible) */
+        .question-box { background: transparent; padding: 0; border: none; }
 
-        @keyframes inkFade {
-            from { opacity: 0; transform: translateX(20px); }
-            to { opacity: 1; transform: translateX(0); }
-        }
-
-        .question-box {
-            background: rgba(255, 255, 255, 0.4); padding: 2.5rem;
-            border: 1px solid rgba(0,0,0,0.03); transition: 0.4s;
-        }
-        .question-box:focus-within { border-color: var(--cinnabar); background: white; }
-
+        /* Input Styling */
         input, select, textarea {
             background: transparent !important; width: 100%; border: none;
-            border-bottom: 2px solid rgba(0,0,0,0.05); outline: none; padding: 0.8rem 0;
-            font-size: 1.2rem; color: var(--ink); font-family: 'ZCOOL XiaoWei', serif;
+            border-bottom: 1px solid rgba(0,0,0,0.1); outline: none; padding: 0.6rem 0;
+            font-size: 1.1rem; color: var(--ink); font-family: 'ZCOOL XiaoWei', serif;
+            transition: 0.4s;
+            cursor: url('https://cur.cursors-4u.net/others/oth-8/oth720.cur'), pointer !important;
         }
-        input:focus { border-bottom-color: var(--cinnabar); }
+        input:focus, select:focus, textarea:focus { border-bottom-color: var(--cinnabar); }
+        input::placeholder { opacity: 0.2; }
 
-        .nav-fixed { position: fixed; bottom: 6vh; right: 10%; display: flex; gap: 40px; align-items: center; }
-        .nav-btn { font-family: 'ZCOOL XiaoWei'; letter-spacing: 0.3em; cursor: pointer; transition: 0.3s; font-size: 0.85rem; font-weight: bold; }
-        .nav-btn:hover { color: var(--cinnabar); }
+        /* Custom Dropdown Styling */
+        select {
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23bc2f32' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'%3E%3C/path%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 10px center;
+            padding-right: 30px;
+        }
+
+        /* Navigation Buttons */
+        .nav-fixed { position: fixed; bottom: 5vh; right: 8%; display: flex; gap: 30px; align-items: center; }
+        .nav-btn { 
+            font-family: 'ZCOOL XiaoWei'; letter-spacing: 0.2em; transition: 0.3s; 
+            font-size: 0.8rem; font-weight: bold; opacity: 0.6;
+            cursor: url('https://cur.cursors-4u.net/others/oth-8/oth720.cur'), pointer !important;
+        }
+        .nav-btn:hover { opacity: 1; color: var(--cinnabar); }
 
         .error-shake { animation: shake 0.4s ease-in-out; border-bottom-color: var(--cinnabar) !important; }
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-4px); }
-            75% { transform: translateX(4px); }
-        }
+        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-4px); } 75% { transform: translateX(4px); } }
     </style>
 </head>
-<body class="flex">
+<body>
 
-    <a href="/dprt/" class="back-home">
-        <span>←</span> RETURN TO HOME
-    </a>
+    
+    <div class="wave-container">
+        <svg class="waves" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+        viewBox="0 24 150 28" preserveAspectRatio="none" shape-rendering="auto">
+            <defs>
+                <path id="gentle-wave" d="M-160 44c30 0 58-18 88-18s 58 18 88 18 58-18 88-18 58 18 88 18 v44h-352z" />
+            </defs>
+            <g class="parallax">
+                <use xlink:href="#gentle-wave" x="48" y="0" />
+                <use xlink:href="#gentle-wave" x="48" y="3" />
+                <use xlink:href="#gentle-wave" x="48" y="5" />
+                <use xlink:href="#gentle-wave" x="48" y="7" />
+            </g>
+        </svg>
+    </div>
+
+    <a href="../../../" class="back-home"><span>←</span> RETURN</a>
 
     <aside class="side-panel">
-        <p id="step-counter" class="text-[10px] tracking-[0.5em] text-[#bc2f32] font-black uppercase mb-2">Initializing...</p>
-        <h1 id="app-title" class="text-5xl font-['ZCOOL_XiaoWei'] tracking-widest uppercase">Registry</h1>
-        <div class="progress-container"><div id="progress-bar" class="progress-fill"></div></div>
+        <p id="step-counter" class="tracking-[0.5em] uppercase mb-4"></p>
+        <h1 id="app-title" class="tracking-widest uppercase">Consulting...</h1>
+        <div class="progress-container" style="width: 150px; height: 1px; background: rgba(0,0,0,0.1); margin-top: 20px;">
+            <div id="progress-bar" style="height: 100%; background: var(--cinnabar); width: 0%; transition: width 0.6s ease;"></div>
+        </div>
     </aside>
 
     <main class="form-area" id="form-scroll-container">
@@ -120,29 +155,23 @@
 
         async function loadConfig() {
             try {
-                // Since form.json is in the SAME folder as this HTML file:
-                const jsonUrl = './form.json';
-
-                console.log("📡 Fetching from local directory:", jsonUrl);
-                const response = await fetch(jsonUrl);
-                
-                if (!response.ok) throw new Error(`HTTP Error: ${response.status}`);
+                // Corrected filename
+                const response = await fetch('./forum.json');
+                if (!response.ok) throw new Error("File not found");
                 formConfig = await response.json();
                 
                 document.getElementById('app-title').innerText = formConfig.title;
                 renderForm();
                 updateUI();
             } catch (err) {
-                console.error("⛔ Fetch Error:", err);
-                document.getElementById('app-title').innerText = "Registry Missing";
-                document.getElementById('step-counter').innerText = "ERROR 404";
+                console.error(err);
+                document.getElementById('app-title').innerText = "Archive Missing";
             }
         }
 
         function renderForm() {
             const root = document.getElementById('pages-root');
             root.innerHTML = ''; 
-            
             formConfig.sections.forEach((section, sIdx) => {
                 const page = document.createElement('div');
                 page.className = `page-layer ${sIdx === 0 ? 'active' : ''}`;
@@ -158,14 +187,19 @@
                         field = `<input type="text" name="${q.id}" placeholder="${q.placeholder}" ${reqAttr} autocomplete="off">`;
                     } else if(q.type === 'select') {
                         field = `<select name="${q.id}" ${reqAttr}>
-                                    <option value="" disabled selected>Select an option...</option>
+                                    <option value="" disabled selected>Choose path...</option>
                                     ${q.options.map(o => `<option value="${o}">${o}</option>`).join('')}
                                  </select>`;
                     } else if(q.type === 'textarea') {
-                        field = `<textarea name="${q.id}" rows="3" placeholder="${q.placeholder}" ${reqAttr}></textarea>`;
+                        field = `<textarea name="${q.id}" rows="4" placeholder="${q.placeholder}" ${reqAttr}></textarea>`;
                     }
 
-                    box.innerHTML = `<label class="text-[9px] uppercase tracking-[0.4em] text-[#bc2f32] mb-4 block font-black opacity-60">${q.label} ${q.required ? '*' : ''}</label>${field}`;
+                    box.innerHTML = `
+                        <label class="text-[9px] uppercase tracking-[0.4em] text-[#bc2f32] mb-3 block font-bold opacity-70">
+                            ${q.label} ${q.required ? '*' : ''}
+                        </label>
+                        ${field}
+                    `;
                     page.appendChild(box);
                 });
                 root.appendChild(page);
@@ -189,16 +223,13 @@
         }
 
         function move(dir) {
-            if (!formConfig) return;
             if (dir === 1 && !validatePage()) return;
             const nextStep = currentStep + dir;
-            
-            if (nextStep < 0) return;
+            if (nextStep < 0 || !formConfig) return;
             if (nextStep === formConfig.sections.length) {
                 submitForm();
                 return;
             }
-
             document.getElementById(`step-${currentStep}`).classList.remove('active');
             currentStep = nextStep;
             document.getElementById(`step-${currentStep}`).classList.add('active');
@@ -207,23 +238,21 @@
         }
 
         function updateUI() {
-            if(!formConfig) return;
             const total = formConfig.sections.length;
             const progress = ((currentStep + 1) / total) * 100;
-            
             document.getElementById('step-counter').innerText = `Step ${currentStep + 1} / ${total}`;
             document.getElementById('progress-bar').style.width = `${progress}%`;
             document.getElementById('prev-btn').style.visibility = (currentStep === 0) ? "hidden" : "visible";
-            document.getElementById('next-btn').innerText = (currentStep === total - 1) ? "COMMIT →" : "NEXT →";
+            document.getElementById('next-btn').innerText = (currentStep === total - 1) ? "SEAL RECORD" : "NEXT →";
         }
 
         function submitForm() {
             document.body.style.opacity = "0";
-            document.body.style.transition = "opacity 1s";
+            document.body.style.transition = "opacity 1.5s";
             setTimeout(() => {
-                alert("The ink has dried. Registry sent.");
-                window.location.href = "/dprt/";
-            }, 1000);
+                alert("The record is sealed.");
+                window.location.href = "../../../";
+            }, 1500);
         }
 
         window.onload = loadConfig;
