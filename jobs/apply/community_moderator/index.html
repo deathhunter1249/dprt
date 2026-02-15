@@ -8,8 +8,9 @@
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@900&family=Zhi+Mang+Xing&family=ZCOOL+XiaoWei&display=swap" rel="stylesheet">
     <style>
         :root { 
-            --ink: #1a1a1a; 
+            --ink: #0a192f; /* Deep Midnight Blue */
             --cinnabar: #bc2f32; 
+            --gold: #d4af37; /* Burnished Gold */
             --paper-light: #fdfaf1; 
             --paper-dark: #e9e7e2; 
         }
@@ -20,28 +21,31 @@
             font-family: 'Noto Serif SC', serif;
             height: 100vh; overflow: hidden; margin: 0;
             display: flex;
-            /* Ink Brush Cursor */
             cursor: url('https://cur.cursors-4u.net/others/oth-8/oth721.cur'), auto;
         }
 
-        /* Moving Wave Background */
+        /* Fixed Wave Background */
         .wave-container {
-            position: fixed; bottom: 0; left: 0; width: 100%; height: 25vh;
-            z-index: -1; opacity: 0.6; pointer-events: none;
+            position: fixed; bottom: 0; left: 0; width: 100%; height: 200px;
+            z-index: -1; pointer-events: none;
+            line-height: 0; /* Removes tiny gaps at the bottom */
         }
-        .waves { position: relative; width: 100%; height: 15vh; margin-bottom: -7px; min-height: 100px; max-height: 150px; }
+        .waves { position: absolute; bottom: 0; width: 100%; height: 100%; }
+        
         .parallax > use { animation: move-forever 25s cubic-bezier(.55,.5,.45,.5) infinite; }
-        .parallax > use:nth-child(1) { animation-delay: -2s; animation-duration: 7s; fill: rgba(255,255,255,0.7); }
-        .parallax > use:nth-child(2) { animation-delay: -3s; animation-duration: 10s; fill: rgba(252, 243, 207, 0.5); }
-        .parallax > use:nth-child(3) { animation-delay: -4s; animation-duration: 13s; fill: rgba(188, 47, 50, 0.05); }
-        .parallax > use:nth-child(4) { animation-delay: -5s; animation-duration: 20s; fill: #ffffff; }
+        /* Wave Colors: Gold and Ink Blue Mix */
+        .parallax > use:nth-child(1) { animation-delay: -2s; animation-duration: 7s; fill: rgba(10, 25, 47, 0.07); }
+        .parallax > use:nth-child(2) { animation-delay: -3s; animation-duration: 10s; fill: rgba(212, 175, 55, 0.15); }
+        .parallax > use:nth-child(3) { animation-delay: -4s; animation-duration: 13s; fill: rgba(10, 25, 47, 0.1); }
+        .parallax > use:nth-child(4) { animation-delay: -5s; animation-duration: 20s; fill: rgba(212, 175, 55, 0.3); }
+
         @keyframes move-forever { 0% { transform: translate3d(-90px,0,0); } 100% { transform: translate3d(85px,0,0); } }
 
-        /* Large Background Watermark */
+        /* Watermark */
         body::before {
             content: "茶"; position: fixed; top: 50%; left: 70%;
             transform: translate(-50%, -50%); font-size: 70vh;
-            color: rgba(0, 0, 0, 0.015); font-family: 'Zhi Mang Xing', cursive;
+            color: rgba(10, 25, 47, 0.02); font-family: 'Zhi Mang Xing', cursive;
             pointer-events: none; z-index: -1;
         }
 
@@ -50,58 +54,55 @@
             position: fixed; top: 30px; left: 30px;
             display: flex; align-items: center; gap: 8px;
             font-family: 'ZCOOL XiaoWei'; font-size: 0.8rem; letter-spacing: 0.1em;
-            transition: 0.3s; z-index: 100; opacity: 0.4;
+            transition: 0.3s; z-index: 100; opacity: 0.5;
             text-decoration: none; color: var(--ink);
         }
         .back-home:hover { opacity: 1; color: var(--cinnabar); transform: translateX(-3px); }
 
-        /* Slimmer Side Panel */
+        /* Side Panel */
         .side-panel {
             width: 30%; height: 100vh; display: flex; flex-direction: column;
-            justify-content: center; padding-left: 6%; border-right: 1px solid rgba(0,0,0,0.03);
-            background: rgba(255,255,255,0.15);
+            justify-content: center; padding-left: 6%; border-right: 1px solid rgba(10, 25, 47, 0.05);
+            background: rgba(255,255,255,0.1);
         }
-        #app-title { font-size: 2.2rem; line-height: 1.2; max-width: 220px; font-weight: 900; }
+        #app-title { font-size: 2.2rem; line-height: 1.2; max-width: 220px; font-weight: 900; color: var(--ink); }
         #step-counter { font-size: 10px; color: var(--cinnabar); font-weight: bold; }
 
-        /* Form Content Area */
+        /* Form Area */
         .form-area { width: 70%; height: 100vh; overflow-y: auto; padding: 15vh 12% 25vh 8%; scroll-behavior: smooth; }
         .form-area::-webkit-scrollbar { width: 3px; }
-        .form-area::-webkit-scrollbar-thumb { background: rgba(188, 47, 50, 0.2); border-radius: 10px; }
+        .form-area::-webkit-scrollbar-thumb { background: var(--gold); border-radius: 10px; opacity: 0.3; }
 
         .page-layer { display: none; opacity: 0; flex-direction: column; gap: 4rem; }
         .page-layer.active { display: flex; animation: inkFade 0.8s ease forwards; }
 
         @keyframes inkFade { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* Question Box (Invisible) */
+        /* Question Box */
         .question-box { background: transparent; padding: 0; border: none; }
 
-        /* Input Styling */
         input, select, textarea {
             background: transparent !important; width: 100%; border: none;
-            border-bottom: 1px solid rgba(0,0,0,0.1); outline: none; padding: 0.6rem 0;
+            border-bottom: 1px solid rgba(10, 25, 47, 0.1); outline: none; padding: 0.6rem 0;
             font-size: 1.1rem; color: var(--ink); font-family: 'ZCOOL XiaoWei', serif;
             transition: 0.4s;
             cursor: url('https://cur.cursors-4u.net/others/oth-8/oth720.cur'), pointer !important;
         }
-        input:focus, select:focus, textarea:focus { border-bottom-color: var(--cinnabar); }
-        input::placeholder { opacity: 0.2; }
+        input:focus, select:focus, textarea:focus { border-bottom-color: var(--gold); }
+        input::placeholder { opacity: 0.3; }
 
         /* Custom Dropdown Styling */
         select {
             appearance: none;
-            background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23bc2f32' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'%3E%3C/path%3E%3C/svg%3E");
-            background-repeat: no-repeat;
-            background-position: right 10px center;
-            padding-right: 30px;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23d4af37' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'%3E%3C/path%3E%3C/svg%3E");
+            background-repeat: no-repeat; background-position: right 10px center; padding-right: 30px;
         }
 
         /* Navigation Buttons */
         .nav-fixed { position: fixed; bottom: 5vh; right: 8%; display: flex; gap: 30px; align-items: center; }
         .nav-btn { 
             font-family: 'ZCOOL XiaoWei'; letter-spacing: 0.2em; transition: 0.3s; 
-            font-size: 0.8rem; font-weight: bold; opacity: 0.6;
+            font-size: 0.8rem; font-weight: bold; opacity: 0.6; color: var(--ink);
             cursor: url('https://cur.cursors-4u.net/others/oth-8/oth720.cur'), pointer !important;
         }
         .nav-btn:hover { opacity: 1; color: var(--cinnabar); }
@@ -112,7 +113,6 @@
 </head>
 <body>
 
-    
     <div class="wave-container">
         <svg class="waves" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
         viewBox="0 24 150 28" preserveAspectRatio="none" shape-rendering="auto">
@@ -132,16 +132,14 @@
 
     <aside class="side-panel">
         <p id="step-counter" class="tracking-[0.5em] uppercase mb-4"></p>
-        <h1 id="app-title" class="tracking-widest uppercase">Consulting...</h1>
-        <div class="progress-container" style="width: 150px; height: 1px; background: rgba(0,0,0,0.1); margin-top: 20px;">
-            <div id="progress-bar" style="height: 100%; background: var(--cinnabar); width: 0%; transition: width 0.6s ease;"></div>
+        <h1 id="app-title" class="tracking-widest uppercase">Registry</h1>
+        <div class="progress-container" style="width: 150px; height: 1px; background: rgba(10,25,47,0.1); margin-top: 20px;">
+            <div id="progress-bar" style="height: 100%; background: var(--gold); width: 0%; transition: width 0.6s ease;"></div>
         </div>
     </aside>
 
     <main class="form-area" id="form-scroll-container">
-        <form id="app-form">
-            <div id="pages-root"></div>
-        </form>
+        <form id="app-form"><div id="pages-root"></div></form>
     </main>
 
     <div class="nav-fixed">
@@ -155,17 +153,14 @@
 
         async function loadConfig() {
             try {
-                // Corrected filename
-                const response = await fetch('./form.json');
+                const response = await fetch('./forum.json');
                 if (!response.ok) throw new Error("File not found");
                 formConfig = await response.json();
-                
                 document.getElementById('app-title').innerText = formConfig.title;
                 renderForm();
                 updateUI();
             } catch (err) {
-                console.error(err);
-                document.getElementById('app-title').innerText = "Archive Missing";
+                document.getElementById('app-title').innerText = "Registry Lost";
             }
         }
 
@@ -181,25 +176,15 @@
                     const box = document.createElement('div');
                     box.className = "question-box";
                     const reqAttr = q.required ? 'data-required="true"' : '';
-                    
                     let field = '';
                     if(q.type === 'text') {
                         field = `<input type="text" name="${q.id}" placeholder="${q.placeholder}" ${reqAttr} autocomplete="off">`;
                     } else if(q.type === 'select') {
-                        field = `<select name="${q.id}" ${reqAttr}>
-                                    <option value="" disabled selected>Choose path...</option>
-                                    ${q.options.map(o => `<option value="${o}">${o}</option>`).join('')}
-                                 </select>`;
+                        field = `<select name="${q.id}" ${reqAttr}><option value="" disabled selected>Choose path...</option>${q.options.map(o => `<option value="${o}">${o}</option>`).join('')}</select>`;
                     } else if(q.type === 'textarea') {
                         field = `<textarea name="${q.id}" rows="4" placeholder="${q.placeholder}" ${reqAttr}></textarea>`;
                     }
-
-                    box.innerHTML = `
-                        <label class="text-[9px] uppercase tracking-[0.4em] text-[#bc2f32] mb-3 block font-bold opacity-70">
-                            ${q.label} ${q.required ? '*' : ''}
-                        </label>
-                        ${field}
-                    `;
+                    box.innerHTML = `<label class="text-[9px] uppercase tracking-[0.4em] text-[#bc2f32] mb-3 block font-bold opacity-80">${q.label} ${q.required ? '*' : ''}</label>${field}`;
                     page.appendChild(box);
                 });
                 root.appendChild(page);
@@ -211,7 +196,6 @@
             if (!currentPage) return true;
             const requiredFields = currentPage.querySelectorAll('[data-required="true"]');
             let allValid = true;
-
             requiredFields.forEach(field => {
                 if (!field.value || field.value.trim() === "") {
                     allValid = false;
@@ -226,10 +210,7 @@
             if (dir === 1 && !validatePage()) return;
             const nextStep = currentStep + dir;
             if (nextStep < 0 || !formConfig) return;
-            if (nextStep === formConfig.sections.length) {
-                submitForm();
-                return;
-            }
+            if (nextStep === formConfig.sections.length) { submitForm(); return; }
             document.getElementById(`step-${currentStep}`).classList.remove('active');
             currentStep = nextStep;
             document.getElementById(`step-${currentStep}`).classList.add('active');
@@ -254,9 +235,7 @@
                 window.location.href = "../../../";
             }, 1500);
         }
-
         window.onload = loadConfig;
     </script>
 </body>
 </html>
-
