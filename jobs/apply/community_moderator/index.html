@@ -34,10 +34,27 @@
         
         .parallax > use { animation: move-forever 25s cubic-bezier(.55,.5,.45,.5) infinite; }
         /* Wave Colors: Gold and Ink Blue Mix */
-        .parallax > use:nth-child(1) { animation-delay: -2s; animation-duration: 7s; fill: rgba(10, 25, 47, 0.07); }
-        .parallax > use:nth-child(2) { animation-delay: -3s; animation-duration: 10s; fill: rgba(212, 175, 55, 0.15); }
-        .parallax > use:nth-child(3) { animation-delay: -4s; animation-duration: 13s; fill: rgba(10, 25, 47, 0.1); }
-        .parallax > use:nth-child(4) { animation-delay: -5s; animation-duration: 20s; fill: rgba(212, 175, 55, 0.3); }
+/* Significantly slowed timings for a non-distracting background */
+.parallax > use:nth-child(1) { 
+    animation-delay: -2s; 
+    animation-duration: 35s; 
+    fill: rgba(10, 25, 47, 0.05); 
+}
+.parallax > use:nth-child(2) { 
+    animation-delay: -3.5s; 
+    animation-duration: 45s; 
+    fill: rgba(212, 175, 55, 0.12); 
+}
+.parallax > use:nth-child(3) { 
+    animation-delay: -4.5s; 
+    animation-duration: 55s; 
+    fill: rgba(10, 25, 47, 0.08); 
+}
+.parallax > use:nth-child(4) { 
+    animation-delay: -5.5s; 
+    animation-duration: 70s; 
+    fill: rgba(212, 175, 55, 0.25); 
+}
 
         @keyframes move-forever { 0% { transform: translate3d(-90px,0,0); } 100% { transform: translate3d(85px,0,0); } }
 
@@ -239,4 +256,5 @@
     </script>
 </body>
 </html>
+
 
