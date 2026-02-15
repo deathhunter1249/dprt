@@ -153,7 +153,7 @@
 
         async function loadConfig() {
             try {
-                const response = await fetch('./forum.json');
+                const response = await fetch('./form.json');
                 if (!response.ok) throw new Error("File not found");
                 formConfig = await response.json();
                 document.getElementById('app-title').innerText = formConfig.title;
@@ -239,3 +239,4 @@
     </script>
 </body>
 </html>
+
