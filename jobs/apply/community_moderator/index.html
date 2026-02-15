@@ -241,14 +241,14 @@
             document.getElementById('step-counter').innerText = `Step ${currentStep + 1} / ${total}`;
             document.getElementById('progress-bar').style.width = `${progress}%`;
             document.getElementById('prev-btn').style.visibility = (currentStep === 0) ? "hidden" : "visible";
-            document.getElementById('next-btn').innerText = (currentStep === total - 1) ? "SEAL RECORD" : "NEXT →";
+            document.getElementById('next-btn').innerText = (currentStep === total - 1) ? "Submit Application" : "NEXT →";
         }
 
         function submitForm() {
             document.body.style.opacity = "0";
             document.body.style.transition = "opacity 1.5s";
             setTimeout(() => {
-                alert("The record is sealed.");
+                alert("Your application was submit.");
                 window.location.href = "../../../";
             }, 1500);
         }
@@ -256,5 +256,6 @@
     </script>
 </body>
 </html>
+
 
 
