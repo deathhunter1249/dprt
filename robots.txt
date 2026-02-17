@@ -1,0 +1,108 @@
+# robots.txt - Selective AI blocking for DPRT
+# Public info (wiki, home, job listings) = allowed
+# Applications and admin = blocked
+
+# Allow search engines to index everything public
+User-agent: Googlebot
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+User-agent: DuckDuckBot
+Allow: /
+
+# AI Scrapers: Block ONLY applications and admin areas
+# They can see wiki, info, job listings (good for visibility)
+
+User-agent: GPTBot
+Disallow: /dprt/jobs/apply/
+Disallow: /dprt/admin/
+Disallow: /api/
+
+User-agent: ChatGPT-User
+Disallow: /dprt/jobs/apply/
+Disallow: /dprt/admin/
+Disallow: /api/
+
+User-agent: CCBot
+Disallow: /dprt/jobs/apply/
+Disallow: /dprt/admin/
+Disallow: /api/
+
+User-agent: anthropic-ai
+Disallow: /dprt/jobs/apply/
+Disallow: /dprt/admin/
+Disallow: /api/
+
+User-agent: Claude-Web
+Disallow: /dprt/jobs/apply/
+Disallow: /dprt/admin/
+Disallow: /api/
+
+User-agent: ClaudeBot
+Disallow: /dprt/jobs/apply/
+Disallow: /dprt/admin/
+Disallow: /api/
+
+User-agent: Google-Extended
+Disallow: /dprt/jobs/apply/
+Disallow: /dprt/admin/
+Disallow: /api/
+
+User-agent: GoogleOther
+Disallow: /dprt/jobs/apply/
+Disallow: /dprt/admin/
+Disallow: /api/
+
+User-agent: PerplexityBot
+Disallow: /dprt/jobs/apply/
+Disallow: /dprt/admin/
+Disallow: /api/
+
+User-agent: Amazonbot
+Disallow: /dprt/jobs/apply/
+Disallow: /dprt/admin/
+Disallow: /api/
+
+User-agent: FacebookBot
+Disallow: /dprt/jobs/apply/
+Disallow: /dprt/admin/
+Disallow: /api/
+
+User-agent: Meta-ExternalAgent
+Disallow: /dprt/jobs/apply/
+Disallow: /dprt/admin/
+Disallow: /api/
+
+User-agent: Omgilibot
+Disallow: /dprt/jobs/apply/
+Disallow: /dprt/admin/
+Disallow: /api/
+
+User-agent: Bytespider
+Disallow: /dprt/jobs/apply/
+Disallow: /dprt/admin/
+Disallow: /api/
+
+User-agent: ImagesiftBot
+Disallow: /dprt/jobs/apply/
+Disallow: /dprt/admin/
+Disallow: /api/
+
+User-agent: Diffbot
+Disallow: /dprt/jobs/apply/
+Disallow: /dprt/admin/
+Disallow: /api/
+
+User-agent: cohere-ai
+Disallow: /dprt/jobs/apply/
+Disallow: /dprt/admin/
+Disallow: /api/
+
+# Generic crawlers can see public stuff
+User-agent: *
+Disallow: /dprt/jobs/apply/
+Disallow: /dprt/admin/
+Disallow: /api/
+Allow: /
