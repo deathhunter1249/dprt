@@ -65,7 +65,7 @@
             width: 310px;
             margin: 0 auto;
             background: linear-gradient(to right, var(--silk-dark), var(--silk-light) 12%, var(--silk-light) 88%, var(--silk-dark));
-            padding: 25px 14px 35px 14px; /* Adjusted padding for new bar sizes */
+            padding: 25px 14px 35px 14px;
             box-shadow: 0 35px 70px -15px rgba(0,0,0,0.3);
             transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
             transform-origin: top center;
@@ -146,6 +146,135 @@
 
         .reveal-node { opacity: 0; transform: translateX(-20px); transition: all 1s ease; }
         .reveal-active { opacity: 1; transform: translateX(0); }
+
+        /* === ADMIN CONTROLS STYLING === */
+        .admin-toggle {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 32px;
+            height: 32px;
+            background: var(--cinnabar);
+            border: 2px solid var(--ink);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 20;
+        }
+
+        .admin-toggle:hover {
+            transform: scale(1.1);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+        }
+
+        .admin-toggle::before {
+            content: "●";
+            font-size: 16px;
+            color: white;
+            transition: all 0.3s ease;
+        }
+
+        .admin-toggle.disabled::before {
+            content: "○";
+        }
+
+        .scroll-container.disabled .scroll-inner {
+            opacity: 0.4;
+            filter: grayscale(1);
+        }
+
+        .scroll-container.disabled .btn-apply {
+            background: #ccc;
+            color: #666;
+            cursor: not-allowed;
+            border-color: #999;
+        }
+
+        .scroll-container.disabled .btn-apply:hover {
+            background: #ccc;
+            color: #666;
+            letter-spacing: 0.2em;
+        }
+
+        .drag-handle {
+            position: absolute;
+            top: 50%;
+            left: -45px;
+            transform: translateY(-50%);
+            width: 35px;
+            height: 60px;
+            background: var(--ink);
+            border-radius: 8px 0 0 8px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            cursor: grab;
+            opacity: 0;
+            transition: all 0.3s ease;
+            z-index: 15;
+        }
+
+        .scroll-container:hover .drag-handle {
+            opacity: 0.7;
+        }
+
+        .drag-handle:hover {
+            opacity: 1;
+            left: -48px;
+        }
+
+        .drag-handle:active {
+            cursor: grabbing;
+        }
+
+        .drag-handle span {
+            width: 20px;
+            height: 3px;
+            background: white;
+            border-radius: 2px;
+        }
+
+        .scroll-container.dragging {
+            opacity: 0.5;
+            transform: scale(0.95);
+            z-index: 1000;
+        }
+
+        .scroll-container.drag-over {
+            transform: translateX(20px);
+        }
+
+        .disabled-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 15;
+            pointer-events: none;
+        }
+
+        .disabled-badge {
+            background: var(--cinnabar);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            font-weight: 900;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            border: 2px solid var(--ink);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+        }
     </style>
 </head>
 <body>
@@ -171,18 +300,139 @@
 
     <script src="/dprt/styling/auth.js"></script>
     <script>
-const jobData = [
-    { id: "01", title: "Community Moderator", icon: "dragon.png", desc: "Apply for the Community Moderator position and help enforce rules, manage discussions, and maintain a safe, structured community environment." },
-    { id: "02", title: "Chat Moderator", icon: "seal.png", desc: "Become a Chat Moderator and help enforce chat rules, answer questions, and keep discussions organized and respectful." },
-    { id: "03", title: "Teapot Communist Party", icon: "teacup.png", desc: "Join the lower echelon of the TCPC. Participate in party activities, support leadership initiatives, and contribute to internal discussions and decision making within the organization." },
-    { id: "04", title: "Stuff here", icon: "teacup.png", desc: "" },
-    { id: "05", title: "Stuff here", icon: "teacup.png", desc: "" },
+// Job data with disabled state
+let jobData = [
+    { id: "01", title: "Community Moderator", icon: "dragon.png", desc: "Apply for the Community Moderator position and help enforce rules, manage discussions, and maintain a safe, structured community environment.", disabled: false, order: 0 },
+    { id: "02", title: "Chat Moderator", icon: "seal.png", desc: "Become a Chat Moderator and help enforce chat rules, answer questions, and keep discussions organized and respectful.", disabled: false, order: 1 },
+    { id: "03", title: "Teapot Communist Party", icon: "teacup.png", desc: "Join the lower echelon of the TCPC. Participate in party activities, support leadership initiatives, and contribute to internal discussions and decision making within the organization.", disabled: false, order: 2 },
+    { id: "04", title: "Stuff here", icon: "teacup.png", desc: "", disabled: false, order: 3 },
+    { id: "05", title: "Stuff here", icon: "teacup.png", desc: "", disabled: false, order: 4 },
 ];
+
+// Check if user is admin (you'll need to implement this based on your auth system)
+function isAdmin() {
+    // Replace this with your actual admin check
+    // For example: return window.currentUser && window.currentUser.role === 'admin';
+    return true; // Set to false for regular users
+}
+
+// Load job data from localStorage
+function loadJobData() {
+    const saved = localStorage.getItem('dprt_job_data');
+    if (saved) {
+        jobData = JSON.parse(saved);
+    }
+}
+
+// Save job data to localStorage
+function saveJobData() {
+    localStorage.setItem('dprt_job_data', JSON.stringify(jobData));
+}
+
+// Toggle job application status
+function toggleJobStatus(jobId) {
+    const job = jobData.find(j => j.id === jobId);
+    if (job) {
+        job.disabled = !job.disabled;
+        saveJobData();
+        renderApps();
+    }
+}
+
+// Handle drag start
+let draggedElement = null;
+let draggedJobId = null;
+
+function handleDragStart(e, jobId) {
+    draggedElement = e.currentTarget.parentElement;
+    draggedJobId = jobId;
+    draggedElement.classList.add('dragging');
+    e.dataTransfer.effectAllowed = 'move';
+    e.dataTransfer.setData('text/html', draggedElement.innerHTML);
+}
+
+function handleDragOver(e) {
+    if (e.preventDefault) {
+        e.preventDefault();
+    }
+    e.dataTransfer.dropEffect = 'move';
+    return false;
+}
+
+function handleDragEnter(e) {
+    const target = e.currentTarget;
+    if (target !== draggedElement) {
+        target.classList.add('drag-over');
+    }
+}
+
+function handleDragLeave(e) {
+    e.currentTarget.classList.remove('drag-over');
+}
+
+function handleDrop(e) {
+    if (e.stopPropagation) {
+        e.stopPropagation();
+    }
+    
+    const dropTarget = e.currentTarget;
+    dropTarget.classList.remove('drag-over');
+    
+    if (draggedElement !== dropTarget) {
+        const targetJobId = dropTarget.dataset.jobId;
+        
+        // Find indices
+        const draggedIndex = jobData.findIndex(j => j.id === draggedJobId);
+        const targetIndex = jobData.findIndex(j => j.id === targetJobId);
+        
+        // Reorder array
+        const draggedJob = jobData[draggedIndex];
+        jobData.splice(draggedIndex, 1);
+        jobData.splice(targetIndex, 0, draggedJob);
+        
+        // Update order values
+        jobData.forEach((job, index) => {
+            job.order = index;
+        });
+        
+        saveJobData();
+        renderApps();
+    }
+    
+    return false;
+}
+
+function handleDragEnd(e) {
+    if (draggedElement) {
+        draggedElement.classList.remove('dragging');
+    }
+    document.querySelectorAll('.scroll-container').forEach(el => {
+        el.classList.remove('drag-over');
+    });
+}
 
 function renderApps() {
     const grid = document.getElementById('job-grid');
-    grid.innerHTML = jobData.map(job => `
-        <div class="scroll-container">
+    const adminMode = isAdmin();
+    
+    // Sort by order
+    const sortedJobs = [...jobData].sort((a, b) => a.order - b.order);
+    
+    grid.innerHTML = sortedJobs.map(job => `
+        <div class="scroll-container ${job.disabled ? 'disabled' : ''}" 
+             data-job-id="${job.id}"
+             ${adminMode ? 'draggable="true"' : ''}>
+            ${adminMode ? `
+                <div class="drag-handle" draggable="true">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+                <div class="admin-toggle ${job.disabled ? 'disabled' : ''}" 
+                     onclick="toggleJobStatus('${job.id}')"
+                     title="${job.disabled ? 'Enable Application' : 'Disable Application'}">
+                </div>
+            ` : ''}
             <div class="kakemono">
                 <div class="scroll-inner">
                     <img src="../decals/${job.icon}" class="job-icon" alt="${job.title}" 
@@ -192,15 +442,37 @@ function renderApps() {
                     <p class="text-zinc-600 text-[11px] leading-relaxed font-serif italic mb-8 text-center px-2">
                         "${job.desc}"
                     </p>
-                   <button onclick="window.location.href='/dprt/jobs/apply/${job.title.toLowerCase().replace(/\s+/g, '_')}/'" class="btn-apply">
-                        Apply
+                    <button 
+                        ${job.disabled ? 'disabled' : ''}
+                        onclick="${job.disabled ? '' : `window.location.href='/dprt/jobs/apply/${job.title.toLowerCase().replace(/\s+/g, '_')}/';`}" 
+                        class="btn-apply">
+                        ${job.disabled ? 'Closed' : 'Apply'}
                     </button>
                 </div>
+                ${job.disabled ? '<div class="disabled-overlay"><div class="disabled-badge">Applications Closed</div></div>' : ''}
                 <div class="roller"></div>
             </div>
         </div>
     `).join('');
     
+    // Add drag event listeners for admin
+    if (adminMode) {
+        document.querySelectorAll('.scroll-container').forEach((container, idx) => {
+            const dragHandle = container.querySelector('.drag-handle');
+            
+            if (dragHandle) {
+                dragHandle.addEventListener('dragstart', (e) => handleDragStart(e, container.dataset.jobId));
+                
+                container.addEventListener('dragover', handleDragOver);
+                container.addEventListener('dragenter', handleDragEnter);
+                container.addEventListener('dragleave', handleDragLeave);
+                container.addEventListener('drop', handleDrop);
+                container.addEventListener('dragend', handleDragEnd);
+            }
+        });
+    }
+    
+    // Animate entrance
     setTimeout(() => {
         document.querySelectorAll('.scroll-container').forEach((el, idx) => {
             setTimeout(() => el.classList.add('visible'), idx * 250);
@@ -209,6 +481,7 @@ function renderApps() {
     }, 100);
 }
 
+// Ink drops animation
 const inkContainer = document.getElementById('ink-container');
 for (let i = 0; i < 15; i++) {
     const drop = document.createElement('div');
@@ -220,7 +493,11 @@ for (let i = 0; i < 15; i++) {
     inkContainer.appendChild(drop);
 }
 
-window.onload = renderApps;
+// Initialize
+window.onload = () => {
+    loadJobData();
+    renderApps();
+};
     </script>
 </body>
 </html>
