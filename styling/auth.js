@@ -46,6 +46,7 @@ async function initAuth() {
             const isAdmin = (user.id === '735531512124145674');
             
             if(isAdmin) {
+                window.isSiteOwner = true;
                 navRank.innerText = "Site Owner";
                 menuRank.innerText = "Admin";
                 document.getElementById('admin-add-trigger')?.classList.remove('hidden');
