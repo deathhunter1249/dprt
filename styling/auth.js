@@ -1,4 +1,5 @@
 const CLIENT_ID = '1323365609777528962';
+const ADMIN_LIST = ["735531512124145674"]; // Your Discord ID
 
 // DISCORD AUTH
 async function initAuth() {
@@ -24,15 +25,14 @@ async function initAuth() {
         if (!response.ok) throw new Error("Invalid Token");
         const user = await response.json();
 
-        // Ensure header elements exist before updating
         const updateUI = () => {
             const navName = document.getElementById('nav-username');
             const navRank = document.getElementById('nav-rank');
             const menuRank = document.getElementById('menu-user-rank');
             const navPfp = document.getElementById('nav-pfp');
+            const adminLink = document.getElementById('admin-link'); // The button in your header.html
 
             if (!navName || !navRank) {
-                // If elements aren't ready yet, wait 50ms and try again
                 setTimeout(updateUI, 50);
                 return;
             }
@@ -43,22 +43,29 @@ async function initAuth() {
             if(navPfp) navPfp.src = `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png`;
 
             // Admin Logic
-            const isAdmin = (user.id === '735531512124145674');
+            const isAdmin = ADMIN_LIST.includes(user.id);
             
             if(isAdmin) {
                 window.isSiteOwner = true;
-                navRank.innerText = "Site Owner";
-                menuRank.innerText = "Admin";
+                navRank.innerText = "SITE OWNER";
+                menuRank.innerText = "SUPREME ADMINISTRATOR";
+                
+                // Show the Admin Panel button in the dropdown
+                if(adminLink) adminLink.classList.remove('hidden');
+                
+                // Also show the old trigger if it exists
                 document.getElementById('admin-add-trigger')?.classList.remove('hidden');
             } else {
+                window.isSiteOwner = false;
                 navRank.innerText = "Teapotian Citizen";
                 menuRank.innerText = "Verified Citizen";
+                if(adminLink) adminLink.classList.add('hidden');
             }
 
             document.getElementById('login-btn')?.classList.add('hidden');
             document.getElementById('user-display')?.classList.remove('hidden');
 
-            // Trigger jobs page if applicable
+            // Trigger jobs page re-render to show admin controls if on that page
             if (typeof renderApps === "function") {
                 renderApps(isAdmin);
             }
@@ -89,9 +96,6 @@ function toggleMenu(show) {
     const overlay = document.getElementById('global-overlay');
     const blurContainer = document.getElementById('blur-container');
     
-    // Logic: 
-    // 1. If 'show' is explicitly false (from overlay click), we close.
-    // 2. If 'show' is undefined/event (from PFP click), we check current state to toggle.
     const isCurrentlyOpen = !menu?.classList.contains('opacity-0');
     const shouldOpen = (show === true) || (show !== false && !isCurrentlyOpen);
 
@@ -113,17 +117,12 @@ function toggleMenu(show) {
 
 async function loadGlobalHeader() {
     try {
-        // This is the most reliable way for GitHub Pages:
-        // If we're on deathhunter1249.github.io/dprt/, 
-        // this ensures the path always points to the root 'dprt' folder.
         const headerUrl = window.location.origin + '/dprt/styling/header.html';
-
         console.log("📡 Attempting to fetch header from:", headerUrl);
 
         const resp = await fetch(headerUrl);
         
         if (!resp.ok) {
-            // Fallback for local testing (where /dprt/ might not exist)
             const localResp = await fetch('/styling/header.html');
             if (!localResp.ok) throw new Error(`Status: ${resp.status}`);
             const localHtml = await localResp.text();
@@ -133,13 +132,11 @@ async function loadGlobalHeader() {
             document.getElementById('header-placeholder').innerHTML = html;
         }
         
-        // --- Highlighting logic for the Jobs page ---
         const path = window.location.pathname;
         if (path.includes('jobs')) {
-            // Wait a tiny bit for the HTML to inject, then highlight
             setTimeout(() => {
                 const jobsLink = document.getElementById('nav-jobs');
-                if (jobsLink) jobsLink.style.color = '#b8860b';
+                if (jobsLink) jobsLink.style.color = '#bc2f32'; // Match your cinnabar color
             }, 100);
         }
 
